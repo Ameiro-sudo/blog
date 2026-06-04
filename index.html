@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnowBlock · 博客</title>
+    <meta name="description" content="SnowBlock 博客 — 技术、游戏、日常">
+    <meta name="theme-color" content="#0b2b3b">
+    <meta name="color-scheme" content="light">
+    <meta property="og:title" content="SnowBlock · 博客">
+    <meta property="og:description" content="❄️ SnowBlock 博客 — 技术、游戏、日常">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:url" content="https://blog.snowblock.top">
+    <meta property="og:image" content="https://snowblock.top/138936740_p0.png">
+    <meta property="og:site_name" content="SnowBlock">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SnowBlock · 博客">
+    <meta name="twitter:description" content="❄️ SnowBlock 博客 — 技术、游戏、日常">
+    <meta name="twitter:image" content="https://snowblock.top/138936740_p0.png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-bg-deep: #0b2b3b;
+            --color-accent: #8fd8ef;
+            --glass-bg: rgba(255,255,255,0.08);
+            --glass-border: rgba(255,255,255,0.18);
+            --glass-hover-bg: rgba(255,255,255,0.15);
+            --glass-header-bg: rgba(11,43,59,0.45);
+            --shadow-card: 0 30px 60px -16px rgba(0,0,0,0.45);
+            --shadow-item: 0 4px 16px -6px rgba(0,0,0,0.15);
+            --radius-card: 2.2rem;
+            --radius-item: 1.1rem;
+            --radius-btn: 2rem;
+            --font-mono: 'SF Mono','Cascadia Code','Fira Code','Consolas',monospace;
+            --font-sans: 'Segoe UI',Roboto,'Helvetica Neue',system-ui,-apple-system,sans-serif;
+            --font-title: 'ZCOOL KuaiLe', cursive, var(--font-sans);
+            --body-pad: 2.5rem;
+            --transition: 0.25s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            padding: var(--body-pad);
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+            background: var(--color-bg-deep) url('138936740_p0.png') center / cover no-repeat fixed;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.25);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body > * { position: relative; z-index: 1; }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== 顶栏 ===== */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            background: var(--glass-header-bg);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.06);
+            margin-bottom: 2.5rem;
+        }
+
+        .top-bar .site-name {
+            font-size: 1.3rem;
+            font-weight: 400;
+            font-family: var(--font-title);
+            background: linear-gradient(135deg,#ffe6b0,#c0f0ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .top-bar .nav-links {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+        }
+
+        .top-bar .nav-links a {
+            color: rgba(200,235,250,0.75);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            transition: color var(--transition);
+        }
+        .top-bar .nav-links a:hover,
+        .top-bar .nav-links a.active {
+            color: #fff;
+        }
+
+        /* ===== 页面头部 ===== */
+        .page-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-header h1 {
+            font-size: clamp(1.8rem,5vw,2.8rem);
+            font-weight: 400;
+            font-family: var(--font-title);
+            background: linear-gradient(135deg,#ffe6b0,#c0f0ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            line-height: 1.3;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+        }
+
+        .page-header .sub {
+            color: rgba(200,235,250,0.70);
+            margin-top: 0.3rem;
+            font-family: var(--font-mono);
+            font-size: clamp(0.7rem,1.5vw,0.85rem);
+            letter-spacing: 0.03em;
+        }
+
+        .page-header .sub a {
+            color: var(--color-accent);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+        .page-header .sub a:hover {
+            color: #fff;
+        }
+
+        /* ===== 文章列表 ===== */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+ background: var(--glass-bg);
+            backdrop-filter: blur(5px) saturate(1.1);
+            -webkit-backdrop-filter: blur(5px) saturate(1.1);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-item), inset 0 1px 0 rgba(255,255,255,0.06);
+            overflow: hidden;
+            transition: transform var(--transition), box-shadow var(--transition);
+            cursor: pointer;
+        }
+
+        .post-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px -16px rgba(0,0,0,0.5);
+        }
+
+        .post-body {
+            padding: 1.5rem 1.8rem;
+        }
+
+        .post-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1rem;
+            align-items: center;
+            margin-bottom: 0.6rem;
+            font-size: 0.75rem;
+            color: rgba(200,235,250,0.55);
+            font-family: var(--font-mono);
+        }
+
+        .post-meta .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            background: rgba(143,216,239,0.15);
+            color: var(--color-accent);
+        }
+
+        .post-meta .tag.tech { background: rgba(76,175,80,0.15); color: #81c784; }
+        .post-meta .tag.game { background: rgba(255,152,0,0.15); color: #ffb74d; }
+        .post-meta .tag.life { background: rgba(233,30,99,0.15); color: #f48fb1; }
+        .post-meta .tag.dev { background: rgba(33,150,243,0.15); color: #64b5f6; }
+
+        .post-title {
+            font-size: clamp(1.1rem,2.8vw,1.4rem);
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.3);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .post-excerpt {
+            color: rgba(200,235,250,0.75);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .post-footer .read-more {
+            color: var(--color-accent);
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+        .post-footer .read-more:hover {
+            color: #fff;
+        }
+
+        .post-footer .post-date {
+            color: rgba(200,235,250,0.40);
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+        }
+
+        /* ===== 文章详情页（单篇文章） ===== */
+        .article-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px) saturate(1.1);
+            -webkit-backdrop-filter: blur(5px) saturate(1.1);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.06);
+            overflow: hidden;
+        }
+
+        .article-body {
+            padding: 2rem 2.2rem;
+        }
+
+        .article-body .article-title {
+            font-size: clamp(1.4rem,4vw,2rem);
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+            margin-bottom: 0.6rem;
+            line-height: 1.3;
+        }
+
+        .article-body .article-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.2rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.8rem;
+            color: rgba(200,235,250,0.55);
+            font-family: var(--font-mono);
+        }
+
+        .article-body .article-content {
+            color: rgba(220,240,250,0.90);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.10);
+        }
+
+        .article-body .article-content p {
+            margin-bottom: 1rem;
+        }
+
+        .article-body .article-content h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 1.5rem 0 0.8rem;
+            border-left: 3px solid var(--color-accent);
+            padding-left: 0.8rem;
+        }
+
+        .article-body .article-content h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 1.2rem 0 0.6rem;
+        }
+
+        .article-body .article-content code {
+            background: rgba(0,0,0,0.25);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            color: var(--color-accent);
+        }
+
+        .article-body .article-content pre {
+            background: rgba(0,0,0,0.30);
+            padding: 1rem 1.2rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .article-body .article-content pre code {
+            background: none;
+            padding: 0;
+            color: #ddf4ff;
+            font-size: 0.85rem;
+        }
+
+        .article-body .article-content blockquote {
+            border-left: 3px solid var(--color-accent);
+            padding: 0.6rem 1rem;
+            margin: 1rem 0;
+            background: rgba(255,255,255,0.04);
+            border-radius: 0 8px 8px 0;
+            color: rgba(200,235,250,0.75);
+            font-style: italic;
+        }
+
+        .article-body .article-content img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+
+        .article-body .article-content a {
+            color: var(--color-accent);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+        .article-body .article-content a:hover {
+            color: #fff;
+        }
+
+        .article-body .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: rgba(200,235,250,0.60);
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+        .article-body .back-link:hover {
+            color: var(--color-accent);
+        }
+
+        /* ===== 空状态 ===== */
+        .no-posts {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px) saturate(1.1);
+            -webkit-backdrop-filter: blur(5px) saturate(1.1: var(--radius-card);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-card);
+            color: rgba(200,235,250,0.70);
+        }
+        .no-posts h2 {
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* ===== 分页 ===== */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 2rem;
+        }
+
+        .pagination a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid var(--glass-border);
+            color: rgba(200,235,250,0.70);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            transition: all var(--transition);
+        }
+        .pagination a:hover,
+        .pagination a.active {
+            background: var(--glass-hover-bg);
+            color: #fff;
+            border-color: var(--color-accent);
+        }
+
+        /* ===== 滚动条 ===== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 760px) {
+            :root { --body-pad: 1.5rem; }
+            .top-bar { padding: 0.7rem 1.2rem; flex-wrap: wrap; gap: 0.5rem; }
+            .top-bar .nav-links { gap: 0.8rem; }
+            .top-bar .nav-links a { font-size: 0.75rem; }
+            .post-body { padding: 1.2rem 1.4rem; }
+            .article-body { padding: 1.4rem 1.4rem; }
+        }
+
+        @media (max-width: 480px) {
+            :root { --body-pad: 1rem; }
+            .top-bar { padding: 0.6rem 1rem; }
+            .top-bar .site-name { font-size: 1.1rem; }
+            .top-bar .nav-links { gap: 0.6rem; }
+            .top-bar .nav-links a { font-size: 0.7rem; }
+            .post-body { padding: 1rem 1.2rem; }
+            .article-body { padding: 1.2rem 1rem; }
+            .article-body .article-content { font-size: 0.9rem; }
+            .pagination a { width: 36px; height: 36px; font-size: 0.8rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
+
+        @media print {
+            body { background: #fff; padding: 1rem; }
+            body::before { display: none; }
+            .top-bar, .post-card, .article-card { background: #fafafa; backdrop-filter: none; border: 1px solid #ddd; box-shadow: none; }
+            .top-bar .site-name, .page-header h1 { background: none; color: #0b2b3b; }
+            .post-title, .article-body .article-title { color: #222; }
+            .post-excerpt, .article-body .article-content { color: #444; }
+            .post-meta, .article-body .article-meta { color: #888; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <!-- 顶栏 -->
+    <header class="top-bar">
+        <a href="https://snowblock.top" class="site-name">❄️ SnowBlock</a>
+        <nav class="nav-links">
+            <a href="https://snowblock.top">导航</a>
+            <a href="#" class="active">博客</a>
+            <a href="https://status.snowblock.top">MC 状态</a>
+        </nav>
+    </header>
+
+    <!-- 页面头部 -->
+    <div class="page-header">
+        <h1>📝 雪地笔记</h1>
+        <p class="sub">
+            <a href="https://snowblock.top">❄️ SnowBlock</a>
+            <span style="color:rgba(200,235,250,0.3);margin:0 6px;">·</span>
+            伪静态 · 一些想法和记录
+        </p>
+    </div>
+
+    <!-- 文章列表页面 -->
+    <div id="postList">
+        <div class="post-list">
+            <!-- 文章 1 -->
+            <div class="post-card" data-post-id="1">
+                <div class="post-body">
+                    <div class="post-meta">
+                        <span>2026-06-03</span>
+                        <span class="tag tech">技术</span>
+                        <span class="tag dev">Dev</span>
+                        <span>📖 5 分钟</span>
+                    </div>
+                    <h2 class="post-title">用 GitHub Pages 搭建个人导航页</h2>
+                    <p class="post-excerpt">
+                        从零开始，用纯前端技术搭建一个漂亮的个人导航页面。包括毛玻璃效果、飘雪动画、响应式布局…… 所有代码都扔在 GitHub 上，永久免费托管。
+                    </p>
+                    <div class="post-footer">
+                        <a href="#" class="read-more" data-post="1">阅读全文 →</a>
+                        <span class="post-date">13:42</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 文章 2 -->
+            <div class="post-card" data-post-id="2">
+                <div class="post-body">
+                    <div class="post-meta">
+                        <span>2026-05-28</span>
+                        <span class="tag game">游戏</span>
+                        <span>📖 3 分钟</span>
+                    </div>
+                    <h2 class="post-title">我的 Minecraft 服务器搭建记录</h2>
+                    <p class="post-excerpt">
+                        从 VPS 选购到 PaperMC 配置，从 Geyser 互通到域名解析，记录一下整个踩坑过程。目前服务器稳定运行中，欢迎来玩。
+                    </p>
+                    <div class="post-footer">
+                        <a href="#" class="read-more" data-post="2">阅读全文 →</a>
+                        <span class="post-date">20:15</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 文章 3 -->
+            <div class="post-card" data-post-id="3">
+                <div class="post-body">
+                    <div class="post-meta">
+                        <span>2026-05-20</span>
+                        <span class="tag life">日常</span>
+                        <span>📖 2 分钟</span>
+                    </div>
+                    <h2 class="post-title">最近在听什么：歌单分享</h2>
+                    <p class="post-excerpt">
+                        码代码时候的背景音乐、深夜写博客时的循环曲、还有服务器维护时的提神歌单——分享一些最近在 Spotify 上循环的曲子。
+                    </p>
+                    <div class="post-footer">
+                        <a href="#" class="read-more" data-post="3">阅读全文 →</a>
+                        <span class="post-date">22:08</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 文章 4 -->
+            <div class="post-card" data-post-id="4">
+                <div class="post-body">
+                    <div class="post-meta">
+                        <span>2026-05-15</span>
+                        <span class="tag tech">技术</span>
+                        <span>📖 8 分钟</span>
+                    </div>
+                    <h2 class="post-title">CSS 毛玻璃效果完全指南</h2>
+                    <p class="post-excerpt">
+                        backdrop-filter 怎么用？模糊半径和透明度的最佳配比？不同浏览器兼容性如何处理？这篇文章一次讲清楚。
+                    </p>
+                    <div class="post-footer">
+                        <a href="#" class="read-more" data-post="4">阅读全文 →</a>
+                        <span class="post-date">16:30</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination">
+            <a href="#" class="active">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">→</a>
+        </div>
+    </div>
+
+    <!-- 文章详情页（隐藏） -->
+    <div id="articleView" style="display:none;">
+        <div class="article-card">
+            <div class="article-body">
+                <h1 class="article-title" id="articleTitle"></h1>
+                <div class="article-meta" id="articleMeta"></div>
+                <div class="article-content" id="articleContent"></div>
+                <a href="#" id="backToList" class="back-link">← 返回文章列表</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // ===== 文章数据 =====
+    var posts = {
+        1: {
+            title: '用 GitHub Pages 搭建个人导航页',
+            date: '2026-06-03',
+            tags: ['技术', 'Dev'],
+            readTime: '5 分钟',
+            time: '13:42',
+            content: [
+                '<p>一直想有一个属于自己的导航页——不是浏览器自带那种，而是一打开就能看到自己常用的服务、当前的服务器状态，还有一些个人风格的印记。</p>',
+                '<p>最开始用的是 <code>Fliqlo</code> 风格的大时钟，后来觉得太冷淡了。SnowBlock 这个想法来自某天晚上盯着雪景壁纸发呆——如果能把这个雪景作为背景，再在上面浮一块毛玻璃卡片，不是很酷吗？</p>',
+                '<h2>技术选型</h2>',
+                '<p>整个页面没有任何后端依赖，纯 HTML + CSS + JavaScript，完全托管在 GitHub Pages 上。核心就三件事：</p>',
+                '<ul style="color:rgba(220,240,250,0.90);line-height:1.8;padding-left:1.2rem;margin-bottom:1rem;">',
+                '<li>一张高清壁纸作为背景</li>',
+                '<li><code>backdrop-filter: blur()</code> 实现毛玻璃</li>',
+                '<li>Canvas 飘雪增加氛围感</li>',
+                '</ul>',
+                '<h2>踩坑记录</h2>',
+                '<p>毛玻璃效果在手机上需要加 <code>-webkit-backdrop-filter</code> 前缀，否则 Safari 不认。飘雪 Canvas 要注意在 <code>prefers-reduced-motion</code> 时隐藏，尊重用户偏好。</p>',
+                '<blockquote>设计上做了很多次减法——最开始有动态天气、有打字机效果、有雪花点击散开……最后只留下了最核心的几个。少即是多。</blockquote>',
+                '<p>代码开源在 GitHub 上，欢迎 Star。有任何建议也可以提 Issue。</p>'
+            ]
+        },
+        2: {
+            title: '我的 Minecraft 服务器搭建记录',
+            date: '2026-05-28',
+            tags: ['游戏'],
+            readTime: '3 分钟',
+            time: '20:15',
+            content: [
+                '<p>其实一直想开个 MC 服务器，和朋友一起玩。这次终于动手了，记录一下过程。</p>',
+                '<h2>服务器配置</h2>',
+                '<pre><code>CPU: 2 核\n内存: 4 GB\n硬盘: 40 GB SSD\n带宽: 10 Mbps\n系统: Ubuntu 22.04</code></pre>',
+                '<p>这个配置带 5-10 个人玩生存完全够了。用的 PaperMC，性能比原版好很多。</p>',
+                '<h2>Geyser 互通</h2>',
+                '<p>为了让基岩版的朋友也能进来，装了 Geyser 和 Floodgate。配置比想象中简单，只要开放对应的端口就行。</p>',
+                '<blockquote>地址是 play.snowblock.top，Java 版 1.20.4，基岩版端口 19132。</blockquote>',
+                '<p>目前服务器运行了快一个月，很稳定。欢迎来玩 🌲</p>'
+            ]
+        },
+        3: {
+            title: '最近在听什么：歌单分享',
+            date: '2026-05-20',
+            tags: ['日常'],
+            readTime: '2 分钟',
+            time: '22:08',
+            content: [
+                '<p>写代码的时候习惯戴耳机，没有音乐总觉得少了点什么。分享一下最近循环的几张专辑。</p>',
+                '<h2>码代码专用</h2>',
+                '<p>Lofi Girl 的 24/7 直播不用多说，写代码神器。最近发现了一些国内的 Lofi 制作人，质量也很高。</p>',
+                '<h2>深夜时间</h2>',
+                '<p>Sigur Rós 的专辑 <code>()</code>，冰岛语后摇，整张专辑没有一句能听懂的歌词，但情绪拉满。特别适合凌晨写博客的时候听。</p>',
+                '<p>导航页上挂的那个 Spotify 播放器就是最近在循环的专辑，欢迎点开听听看。</p>'
+            ]
+        },
+        4: {
+            title: 'CSS 毛玻璃效果完全指南',
+            date: '2026-05-15',
+            tags: ['技术'],
+            readTime: '8 分钟',
+            time: '16:30',
+            content: [
+                '<p>毛玻璃（Glassmorphism）是近几年很流行的设计风格。SnowBlock 整个系列都用了这个效果，这篇文章总结一下经验。</p>',
+                '<h2>核心属性</h2>',
+                '<pre><code>.glass {\n  background: rgba(255, 255, 255, 0.08);\n  backdrop-filter: blur(5px) saturate(1.1);\n  -webkit-backdrop-filter: blur(5px) saturate(1.1);\n  border: 1px solid rgba(255, 255, 255, 0.18);\n  border-radius: 2.2rem;\n}</code></pre>',
+                '<h2>几个要点</h2>',
+                '<p><strong>1. 透明度要低</strong> — 背景太实就失去玻璃感了，建议在 0.05~0.15 之间。</p>',
+                '<p><strong>2. 模糊半径别太大</strong> — 12px 以上会糊成一片看不清背景，5~8px 刚刚好。</p>',
+                '<p><strong>3. 边框很重要</strong> — 浅色半透明边框能让玻璃的轮廓更清晰，否则像一块脏玻璃。</p>',
+                '<p><strong>4. 暗色背景更出效果</strong> — 毛玻璃在深色背景上比浅色背景上好看很多。</p>',
+                '<blockquote>另外别忘了加 will-change: backdrop-filter，避免页面打开时先透后糊的闪烁。</blockquote>'
+            ]
+        }
+    };
+
+    // ===== DOM 引用 =====
+    var postListEl = document.getElementById('postList');
+    var articleViewEl = document.getElementById('articleView');
+    var articleTitle = document.getElementById('articleTitle');
+    var articleMeta = document.getElementById('articleMeta');
+    var articleContent = document.getElementById('articleContent');
+    var backToList = document.getElementById('backToList');
+
+    // ===== 显示文章列表 =====
+    function showPostList() {
+        postListEl.style.display = 'block';
+        articleViewEl.style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ===== 显示文章详情 =====
+    function showArticle(postId) {
+        var post = posts[postId];
+        if (!post) return;
+
+        articleTitle.textContent = post.title;
+
+        var tagsHtml = post.tags.map(function(t) {
+            var cls = '';
+            if (t === '技术' || t === 'Dev') cls = 'tech';
+            else if (t === '游戏') cls = 'game';
+            else if (t === '日常') cls = 'life';
+            return '<span class="tag ' + cls + '">' + t + '</span>';
+        }).join(' ');
+
+        articleMeta.innerHTML = post.date + ' · ' + post.time + ' · 📖 ' + post.readTime + ' ' + tagsHtml;
+        articleContent.innerHTML = post.content.join('');
+
+        postListEl.style.display = 'none';
+        articleViewEl.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ===== 绑定事件 =====
+    document.querySelectorAll('.read-more[data-post]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            var id = this.getAttribute('data-post');
+            showArticle(id);
+        });
+    });
+
+    if (backToList) {
+        backToList.addEventListener('click', function(e) {
+            e.preventDefault();
+            showPostList();
+        });
+    }
+
+    // ===== 卡片点击也进入文章 =====
+    document.querySelectorAll('.post-card').forEach(function(card) {
+        card.addEventListener('click', function(e) {
+            // 如果点的是 read-more 链接，不重复触发
+            if (e.target.closest('.read-more')) return;
+            var id = this.getAttribute('data-post-id');
+            if (id) showArticle(id);
+        });
+    });
+
+    // ===== 分页点击（演示） =====
+    document.querySelectorAll('.pagination a').forEach(function(a) {
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.pagination a').forEach(function(x) {
+                x.classList.remove('active');
+            });
+            this.classList.add('active');
+        });
+    });
+})();
+</script>
+</body>
+</html>
