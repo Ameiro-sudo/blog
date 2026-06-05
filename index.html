@@ -391,25 +391,18 @@
 
 <script>
     (function(){
-        /* ========== 稳健加载：2 秒强制隐藏 Loader ========== */
         const loader = document.getElementById('loader');
-
-        // 背景图静默加载，不影响 Loader 消失
         const bgImg = new Image();
         bgImg.src = 'https://snowblock.top/138936740_p0.webp';
         bgImg.onload = () => document.body.classList.add('bg-loaded');
-        bgImg.onerror = () => console.warn('背景图加载失败，保留渐变背景');
+        bgImg.onerror = () => console.warn('背景图加载失败');
         if (bgImg.complete) document.body.classList.add('bg-loaded');
 
         setTimeout(() => {
             loader.classList.add('hidden');
-            // 保险：0.6 秒后彻底移除
-            setTimeout(() => {
-                if (loader.style.display !== 'none') loader.style.display = 'none';
-            }, 600);
+            setTimeout(() => { if (loader.style.display !== 'none') loader.style.display = 'none'; }, 600);
         }, 2000);
 
-        /* ========== 雪花动画 ========== */
         const canvas = document.getElementById('snowCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [], w, h;
@@ -441,14 +434,13 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas(); initSnow(); drawSnow();
 
-        /* ========== 博客逻辑（依赖就绪后运行） ========== */
+        /* ========== 博客逻辑 ========== */
         window.addEventListener('load', () => {
             if (!window.markdownit || !window.hljs || !window.DOMPurify) {
                 document.body.innerHTML += '<div style="color:white;text-align:center;padding:2rem;">核心依赖加载失败，请检查网络后刷新</div>';
                 return;
             }
 
-            // markdown-it 配置
             const md = window.markdownit({
                 html: true, linkify: true, typographer: true,
                 highlight: function (str, lang) {
@@ -463,35 +455,23 @@
                 }
             });
 
-            // DOMPurify 安全配置
             const purifyConfig = {
-                ALLOWED_TAGS: ['h2','h3','h4','p','blockquote','ul','ol','li','a','strong','em','code','pre','img','br','table','thead','tbody','tr','th','td','span','div','button','progress'],
+                ALLOWED_TAGS: ['h2','h3','h4','h5','h6','p','blockquote','ul','ol','li','a','strong','em','code','pre','img','br','hr','table','thead','tbody','tr','th','td','span','div','button','progress'],
                 ALLOWED_ATTR: ['href','src','alt','class','id','loading','style','type','value','max','onclick']
             };
 
             function safeRender(mdText) {
-                return DOMPurify.sanitize(md.render(mdText), purifyConfig);
+                const raw = md.render(mdText);
+                return DOMPurify.sanitize(raw, purifyConfig);
             }
 
-            // 文章数据（纯 Markdown）
-            const posts = {
-                1: { title:'图床测试 · 静态资源占位', date:'2026-06-05', tags:['测试','图床'], readTime:'3 分钟', time:'09:30', markdown:'测试图片加载和样式兼容性：\n\n![示例](https://picsum.photos/id/104/800/450)\n\n> 编号 1' },
-                2: { title:'Bash 命令示例 · 系统检查', date:'2026-06-04', tags:['Bash','终端'], readTime:'5 分钟', time:'14:20', markdown:'显示系统资源：\n```bash\n#!/bin/bash\ndf -h | grep -E "^(/dev/)"\nfree -m\nuptime\n```\n批量处理：\n```bash\nfor f in *.txt; do mv "$f" "${f%.txt}.bak"; done\n```' },
-                3: { title:'HTML 渲染 · UI 组件测试', date:'2026-06-03', tags:['HTML','UI'], readTime:'4 分钟', time:'11:05', markdown:'HTML 元素测试：\n<div style="display:flex;gap:1rem;flex-wrap:wrap;"><span style="background:#1e2a32cc;padding:4px 12px;border-radius:40px;color:#b0f0cc;font-size:0.75rem;">状态: 正常</span></div>\n<div style="margin-top:12px;"><progress value="60" max="100" style="width:100%;height:8px;"></progress><p>完成度 60%</p></div>\n<button style="background:#8fd8ef33;border:1px solid #8fd8ef;border-radius:60px;padding:6px 16px;color:white;cursor:pointer;" onclick="alert(\'测试通过\')">点击测试</button>' },
-                4: { title:'数据表格示例 · 性能对比', date:'2026-06-02', tags:['表格','数据'], readTime:'3 分钟', time:'16:30', markdown:'## 性能数据\n\n| 方案 | 吞吐量 | 延迟 | 成功率 |\n|------|--------|------|--------|\n| A | 12500 req/s | 12ms | 99.95% |\n| B | 9800 req/s | 18ms | 99.92% |\n| C | 15200 req/s | 9ms | 99.98% |\n\n仅演示。' },
-                5: { title:'综合测试 · 多格式示例', date:'2026-06-01', tags:['测试','全格式'], readTime:'6 分钟', time:'20:15', markdown:'## 图像\n![图](https://picsum.photos/id/26/800/400)\n## Bash\n```bash\ncat access.log | awk \'{print $1}\' | sort | uniq -c | sort -nr | head -5\n```\n## 卡片\n<div style="display:flex;gap:12px;"><div style="background:#ffffff10;border-radius:24px;padding:16px;width:180px;text-align:center;">存储<br><strong>120GB</strong></div><div style="background:#8fd8ef20;border-radius:24px;padding:16px;width:180px;text-align:center;">网络<br><strong>100Mbps</strong></div></div>' },
-                6: { title:'引用与列表测试 · 排版验证', date:'2026-05-31', tags:['排版','引用'], readTime:'2 分钟', time:'22:40', markdown:'> 引用文本\n- 无序项\n  - 嵌套项\n1. 有序项\n\n内联代码：`npm install`\n```js\nfunction hello() { console.log("test"); }\n```' }
-            };
-
-            // 智能摘要
-            function getExcerpt(mdText, max = 110) {
+            function getTextExcerpt(text, max = 110) {
                 const div = document.createElement('div');
-                div.innerHTML = safeRender(mdText);
-                const text = (div.textContent || '').replace(/\s+/g, ' ').trim();
-                return text.length > max ? text.slice(0, max) + '…' : text;
+                div.innerHTML = safeRender(text);
+                const s = (div.textContent || '').replace(/\s+/g, ' ').trim();
+                return s.length > max ? s.slice(0, max) + '…' : s;
             }
 
-            // DOM 元素
             const postContainer = document.getElementById('dynamicPostList');
             const listView = document.getElementById('postList');
             const articleView = document.getElementById('articleView');
@@ -500,7 +480,8 @@
             const articleContent = document.getElementById('articleContent');
             const backLink = document.getElementById('backToList');
 
-            // 增强内容：复制按钮、表格滚动
+            let postsMeta = [];
+
             function enhance(container) {
                 container.querySelectorAll('pre').forEach(pre => {
                     if (pre.parentElement?.classList.contains('code-block-wrapper')) return;
@@ -512,9 +493,8 @@
                     btn.className = 'copy-btn'; btn.textContent = '复制';
                     btn.onclick = async (e) => {
                         e.stopPropagation();
-                        const code = pre.innerText;
                         try {
-                            await navigator.clipboard.writeText(code);
+                            await navigator.clipboard.writeText(pre.innerText);
                             btn.textContent = '已复制 ✓';
                             btn.classList.add('copied');
                             setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 2000);
@@ -535,10 +515,9 @@
                 });
             }
 
-            // 渲染文章列表
             function renderList() {
                 let html = '';
-                Object.entries(posts).forEach(([id, p]) => {
+                postsMeta.forEach(p => {
                     const tags = p.tags.map(t => {
                         let cls = 'tag';
                         if (t === 'Bash' || t === '终端') cls += ' bash';
@@ -546,53 +525,96 @@
                         else cls += ' tech';
                         return `<span class="${cls}">${t}</span>`;
                     }).join('');
-                    html += `<div class="post-card" data-post-id="${id}" tabindex="0" role="button">
+                    html += `<div class="post-card" data-post-id="${p.id}" tabindex="0" role="button">
                         <div class="post-body">
                             <div class="post-meta"><span>${p.date}</span> ${tags} <span>📖 ${p.readTime}</span></div>
                             <h2 class="post-title">${p.title}</h2>
-                            <p class="post-excerpt">${getExcerpt(p.markdown)}</p>
-                            <div class="post-footer"><a href="#" class="read-more">阅读全文 →</a><span class="post-date">${p.time}</span></div>
+                            <p class="post-excerpt" id="excerpt-${p.id}"></p>
+                            <div class="post-footer"><a href="#/${p.id}" class="read-more">阅读全文 →</a><span class="post-date">${p.time}</span></div>
                         </div>
                     </div>`;
                 });
                 postContainer.innerHTML = html;
 
-                // 事件委托
+                postsMeta.forEach(p => {
+                    fetch('posts/' + p.file).then(r => r.text()).then(mdText => {
+                        const excerpt = document.getElementById('excerpt-' + p.id);
+                        if (excerpt) excerpt.textContent = getTextExcerpt(mdText);
+                    }).catch(() => {});
+                });
+
                 postContainer.addEventListener('click', e => {
                     const card = e.target.closest('.post-card');
                     if (!card) return;
-                    if (e.target.closest('.read-more')) e.preventDefault();
-                    showArticle(card.dataset.postId);
+                    const id = card.dataset.postId;
+                    if (id) { e.preventDefault(); navigateTo(id); }
                 });
                 postContainer.addEventListener('keydown', e => {
                     if (e.key === 'Enter' || e.key === ' ') {
                         const card = e.target.closest('.post-card');
-                        if (card) { e.preventDefault(); showArticle(card.dataset.postId); }
+                        if (card) { e.preventDefault(); navigateTo(card.dataset.postId); }
                     }
                 });
             }
 
-            function showArticle(id) {
-                const p = posts[id];
-                if (!p) return;
-                articleTitle.textContent = p.title;
-                const tags = p.tags.map(t => `<span class="tag ${t==='Bash'?'bash':'tech'}">${t}</span>`).join(' ');
-                articleMeta.innerHTML = `${p.date} · ${p.time} · ${p.readTime} ${tags}`;
-                articleContent.innerHTML = safeRender(p.markdown);
-                enhance(articleContent);
-                listView.style.display = 'none';
-                articleView.style.display = 'block';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            function navigateTo(id) {
+                history.pushState(null, '', '#/' + id);
+                loadArticle(id);
+            }
+
+            async function loadArticle(id) {
+                const meta = postsMeta.find(p => p.id === id);
+                if (!meta) { showList(); return; }
+                try {
+                    const resp = await fetch('posts/' + meta.file);
+                    const mdText = await resp.text();
+                    articleTitle.textContent = meta.title;
+                    const tags = meta.tags.map(t => `<span class="tag ${t==='Bash'?'bash':'tech'}">${t}</span>`).join(' ');
+                    articleMeta.innerHTML = `${meta.date} · ${meta.time} · ${meta.readTime} ${tags}`;
+                    articleContent.innerHTML = safeRender(mdText);
+                    enhance(articleContent);
+                    listView.style.display = 'none';
+                    articleView.style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } catch {
+                    showList();
+                }
+            }
+
+            function showList() {
+                listView.style.display = 'block';
+                articleView.style.display = 'none';
+                window.scrollTo({ top: 0 });
+            }
+
+            function handleHash() {
+                const match = location.hash.match(/^#\/(.+)/);
+                if (match && postsMeta.some(p => p.id === match[1])) {
+                    loadArticle(match[1]);
+                } else {
+                    showList();
+                }
             }
 
             backLink.addEventListener('click', e => {
                 e.preventDefault();
-                listView.style.display = 'block';
-                articleView.style.display = 'none';
-                window.scrollTo({ top: 0 });
+                history.pushState(null, '', '#/');
+                showList();
             });
 
-            renderList();
+            window.addEventListener('hashchange', handleHash);
+            window.addEventListener('popstate', handleHash);
+
+            fetch('posts/index.json')
+                .then(r => r.json())
+                .then(data => {
+                    postsMeta = data;
+                    renderList();
+                    handleHash();
+                })
+                .catch(() => {
+                    postContainer.innerHTML = '<div style="color:white;text-align:center;padding:2rem;">文章加载失败</div>';
+                });
         });
     })();
 </script>
