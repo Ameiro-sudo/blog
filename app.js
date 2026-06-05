@@ -99,8 +99,8 @@
         '<div class="profile-wrap">' +
         (profileConfig.avatar ? '<img class="profile-avatar" src="' + profileConfig.avatar + '" alt="avatar">' : '') +
         '<div class="profile-info">' +
-        '<span class="profile-name">' + (profileConfig.name || '') + '</span>' +
-        (profileConfig.bio ? '<span class="profile-bio">' + profileConfig.bio + '</span>' : '') +
+        '<div class="profile-name">' + (profileConfig.name || '') + '</div>' +
+        (profileConfig.bio ? '<div class="profile-bio">' + profileConfig.bio + '</div>' : '') +
         '</div>' +
         (links ? '<div class="profile-links">' + links + '</div>' : '') +
         '</div>'
