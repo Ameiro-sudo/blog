@@ -6,9 +6,10 @@
   const profileConfig = {
     avatar: 'avatar.webp',
     name: 'ninasukiwww',
-    bio: '❄️ 在雪地里写代码',
+    bio: '世界は大きい、君は行かなければならない',
     links: [
-      { name: 'GitHub', url: 'https://github.com/ninasukiwww-png' },
+      { name: 'GH', url: 'https://github.com/ninasukiwww-png' },
+      { name: 'B站', url: 'https://space.bilibili.com/3493084421687360' },
       { name: '博客', url: 'https://blog.snowblock.top' }
     ]
   }
@@ -75,16 +76,16 @@
       if (!profileConfig.name) { profileCard.style.display = 'none'; return }
       profileCard.style.display = 'block'
       var links = (profileConfig.links || []).map(function (l) {
-        return '<a href="' + l.url + '" target="_blank" rel="noopener">' + l.name + '</a>'
+        return '<a href="' + l.url + '" target="_blank" rel="noopener" title="' + l.name + '">' + l.name + '</a>'
       }).join('')
       profileCard.innerHTML =
         '<div class="profile-wrap">' +
         (profileConfig.avatar ? '<img class="profile-avatar" src="' + profileConfig.avatar + '" alt="avatar">' : '') +
-        '<div class="profile-info">' +
         '<div class="profile-name">' + (profileConfig.name || '') + '</div>' +
+        '<div class="profile-divider"></div>' +
         (profileConfig.bio ? '<div class="profile-bio">' + profileConfig.bio + '</div>' : '') +
         (links ? '<div class="profile-links">' + links + '</div>' : '') +
-        '</div></div>'
+        '</div>'
     }
 
     // === 标签筛选 ===
