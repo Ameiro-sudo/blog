@@ -92,15 +92,16 @@
       profileCard.style.display = 'block'
       var links = (profileConfig.links || []).map(function (l) {
         var iconSrc = l.icon ? 'https://api.iconify.design/' + l.icon + '.svg' : ''
-        var icon = iconSrc ? '<img src="' + iconSrc + '" alt="' + l.name + '" style="width:1.1rem;height:1.1rem;filter:brightness(0) invert(0.8);">' : l.name
+        var icon = iconSrc ? '<img src="' + iconSrc + '" alt="' + l.name + '" style="width:0.9rem;height:0.9rem;filter:brightness(0) invert(0.7);">' : l.name
         return '<a href="' + l.url + '" target="_blank" rel="noopener" title="' + l.name + '">' + icon + '</a>'
       }).join('')
       profileCard.innerHTML =
         '<div class="profile-wrap">' +
         (profileConfig.avatar ? '<img class="profile-avatar" src="' + profileConfig.avatar + '" alt="avatar">' : '') +
-        '<div class="profile-name">' + (profileConfig.name || '') + '</div>' +
-        '<div class="profile-divider"></div>' +
-        (profileConfig.bio ? '<div class="profile-bio">' + profileConfig.bio + '</div>' : '') +
+        '<div class="profile-info">' +
+        '<span class="profile-name">' + (profileConfig.name || '') + '</span>' +
+        (profileConfig.bio ? '<span class="profile-bio">' + profileConfig.bio + '</span>' : '') +
+        '</div>' +
         (links ? '<div class="profile-links">' + links + '</div>' : '') +
         '</div>'
     }
