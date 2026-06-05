@@ -453,12 +453,8 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 /* ===== 画廊 ===== */
 #galleryView { margin-bottom: 2rem; }
 .gallery-wrap {
-  background:
-    linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
-    var(--glass-bg);
-  backdrop-filter: blur(14px) saturate(1.2);
+  background: rgba(0,0,0,0.25);
   border-radius: var(--radius-card);
-  border: 1px solid var(--glass-border);
   padding: 1.5rem 1.8rem;
 }
 .gallery-header { text-align: center; margin-bottom: 1.5rem; }
@@ -606,7 +602,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   .profile-wrap::before { background: rgba(0,0,0,0.40); }
   .profile-links a { background: rgba(0,0,0,0.20); }
   .tag-filter { background: rgba(255,255,255,0.04); }
-  .gallery-wrap { background: rgba(0,18,30,0.50); }
+  .gallery-wrap { background: rgba(0,0,0,0.35); }
   .album-detail-wrap { background: rgba(0,0,0,0.35); }
   .archive-card { background: rgba(0,18,30,0.50); }
   .post-card, .article-card, .archive-card, .page-header { border-color: rgba(255,255,255,0.06); }
