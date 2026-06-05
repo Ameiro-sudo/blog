@@ -122,8 +122,8 @@
       }
     })
 
-    audio.addEventListener('play', function () { isPlaying = true; playBtn.textContent = '⏸' })
-    audio.addEventListener('pause', function () { isPlaying = false; playBtn.textContent = '▶️' })
+    audio.addEventListener('play', function () { isPlaying = true; playBtn.textContent = '||' })
+    audio.addEventListener('pause', function () { isPlaying = false; playBtn.textContent = '>' })
 
     audio.addEventListener('timeupdate', function () {
       if (audio.duration) {
@@ -380,7 +380,7 @@
         var excerpt = allExcerpts[p.id] || ''
         html += '<div class="post-card" data-post-id="' + p.id + '" tabindex="0" role="button">' +
           '<div class="post-body">' +
-           '<div class="post-meta"><span>' + p.date + '</span> ' + (p.pinned ? '<span class="pinned-badge">📌</span>' : '') + tags + ' <span>📖 ' + p.readTime + '</span></div>' +
+           '<div class="post-meta"><span>' + p.date + '</span> ' + (p.pinned ? '<span class="pinned-badge">[置顶]</span>' : '') + tags + ' <span>' + p.readTime + '</span></div>' +
           '<h2 class="post-title">' + p.title + '</h2>' +
           '<p class="post-excerpt">' + excerpt + '</p>' +
            '<div class="post-footer"><span class="post-date">' + p.date + ' · ' + p.time + '</span></div>' +
@@ -450,7 +450,7 @@
       scored.sort(function (a, b) { return b.score - a.score })
       var top = scored.slice(0, 3)
       if (!top.length) { relatedPosts.innerHTML = ''; return }
-      var html = '<div class="related-title">📎 相关文章</div><div class="related-grid">'
+      var html = '<div class="related-title">相关文章</div><div class="related-grid">'
       top.forEach(function (s) {
         html += '<div class="related-card" data-id="' + s.post.id + '">' +
           '<div class="related-card-title">' + s.post.title + '</div>' +
@@ -611,7 +611,7 @@
           '<div class="album-info">' +
           '<div class="album-title">' + a.title + '</div>' +
           (a.description ? '<div class="album-desc">' + a.description + '</div>' : '') +
-          '<div class="album-count">📷 ' + a.photos.length + ' 张</div>' +
+          '<div class="album-count">' + a.photos.length + ' 张</div>' +
           '</div></div>'
       })
       albumGrid.innerHTML = html
