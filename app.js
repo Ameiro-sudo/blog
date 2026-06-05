@@ -214,7 +214,7 @@
           '<div class="post-meta"><span>' + p.date + '</span> ' + tags + ' <span>📖 ' + p.readTime + '</span></div>' +
           '<h2 class="post-title">' + p.title + '</h2>' +
           '<p class="post-excerpt">' + excerpt + '</p>' +
-          '<div class="post-footer"><a href="#/' + p.id + '" class="read-more">阅读全文 →</a><span class="post-date">' + p.time + '</span></div>' +
+           '<div class="post-footer"><span class="post-date">' + p.date + ' · ' + p.time + '</span></div>' +
           '</div></div>'
       })
       if (!html) html = '<div style="color:rgba(200,235,250,0.6);text-align:center;padding:2rem;">没有匹配的文章</div>'
