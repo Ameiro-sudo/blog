@@ -288,21 +288,6 @@
 
 <div class="toast" id="toast" aria-live="polite"></div>
 <button id="backToTop" aria-label="回到顶部">↑</button>
-<button id="musicToggle" aria-label="音乐播放器" style="display:none;">&#9835;</button>
-<div id="musicPlayer" style="display:none;">
-  <div class="music-cover-wrap"><img id="musicCover" src="" alt=""></div>
-  <div class="music-info">
-    <div class="music-title" id="musicTitle">加载中...</div>
-    <div class="music-artist" id="musicArtist"></div>
-    <div class="music-lyric" id="musicLyric"></div>
-    <div class="music-progress"><div class="music-progress-bar" id="musicProgress"><div class="music-progress-fill" id="musicProgressFill"></div></div></div>
-    <div class="music-controls">
-      <button id="musicPrev">&lt;&lt;</button>
-      <button id="musicPlayBtn">&gt;</button>
-      <button id="musicNext">&gt;&gt;</button>
-    </div>
-  </div>
-</div>
 <button id="tocToggle" aria-label="目录">&#9776;</button>
 <div id="tocPanel"></div>
 <div id="lightbox">
@@ -322,6 +307,30 @@
     </header>
 
     <div id="profileCard"></div>
+
+    <div id="musicWidget" class="music-widget">
+      <div class="music-widget-header">
+        <span class="music-widget-icon">&#9835;</span>
+        <span class="music-widget-label">音乐</span>
+        <span class="music-widget-status" id="mwStatus">加载中...</span>
+      </div>
+      <div class="music-widget-body">
+        <div class="mw-layout">
+          <img id="mwCover" src="" alt="" class="mw-cover">
+          <div class="mw-content">
+            <div class="mw-title" id="mwTitle">加载中...</div>
+            <div class="mw-artist" id="mwArtist"></div>
+            <div class="mw-lyric" id="mwLyric"></div>
+            <div class="mw-progress"><div class="mw-progress-fill" id="mwProgressFill"></div></div>
+            <div class="mw-controls">
+              <button id="mwPrev">&#9664;&#9664;</button>
+              <button id="mwPlayBtn">&#9654;</button>
+              <button id="mwNext">&#9654;&#9654;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="page-header" id="pageHeader">
         <h1>雪地笔记</h1>
