@@ -497,6 +497,7 @@
           '<div class="album-title">' + a.title + '</div>' +
           '<div class="album-date">' + a.date + '</div>' +
           (a.description ? '<div class="album-desc">' + a.description + '</div>' : '') +
+          '<div class="album-suffix">查看 &rarr;</div>' +
           '</div></div>'
       })
       grid.innerHTML = html
