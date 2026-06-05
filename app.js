@@ -62,6 +62,10 @@
       return s.length > max ? s.slice(0, max) + '…' : s
     }
 
+    function stripMeta(text) {
+      return text.replace(/^# .+\n[\s\S]*?\n---\n?/, '')
+    }
+
     var postsMeta = []
     var allExcerpts = {}
     var currentPage = 1
@@ -292,12 +296,14 @@
       var meta = postsMeta.find(function (p) { return p.id === id })
       if (!meta) { showListView(); return }
       fetch('posts/' + meta.file).then(function (r) { return r.text() }).then(function (mdText) {
+        // 去掉元数据段（标题 # 之后、--- 之前的部分）
+        var content = stripMeta(mdText)
         articleTitle.textContent = meta.title
         var tags = meta.tags.map(function (t) {
           return '<span class="tag ' + (t === 'Bash' ? 'bash' : 'tech') + '">' + t + '</span>'
         }).join(' ')
         articleMeta.innerHTML = meta.date + ' · ' + meta.time + ' · ' + meta.readTime + ' ' + tags
-        articleContent.innerHTML = safeRender(mdText)
+        articleContent.innerHTML = safeRender(content)
         enhance(articleContent)
         renderRelated(id)
         listView.style.display = 'none'
@@ -400,7 +406,7 @@
       var total = postsMeta.length
       postsMeta.forEach(function (p) {
         fetch('posts/' + p.file).then(function (r) { return r.text() }).then(function (mdText) {
-          allExcerpts[p.id] = getExcerpt(mdText)
+          allExcerpts[p.id] = getExcerpt(stripMeta(mdText))
           loaded++
           if (loaded === total) { applyFilters(); handleHash() }
         }).catch(function () {
