@@ -20,12 +20,14 @@
     <meta name="twitter:description" content="❄️ SnowBlock 博客 — 技术、游戏、日常">
     <meta name="twitter:image" content="https://snowblock.top/138936740_p0.webp">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
+
     <link rel="preload" href="https://snowblock.top/138936740_p0.webp" as="image">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+
     <style>
-        /* ---------- RESET & VARIABLES ---------- */
+        /* ---------- 样式 (与原版保持一致) ---------- */
         :root {
             --bg-gradient: linear-gradient(160deg, #8DB8D8 0%, #C5DCEB 50%, #E8F0F5 100%);
             --color-bg-deep: #0b2b3b;
@@ -43,103 +45,59 @@
             --body-pad: 2rem;
             --transition: 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
             min-height: 100vh;
             padding: var(--body-pad);
             font-family: var(--font-sans);
-            font-weight: 400;
             background: var(--bg-gradient);
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
             overflow-x: hidden;
         }
-
         body.bg-loaded {
-            background: var(--color-bg-deep) url('https://snowblock.top/138936740_p0.webp') center / cover no-repeat fixed;
+            background: var(--color-bg-deep) url('https://snowblock.top/138936740_p0.webp') center/cover fixed;
         }
-
         body::before {
             content: '';
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(0,0,0,0.35);
             backdrop-filter: blur(1px);
             pointer-events: none;
             z-index: 0;
         }
-
-        body > * {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* 雪花 canvas */
+        body > * { position: relative; z-index: 1; }
         #snowCanvas {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
         }
-
-        /* LOADER 优雅退出 */
         #loader {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
+            position: fixed; inset: 0; z-index: 9999;
             background: var(--bg-gradient);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 1rem;
-            transition: opacity 0.45s ease, visibility 0.45s;
+            transition: opacity 0.3s ease, visibility 0.3s;
             backdrop-filter: blur(2px);
         }
-
-        #loader.hide {
-            opacity: 0;
-            visibility: hidden;
-        }
-
+        #loader.hide { opacity:0; visibility:hidden; pointer-events: none; }
         .loader-icon {
             font-size: 3.2rem;
             animation: gentlePulse 1.6s infinite ease-in-out;
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
         }
-
         @keyframes gentlePulse {
-            0%, 100% { opacity: 0.5; transform: scale(0.96); }
-            50% { opacity: 1; transform: scale(1.04); }
+            0%,100% { opacity:0.5; transform:scale(0.96); }
+            50% { opacity:1; transform:scale(1.04); }
         }
-
         .loader-text {
             color: rgba(255,255,255,0.8);
             font-family: var(--font-mono);
-            font-size: 0.85rem;
-            letter-spacing: 0.1em;
+            font-size: 0.85rem; letter-spacing: 0.1em;
             text-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        /* 毛玻璃顶部栏 */
+        .container { max-width: 1000px; margin: 0 auto; }
         .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
             padding: 0.7rem 1.8rem;
             background: var(--glass-header-bg);
             backdrop-filter: blur(16px) saturate(1.4);
@@ -149,78 +107,34 @@
             margin-bottom: 2.5rem;
             gap: 0.75rem;
         }
-
         .site-name {
-            font-size: 1.35rem;
-            font-weight: 400;
-            font-family: var(--font-title);
+            font-size: 1.35rem; font-weight: 400; font-family: var(--font-title);
             background: linear-gradient(135deg, #FFF2D0, #c0f0ff);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            text-decoration: none;
-            letter-spacing: 1px;
+            -webkit-background-clip: text; background-clip: text;
+            color: transparent; text-decoration: none; letter-spacing: 1px;
         }
-
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
         .nav-links a {
-            color: rgba(210, 240, 255, 0.8);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-family: var(--font-mono);
-            transition: color var(--transition);
-            padding: 0.2rem 0;
+            color: rgba(210,240,255,0.8); text-decoration: none;
+            font-size: 0.85rem; font-family: var(--font-mono);
+            transition: color var(--transition); padding: 0.2rem 0;
             border-bottom: 1px solid transparent;
         }
-
         .nav-links a:hover,
-        .nav-links a.active {
-            color: #ffffff;
-            border-bottom-color: var(--color-accent);
-        }
-
-        /* 头部区域 */
-        .page-header {
-            text-align: center;
-            margin-bottom: 2.8rem;
-        }
-
+        .nav-links a.active { color: #fff; border-bottom-color: var(--color-accent); }
+        .page-header { text-align: center; margin-bottom: 2.8rem; }
         .page-header h1 {
-            font-size: clamp(2rem, 7vw, 3rem);
-            font-weight: 400;
-            font-family: var(--font-title);
+            font-size: clamp(2rem, 7vw, 3rem); font-weight: 400; font-family: var(--font-title);
             background: linear-gradient(135deg, #FFEFC0, #B8E4FF);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            -webkit-background-clip: text; background-clip: text;
+            color: transparent; text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-
         .page-header .sub {
-            color: rgba(220, 240, 255, 0.75);
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
+            color: rgba(220,240,255,0.75); font-family: var(--font-mono);
+            font-size: 0.8rem; margin-top: 0.5rem;
         }
-
-        .page-header .sub a {
-            color: var(--color-accent);
-            text-decoration: none;
-            transition: color var(--transition);
-        }
-
-        /* 文章列表卡片 */
-        .post-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1.3rem;
-        }
-
+        .page-header .sub a { color: var(--color-accent); text-decoration: none; }
+        .post-list { display: flex; flex-direction: column; gap: 1.3rem; }
         .post-card {
             background: var(--glass-bg);
             backdrop-filter: blur(14px) saturate(1.2);
@@ -228,313 +142,135 @@
             border: 1px solid var(--glass-border);
             box-shadow: var(--shadow-item);
             transition: transform var(--transition), box-shadow var(--transition);
-            cursor: pointer;
-            outline: none;
+            cursor: pointer; outline: none;
         }
-
         .post-card:focus-visible {
-            outline: 2px solid var(--color-accent);
-            outline-offset: 4px;
-            transform: scale(0.99);
+            outline: 2px solid var(--color-accent); outline-offset: 4px; transform: scale(0.99);
         }
-
         .post-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 25px 40px -18px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 40px -18px rgba(0,0,0,0.5);
             background: rgba(255,255,255,0.18);
         }
-
-        .post-body {
-            padding: 1.4rem 1.8rem;
-        }
-
+        .post-body { padding: 1.4rem 1.8rem; }
         .post-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem 1rem;
-            align-items: center;
-            margin-bottom: 0.6rem;
-            font-size: 0.7rem;
-            font-family: var(--font-mono);
-            color: rgba(210, 235, 250, 0.6);
+            display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center;
+            margin-bottom: 0.6rem; font-size: 0.7rem; font-family: var(--font-mono);
+            color: rgba(210,235,250,0.6);
         }
-
         .tag {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 40px;
-            font-size: 0.65rem;
-            font-weight: 500;
-            background: rgba(143, 216, 239, 0.18);
-            color: #b9e6ff;
-            letter-spacing: 0.3px;
+            display: inline-block; padding: 2px 10px; border-radius: 40px;
+            font-size: 0.65rem; font-weight: 500;
+            background: rgba(143,216,239,0.18); color: #b9e6ff; letter-spacing: 0.3px;
         }
-
-        .tag.bash { background: rgba(0, 0, 0, 0.35); color: #b3e4ff; }
-        .tag.tech { background: rgba(76, 175, 80, 0.2); color: #a5d6a5; }
-        .tag.game { background: rgba(255, 152, 0, 0.2); color: #ffcd94; }
-        .tag.life { background: rgba(233, 30, 99, 0.2); color: #ffb7c5; }
-        .tag.test { background: rgba(156, 39, 176, 0.25); color: #daaaff; }
-
         .post-title {
-            font-size: clamp(1.15rem, 3vw, 1.5rem);
-            font-weight: 600;
-            color: #fff;
-            text-shadow: 0 1px 5px rgba(0,0,0,0.25);
-            margin-bottom: 0.5rem;
-            line-height: 1.35;
+            font-size: clamp(1.15rem, 3vw, 1.5rem); font-weight: 600;
+            color: #fff; text-shadow: 0 1px 5px rgba(0,0,0,0.25);
+            margin-bottom: 0.5rem; line-height: 1.35;
         }
-
         .post-excerpt {
-            color: rgba(220, 240, 255, 0.85);
-            font-size: 0.9rem;
-            line-height: 1.5;
+            color: rgba(220,240,255,0.85); font-size: 0.9rem; line-height: 1.5;
         }
-
         .post-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            padding-top: 0.7rem;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 1rem; padding-top: 0.7rem;
             border-top: 1px solid rgba(255,255,255,0.1);
         }
-
         .read-more {
-            color: var(--color-accent);
-            font-size: 0.8rem;
-            font-family: var(--font-mono);
-            text-decoration: none;
-            transition: color var(--transition);
+            color: var(--color-accent); font-size: 0.8rem; font-family: var(--font-mono);
+            text-decoration: none; transition: color var(--transition);
         }
-
-        .read-more:hover {
-            color: white;
-        }
-
+        .read-more:hover { color: white; }
         .post-date {
-            color: rgba(200, 230, 250, 0.45);
-            font-size: 0.7rem;
-            font-family: var(--font-mono);
+            color: rgba(200,230,250,0.45); font-size: 0.7rem; font-family: var(--font-mono);
         }
-
-        /* 文章详情卡片 */
         .article-card {
             background: var(--glass-bg);
             backdrop-filter: blur(16px) saturate(1.3);
             border-radius: var(--radius-card);
             border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow-card);
-            overflow: hidden;
+            box-shadow: var(--shadow-card); overflow: hidden;
         }
-
-        .article-body {
-            padding: 2rem 2.2rem;
-        }
-
+        .article-body { padding: 2rem 2.2rem; }
         .article-title {
-            font-size: clamp(1.6rem, 5vw, 2.2rem);
-            font-weight: 600;
-            color: #fff;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 600;
+            color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.3);
             margin-bottom: 0.5rem;
         }
-
         .article-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem 1rem;
-            align-items: center;
-            margin-bottom: 1.8rem;
-            font-size: 0.8rem;
-            font-family: var(--font-mono);
-            color: rgba(200, 235, 250, 0.6);
+            display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center;
+            margin-bottom: 1.8rem; font-size: 0.8rem; font-family: var(--font-mono);
+            color: rgba(200,235,250,0.6);
         }
-
         .article-content {
-            color: rgba(235, 245, 255, 0.92);
-            font-size: 0.96rem;
-            line-height: 1.75;
+            color: rgba(235,245,255,0.92); font-size: 0.96rem; line-height: 1.75;
         }
-
-        .article-content p {
-            margin-bottom: 1rem;
-        }
-
+        .article-content p { margin-bottom: 1rem; }
         .article-content h2 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: white;
-            margin: 1.6rem 0 0.8rem;
-            border-left: 3px solid var(--color-accent);
+            font-size: 1.4rem; font-weight: 600; color: white;
+            margin: 1.6rem 0 0.8rem; border-left: 3px solid var(--color-accent);
             padding-left: 0.9rem;
         }
-
         .article-content h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #f0fcff;
-            margin: 1.2rem 0 0.6rem;
+            font-size: 1.2rem; font-weight: 600; color: #f0fcff; margin: 1.2rem 0 0.6rem;
         }
-
         .article-content code {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 0.2rem 0.4rem;
-            border-radius: 8px;
-            font-family: var(--font-mono);
-            font-size: 0.85em;
-            color: var(--color-accent);
+            background: rgba(0,0,0,0.4); padding: 0.2rem 0.4rem;
+            border-radius: 8px; font-family: var(--font-mono);
+            font-size: 0.85em; color: var(--color-accent);
         }
-
         .article-content pre {
-            margin: 1rem 0;
-            background: rgba(0, 0, 0, 0.45);
-            padding: 1rem 1.2rem;
-            border-radius: 14px;
-            overflow-x: auto;
-            border: 1px solid rgba(255,255,255,0.1);
-            font-family: var(--font-mono);
+            margin: 1rem 0; background: rgba(0,0,0,0.45);
+            padding: 1rem 1.2rem; border-radius: 14px; overflow-x: auto;
+            border: 1px solid rgba(255,255,255,0.1); font-family: var(--font-mono);
             font-size: 0.85rem;
         }
-
-        /* 代码块复制按钮包装器 */
-        .code-block-wrapper {
-            position: relative;
-            margin: 1rem 0;
-        }
-
+        .code-block-wrapper { position: relative; margin: 1rem 0; }
         .copy-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.7rem;
-            background: rgba(30, 50, 65, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: #eef5ff;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            padding: 0.2rem 0.7rem;
-            border-radius: 28px;
-            cursor: pointer;
-            transition: all 0.2s;
-            z-index: 3;
+            position: absolute; top: 0.5rem; right: 0.7rem;
+            background: rgba(30,50,65,0.7); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.3); color: #eef5ff;
+            font-family: var(--font-mono); font-size: 0.7rem;
+            padding: 0.2rem 0.7rem; border-radius: 28px;
+            cursor: pointer; transition: all 0.2s; z-index: 3;
         }
-
         .copy-btn:hover {
-            background: var(--color-accent);
-            color: #0b2b3b;
-            border-color: var(--color-accent);
+            background: var(--color-accent); color: #0b2b3b; border-color: var(--color-accent);
         }
-
-        .copy-btn.copied {
-            background: #4caf50;
-            color: white;
-            border-color: #4caf50;
-        }
-
-        /* 表格滚动容器 */
-        .table-responsive {
-            overflow-x: auto;
-            margin: 1rem 0;
-            border-radius: 12px;
-        }
-
+        .copy-btn.copied { background: #4caf50; color: white; border-color: #4caf50; }
+        .table-responsive { overflow-x: auto; margin: 1rem 0; border-radius: 12px; }
         .article-content table {
-            width: 100%;
-            border-collapse: collapse;
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 14px;
-            overflow: hidden;
+            width: 100%; border-collapse: collapse;
+            background: rgba(0,0,0,0.25); border-radius: 14px; overflow: hidden;
         }
-
         .article-content th, .article-content td {
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 8px 12px;
-            text-align: left;
+            border: 1px solid rgba(255,255,255,0.2); padding: 8px 12px; text-align: left;
         }
-
-        .article-content th {
-            background: rgba(143, 216, 239, 0.2);
-            color: white;
-        }
-
+        .article-content th { background: rgba(143,216,239,0.2); color: white; }
         .article-content img {
-            max-width: 100%;
-            border-radius: 16px;
-            margin: 1rem 0;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-            height: auto;
+            max-width: 100%; border-radius: 16px; margin: 1rem 0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25); height: auto;
         }
-
         .article-content a {
-            color: var(--color-accent);
-            text-decoration: none;
+            color: var(--color-accent); text-decoration: none;
             border-bottom: 1px dotted rgba(143,216,239,0.4);
         }
-
-        .article-content a:hover {
-            color: white;
-            border-bottom-color: white;
-        }
-
+        .article-content a:hover { color: white; border-bottom-color: white; }
         .back-link {
-            display: inline-block;
-            margin-top: 2rem;
-            color: rgba(210, 235, 250, 0.7);
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            text-decoration: none;
+            display: inline-block; margin-top: 2rem;
+            color: rgba(210,235,250,0.7); font-family: var(--font-mono);
+            font-size: 0.85rem; text-decoration: none;
             transition: color var(--transition);
         }
-
-        .back-link:hover {
-            color: var(--color-accent);
+        .back-link:hover { color: var(--color-accent); }
+        .hljs {
+            background: transparent !important;
+            color: #e0e0e0;
         }
-
-        /* 内嵌演示卡片样式 */
-        .inline-html-demo {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 1.5rem;
-            padding: 1rem 1.2rem;
-            margin: 1rem 0;
-            border-left: 4px solid #8fd8ef;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #1e2a32cc;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-family: monospace;
-            color: #b0f0cc;
-            font-size: 0.75rem;
-        }
-
-        .server-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.2));
-            border-radius: 1rem;
-            padding: 0.8rem;
-            margin: 0.5rem 0;
-        }
-
-        /* 滚动条 */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.25);
-            border-radius: 6px;
-        }
-
-        /* 响应式 */
+        .hljs-keyword, .hljs-selector-tag { color: #c792ea; }
+        .hljs-string { color: #c3e88d; }
+        .hljs-number, .hljs-literal { color: #f78c6c; }
+        .hljs-comment { color: #546e7a; font-style: italic; }
         @media (max-width: 760px) {
             :root { --body-pad: 1rem; }
             .top-bar { padding: 0.6rem 1.2rem; }
@@ -542,20 +278,26 @@
             .article-body { padding: 1.4rem 1.2rem; }
             .nav-links { gap: 1rem; }
         }
-
         @media (max-width: 480px) {
             .post-title { font-size: 1.2rem; }
             .article-title { font-size: 1.6rem; }
         }
-
         @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                transition-duration: 0.01ms !important;
-            }
+            * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
             #snowCanvas { display: none; }
             body { background: var(--color-bg-deep) url('https://snowblock.top/138936740_p0.webp') center/cover fixed; }
             .post-card:hover { transform: none; }
+        }
+        .error-message {
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(16px);
+            border-radius: 2rem; padding: 2rem; text-align: center;
+            border: 1px solid #ffab91; color: #ffccbc;
+            margin: 2rem auto; max-width: 500px;
+        }
+        .error-message button {
+            background: var(--color-accent); border: none; color: #0b2b3b;
+            padding: 6px 18px; border-radius: 30px; margin-top: 1rem;
+            cursor: pointer; font-weight: bold;
         }
     </style>
 </head>
@@ -563,7 +305,7 @@
 
 <div id="loader">
     <div class="loader-icon">❄️</div>
-    <div class="loader-text">Snow dust loading...</div>
+    <div class="loader-text">正在加载雪地笔记...</div>
 </div>
 
 <canvas id="snowCanvas"></canvas>
@@ -604,189 +346,163 @@
 </div>
 
 <script>
-    (function(){
-        // ---------- 背景预加载与最小延迟 ----------
+    (function() {
+        // ---------- 强制隐藏加载屏的超时 ----------
         const loader = document.getElementById('loader');
-        let bgReady = false, timeReady = false;
-        const MIN_LOAD = 650;
+        let loaderHidden = false;
+        function hideLoader() {
+            if (loaderHidden || !loader) return;
+            loaderHidden = true;
+            loader.classList.add('hide');
+            setTimeout(() => loader?.remove(), 500);
+        }
+        // 绝对超时：任何情况下 2.5 秒后强制隐藏加载屏（避免卡死）
+        setTimeout(hideLoader, 2500);
+
+        // ---------- 背景图片加载（不影响界面）----------
         const bgImg = new Image();
-        function tryFinish() {
-            if (bgReady && timeReady) {
-                document.body.classList.add('bg-loaded');
-                requestAnimationFrame(() => {
-                    loader.classList.add('hide');
-                    setTimeout(() => loader?.parentNode?.removeChild(loader), 500);
-                });
-            }
-        }
-        bgImg.onload = () => { bgReady = true; tryFinish(); };
-        bgImg.onerror = () => { bgReady = true; tryFinish(); };
+        bgImg.onload = () => document.body.classList.add('bg-loaded');
+        bgImg.onerror = () => document.body.classList.add('bg-loaded');
         bgImg.src = 'https://snowblock.top/138936740_p0.webp';
-        if (bgImg.complete) bgReady = true;
-        setTimeout(() => { timeReady = true; tryFinish(); }, MIN_LOAD);
+        if (bgImg.complete) document.body.classList.add('bg-loaded');
 
-        // ---------- 雪花飘落 ----------
+        // ---------- 雪花动画（轻量）----------
         const canvas = document.getElementById('snowCanvas');
-        let ctx = canvas.getContext('2d');
-        let particles = [];
-        let w, h;
-        function resizeCanvas() {
-            w = canvas.width = window.innerWidth;
-            h = canvas.height = window.innerHeight;
-            if (particles.length) {
-                for (let p of particles) {
-                    if (p.x > w + 15) p.x = w - 5;
-                    if (p.x < -15) p.x = 5;
-                    if (p.y > h + 30) p.y = -10;
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let particles = [], w, h;
+            function resizeCanvas() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+                if (particles.length) particles.forEach(p => { if(p.x > w+15) p.x=w-5; if(p.x<-15) p.x=5; if(p.y>h+30) p.y=-10; });
+            }
+            function createParticle() { return { x: Math.random() * w, y: Math.random() * h - 20, r: Math.random() * 2.4 + 1.0, speed: Math.random() * 0.6 + 0.2, wind: Math.random() * 0.3 - 0.12, alpha: Math.random() * 0.4 + 0.15 }; }
+            function initSnow() { if(w&&h) particles = Array.from({ length: 48 }, createParticle); }
+            function drawSnow() {
+                if(!ctx||!w||!h) return;
+                ctx.clearRect(0, 0, w, h);
+                for(let p of particles){
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                    ctx.fillStyle = `rgba(255,255,255,${p.alpha})`; ctx.fill();
+                    p.y += p.speed; p.x += p.wind;
+                    if(p.y > h+25) { const idx = particles.indexOf(p); if(idx!==-1) particles[idx]=createParticle(); }
+                    if(p.x > w+20) p.x = -15; if(p.x < -20) p.x = w+10;
                 }
+                while(particles.length<55) particles.push(createParticle());
+                requestAnimationFrame(drawSnow);
             }
+            window.addEventListener('resize', () => { resizeCanvas(); if(!particles.length) initSnow(); });
+            resizeCanvas(); initSnow(); drawSnow();
         }
-        function createParticle() {
-            return {
-                x: Math.random() * w,
-                y: Math.random() * h - 20,
-                r: Math.random() * 2.4 + 1.0,
-                speed: Math.random() * 0.6 + 0.2,
-                wind: Math.random() * 0.3 - 0.12,
-                alpha: Math.random() * 0.4 + 0.15
-            };
-        }
-        function initSnow() {
-            particles = [];
-            for (let i = 0; i < 48; i++) particles.push(createParticle());
-        }
-        function drawSnow() {
-            if (!ctx) return;
-            ctx.clearRect(0, 0, w, h);
-            for (let i = 0; i < particles.length; i++) {
-                const p = particles[i];
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
-                ctx.fill();
-                p.y += p.speed;
-                p.x += p.wind;
-                if (p.y > h + 25) particles[i] = createParticle();
-                if (p.x > w + 20) p.x = -15;
-                if (p.x < -20) p.x = w + 10;
-            }
-            while (particles.length < 55) particles.push(createParticle());
-            requestAnimationFrame(drawSnow);
-        }
-        window.addEventListener('resize', () => {
-            resizeCanvas();
-        });
-        resizeCanvas();
-        initSnow();
-        drawSnow();
 
-        // ---------- 用户提供的文章数据（已修正第三篇结构） ----------
+        // ---------- 文章数据 (内置) ----------
         const posts = {
-            1: {
-                title: '图床测试 · 静态资源占位',
-                date: '2026-06-05', tags: ['测试', '图床'], readTime: '3 分钟', time: '09:30',
-                content: [
-                    '<p>测试图片加载和样式兼容性：</p>',
-                    '<img src="https://picsum.photos/id/104/800/450" alt="示例图片" loading="lazy">',
-                    '<p>此图片仅用于验证页面布局和加载性能。</p>',
-                    '<blockquote>编号 1</blockquote>'
-                ]
-            },
-            2: {
-                title: 'Bash 命令示例 · 系统检查',
-                date: '2026-06-04', tags: ['Bash', '终端'], readTime: '5 分钟', time: '14:20',
-                content: [
-                    '<p>显示系统资源和状态：</p>',
-                    '<pre><code class="language-bash">#!/bin/bash\n# 显示磁盘使用情况\ndf -h | grep -E "^(/dev/)"\n# 内存使用\nfree -m\n# 系统负载\nuptime</code></pre>',
-                    '<p>批量处理文件：</p>',
-                    '<pre><code class="language-bash">for file in *.txt; do\n  mv "$file" "${file%.txt}.bak"\ndone</code></pre>'
-                ]
-            },
-            3: {
-                title: 'HTML 渲染 · UI 组件测试',
-                date: '2026-06-03', tags: ['HTML', 'UI'], readTime: '4 分钟', time: '11:05',
-                content: [
-                    '<p>HTML/CSS 元素测试：</p>',
-                    '<div class="inline-html-demo">',
-                    '<div style="display: flex; gap: 1rem; flex-wrap: wrap;">',
-                    '<div class="status-badge">服务状态: 正常</div>',
-                    '<div class="status-badge">响应时间: 24ms</div>',
-                    '</div>',
-                    '<div class="server-card" style="margin-top: 12px;">',
-                    '<strong>进度条示例</strong><br>',
-                    '<progress value="60" max="100" style="width: 100%; height: 8px; border-radius: 20px;"></progress>',
-                    '<p style="font-size:0.8rem; margin-top:8px;">完成度 60%</p>',
-                    '</div>',
-                    '<button style="background: #8fd8ef33; border: 1px solid #8fd8ef; border-radius: 60px; padding: 6px 16px; color: white; cursor: pointer; backdrop-filter: blur(4px);" onclick="alert(\'组件测试通过\')">点击测试</button>',
-                    '</div>'   // 修复缺失的闭合标签
-                ]
-            },
-            4: {
-                title: '数据表格示例 · 性能对比',
-                date: '2026-06-02', tags: ['表格', '数据'], readTime: '3 分钟', time: '16:30',
-                content: [
-                    '<h2>性能数据示例</h2>',
-                    '<div class="table-responsive"><table>',
-                    '<thead><tr><th>方案</th><th>吞吐量</th><th>延迟</th><th>成功率</th></tr></thead>',
-                    '<tbody>',
-                    '<tr><td>方案 A</td><td>12500 req/s</td><td>12ms</td><td>99.95%</td></tr>',
-                    '<tr><td>方案 B</td><td>9800 req/s</td><td>18ms</td><td>99.92%</td></tr>',
-                    '<tr><td>方案 C</td><td>15200 req/s</td><td>9ms</td><td>99.98%</td></tr>',
-                    '</tbody>',
-                    '追赶</div>',
-                    '<p>数据仅用于演示表格样式，无实际性能含义。</p>'
-                ]
-            },
-            5: {
-                title: '综合测试 · 多格式示例',
-                date: '2026-06-01', tags: ['测试', '全格式'], readTime: '6 分钟', time: '20:15',
-                content: [
-                    '<h2>图像占位</h2>',
-                    '<img src="https://picsum.photos/id/26/800/400" alt="示例图" loading="lazy">',
-                    '<h2>Bash 示例</h2>',
-                    '<pre><code class="language-bash"># 统计日志唯一 IP\ncat access.log | awk \'{print $1}\' | sort | uniq -c | sort -nr | head -5</code></pre>',
-                    '<h2>HTML 卡片</h2>',
-                    '<div style="display: flex; gap: 12px; flex-wrap: wrap;">',
-                    '<div style="background: linear-gradient(145deg, #ffffff10, #00000030); border-radius: 24px; padding: 16px; width: 180px; text-align: center;"><div>存储</div><strong>120GB 可用</strong></div>',
-                    '<div style="background: linear-gradient(145deg, #8fd8ef20, #00000030); border-radius: 24px; padding: 16px; width: 180px; text-align: center;"><div>网络</div><strong>100Mbps</strong></div>',
-                    '</div>',
-                    '<p>图像、Bash、HTML 多格式测试，验证页面兼容性。</p>'
-                ]
-            },
-            6: {
-                title: '引用与列表测试 · 排版验证',
-                date: '2026-05-31', tags: ['排版', '引用'], readTime: '2 分钟', time: '22:40',
-                content: [
-                    '<blockquote>此处为引用文本，用于测试排版样式。</blockquote>',
-                    '<ul>',
-                    '<li>无序列表项一</li>',
-                    '<li>无序列表项二</li>',
-                    '<li>嵌套子项<ul><li>子项 A</li><li>子项 B</li></ul></li>',
-                    '</ul>',
-                    '<ol>',
-                    '<li>有序列表项 1</li>',
-                    '<li>有序列表项 2</li>',
-                    '</ol>',
-                    '<p>内联代码示例：<code>npm install</code> 或 <code>pip install package</code>。</p>',
-                    '<pre><code>// 纯文本代码块\nfunction hello() {\n  console.log("示例测试");\n}</code></pre>'
-                ]
-            }
+            1: { title: '图床测试 · 静态资源占位', date: '2026-06-05', tags: ['测试','图床'], readTime: '3 分钟', time: '09:30', markdown: `测试图片加载和样式兼容性：\n\n![示例图片](https://picsum.photos/id/104/800/450)\n\n此图片仅用于验证页面布局和加载性能。\n\n> 编号 1` },
+            2: { title: 'Bash 命令示例 · 系统检查', date: '2026-06-04', tags: ['Bash','终端'], readTime: '5 分钟', time: '14:20', markdown: `显示系统资源和状态：\n\n\`\`\`bash\n#!/bin/bash\n# 显示磁盘使用情况\ndf -h | grep -E "^(/dev/)"\n# 内存使用\nfree -m\n# 系统负载\nuptime\n\`\`\`\n\n批量处理文件：\n\n\`\`\`bash\nfor file in *.txt; do\n  mv "$file" "${file%.txt}.bak"\ndone\n\`\`\`` },
+            3: { title: 'HTML 渲染 · UI 组件测试', date: '2026-06-03', tags: ['HTML','UI'], readTime: '4 分钟', time: '11:05', markdown: `HTML/CSS 元素测试：\n\n<div style="display: flex; gap: 1rem; flex-wrap: wrap;">\n  <div class="status-badge" style="background:#1e2a32cc; padding:4px 12px; border-radius:40px; font-family:monospace; color:#b0f0cc; font-size:0.75rem;">服务状态: 正常</div>\n  <div class="status-badge" style="background:#1e2a32cc; padding:4px 12px; border-radius:40px; font-family:monospace; color:#b0f0cc; font-size:0.75rem;">响应时间: 24ms</div>\n</div>\n\n<div style="background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.2)); border-radius: 1rem; padding: 0.8rem; margin: 0.5rem 0;">\n  <strong>进度条示例</strong><br>\n  <progress value="60" max="100" style="width: 100%; height: 8px; border-radius: 20px;"></progress>\n  <p style="font-size:0.8rem; margin-top:8px;">完成度 60%</p>\n</div>\n\n<button style="background: #8fd8ef33; border: 1px solid #8fd8ef; border-radius: 60px; padding: 6px 16px; color: white; cursor: pointer; backdrop-filter: blur(4px);" onclick="alert('组件测试通过')">点击测试</button>` },
+            4: { title: '数据表格示例 · 性能对比', date: '2026-06-02', tags: ['表格','数据'], readTime: '3 分钟', time: '16:30', markdown: `## 性能数据示例\n\n| 方案   | 吞吐量      | 延迟 | 成功率  |\n|--------|------------|------|--------|\n| 方案 A | 12500 req/s | 12ms | 99.95% |\n| 方案 B | 9800 req/s  | 18ms | 99.92% |\n| 方案 C | 15200 req/s | 9ms  | 99.98% |\n\n数据仅用于演示表格样式，无实际性能含义。` },
+            5: { title: '综合测试 · 多格式示例', date: '2026-06-01', tags: ['测试','全格式'], readTime: '6 分钟', time: '20:15', markdown: `## 图像占位\n![示例图](https://picsum.photos/id/26/800/400)\n\n## Bash 示例\n\`\`\`bash\n# 统计日志唯一 IP\ncat access.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -5\n\`\`\`\n\n## HTML 卡片\n<div style="display: flex; gap: 12px; flex-wrap: wrap;">\n  <div style="background: linear-gradient(145deg, #ffffff10, #00000030); border-radius: 24px; padding: 16px; width: 180px; text-align: center;">\n    <div>存储</div><strong>120GB 可用</strong>\n  </div>\n  <div style="background: linear-gradient(145deg, #8fd8ef20, #00000030); border-radius: 24px; padding: 16px; width: 180px; text-align: center;">\n    <div>网络</div><strong>100Mbps</strong>\n  </div>\n</div>\n\n图像、Bash、HTML 多格式测试，验证页面兼容性。` },
+            6: { title: '引用与列表测试 · 排版验证', date: '2026-05-31', tags: ['排版','引用'], readTime: '2 分钟', time: '22:40', markdown: `> 此处为引用文本，用于测试排版样式。\n\n- 无序列表项一\n- 无序列表项二\n  - 嵌套子项 A\n  - 嵌套子项 B\n\n1. 有序列表项 1\n2. 有序列表项 2\n\n内联代码示例：\`npm install\` 或 \`pip install package\`。\n\n\`\`\`\n// 纯文本代码块\nfunction hello() {\n  console.log("示例测试");\n}\n\`\`\`` }
         };
 
-        // 智能摘要: 从内容数组提取纯文本前120字
-        function getTextExcerpt(contentArr, maxLen = 120) {
-            const rawHtml = contentArr.join('');
+        // ---------- 降级渲染器 (不依赖任何外部库，保证永远可用) ----------
+        function safeRenderFallback(markdown) {
+            // 极简转换：只处理基本内联和代码块、标题、图片等，但为了保持可读性，直接用 <pre> 包裹? 不，我们做一个简易但安全的渲染
+            // 为了避免 XSS，先转义 HTML 实体
+            let escaped = markdown.replace(/[&<>]/g, function(m) {
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            });
+            // 处理代码块 ```lang \n code \n ```
+            escaped = escaped.replace(/```(\w*)\n([\s\S]*?)```/g, function(_, lang, code) {
+                return '<pre><code>' + code.replace(/</g, '&lt;') + '</code></pre>';
+            });
+            // 处理行内代码
+            escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
+            // 处理标题
+            escaped = escaped.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+            escaped = escaped.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+            escaped = escaped.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+            // 处理图片
+            escaped = escaped.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width:100%">');
+            // 处理链接
+            escaped = escaped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+            // 粗体/斜体
+            escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            escaped = escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+            // 段落
+            escaped = escaped.replace(/\n\n/g, '</p><p>');
+            escaped = '<p>' + escaped + '</p>';
+            // 修复多余的 p 标签
+            escaped = escaped.replace(/<p><\/p>/g, '');
+            return escaped;
+        }
+
+        // 尝试加载外部库，但绝不阻塞页面
+        let md = null, hljs = null, DOMPurify = null;
+        let libReady = false;
+        let appStarted = false;
+
+        function loadScript(src, name) {
+            return new Promise((resolve) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.crossOrigin = 'anonymous';
+                script.onload = () => resolve(true);
+                script.onerror = () => { console.warn(name + ' 加载失败'); resolve(false); };
+                document.head.appendChild(script);
+            });
+        }
+
+        Promise.all([
+            loadScript('https://cdnjs.cloudflare.com/ajax/libs/markdown-it/14.1.0/markdown-it.min.js', 'markdown-it'),
+            loadScript('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js', 'highlight.js'),
+            loadScript('https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js', 'DOMPurify')
+        ]).then(() => {
+            if (window.markdownit && window.hljs && window.DOMPurify) {
+                md = window.markdownit({ html: true, linkify: true, typographer: true, breaks: false,
+                    highlight: function(str, lang) {
+                        if (lang && window.hljs.getLanguage(lang)) {
+                            try {
+                                return '<pre class="hljs"><code>' + window.hljs.highlight(str, { language: lang, ignoreIllegals: true }).value + '</code></pre>';
+                            } catch(e) {}
+                        }
+                        return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+                    }
+                });
+                hljs = window.hljs;
+                DOMPurify = window.DOMPurify;
+                libReady = true;
+            } else {
+                console.warn("部分库未成功挂载，使用降级渲染");
+            }
+        }).catch(() => console.warn("库加载异常，使用降级渲染")).finally(() => {
+            if (!appStarted) startApp();
+        });
+
+        function sanitizeAndRender(markdownStr) {
+            if (libReady && md && DOMPurify) {
+                const raw = md.render(markdownStr);
+                return DOMPurify.sanitize(raw, { ALLOWED_TAGS: ['h1','h2','h3','h4','h5','h6','p','blockquote','ul','ol','li','a','strong','em','code','pre','img','br','hr','table','thead','tbody','tr','th','td','span','div','button','progress','style','input'], ALLOWED_ATTR: ['href','src','alt','class','id','loading','style','type','value','max','onclick'] });
+            } else {
+                return safeRenderFallback(markdownStr);
+            }
+        }
+
+        function getExcerpt(mdText, maxLen=110) {
+            const html = sanitizeAndRender(mdText);
             const div = document.createElement('div');
-            div.innerHTML = rawHtml;
-            const text = (div.textContent || div.innerText || '').trim().replace(/\s+/g, ' ');
+            div.innerHTML = html;
+            const text = (div.textContent || '').replace(/\s+/g, ' ').trim();
             return text.length > maxLen ? text.slice(0, maxLen) + '…' : text;
         }
 
-        // 代码块复制按钮 + 表格滚动增强
-        function addCopyButtons(container) {
-            const pres = container.querySelectorAll('pre');
-            pres.forEach(pre => {
-                if (pre.parentElement?.classList?.contains('code-block-wrapper')) return;
+        function enhanceCodeBlocks(container) {
+            if(!container) return;
+            container.querySelectorAll('pre').forEach(pre => {
+                if(pre.parentElement?.classList.contains('code-block-wrapper')) return;
                 const wrapper = document.createElement('div');
                 wrapper.className = 'code-block-wrapper';
                 pre.parentNode.insertBefore(wrapper, pre);
@@ -794,7 +510,6 @@
                 const btn = document.createElement('button');
                 btn.className = 'copy-btn';
                 btn.textContent = '复制';
-                btn.setAttribute('aria-label', '复制代码片段');
                 btn.onclick = async (e) => {
                     e.stopPropagation();
                     const code = pre.innerText;
@@ -802,21 +517,13 @@
                         await navigator.clipboard.writeText(code);
                         btn.textContent = '已复制 ✓';
                         btn.classList.add('copied');
-                        setTimeout(() => {
-                            btn.textContent = '复制';
-                            btn.classList.remove('copied');
-                        }, 2000);
-                    } catch { 
-                        btn.textContent = '失败';
-                        setTimeout(() => btn.textContent = '复制', 1500);
-                    }
+                        setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 2000);
+                    } catch { btn.textContent = '失败'; setTimeout(() => btn.textContent = '复制', 1500); }
                 };
                 wrapper.appendChild(btn);
             });
-            // 为所有未包装的表格添加滚动容器
-            const tables = container.querySelectorAll('table');
-            tables.forEach(table => {
-                if (!table.closest('.table-responsive')) {
+            container.querySelectorAll('table').forEach(table => {
+                if(!table.closest('.table-responsive')) {
                     const wrap = document.createElement('div');
                     wrap.className = 'table-responsive';
                     table.parentNode.insertBefore(wrap, table);
@@ -825,82 +532,69 @@
             });
         }
 
-        // DOM 元素
-        const postContainer = document.getElementById('dynamicPostList');
-        const listView = document.getElementById('postList');
-        const articleView = document.getElementById('articleView');
-        const articleTitle = document.getElementById('articleTitle');
-        const articleMetaSpan = document.getElementById('articleMeta');
-        const articleContentDiv = document.getElementById('articleContent');
-        const backLink = document.getElementById('backToList');
+        function startApp() {
+            if(appStarted) return;
+            appStarted = true;
+            const postContainer = document.getElementById('dynamicPostList');
+            const listView = document.getElementById('postList');
+            const articleView = document.getElementById('articleView');
+            const articleTitle = document.getElementById('articleTitle');
+            const articleMeta = document.getElementById('articleMeta');
+            const articleContent = document.getElementById('articleContent');
+            const backLink = document.getElementById('backToList');
 
-        function renderPostList() {
-            let html = '';
-            for (const id in posts) {
-                const p = posts[id];
-                const tagHtml = p.tags.map(t => {
-                    let cls = 'tag';
-                    if (t === 'Bash' || t === '终端') cls += ' bash';
-                    else if (t === '表格' || t === '数据') cls += ' test';
-                    else cls += ' tech';
-                    return `<span class="${cls}">${t}</span>`;
-                }).join('');
-                const excerpt = getTextExcerpt(p.content, 110);
-                html += `
-                    <div class="post-card" data-post-id="${id}" tabindex="0" role="button" aria-label="阅读文章：${p.title}">
-                        <div class="post-body">
-                            <div class="post-meta">
-                                <span>${p.date}</span> ${tagHtml} <span>📖 ${p.readTime}</span>
-                            </div>
-                            <h2 class="post-title">${escapeHtml(p.title)}</h2>
-                            <p class="post-excerpt">${escapeHtml(excerpt)}</p>
-                            <div class="post-footer">
-                                <a href="#" class="read-more" data-post="${id}" aria-label="阅读全文">阅读全文 →</a>
-                                <span class="post-date">${p.time}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
+            function renderList() {
+                let html = '';
+                Object.entries(posts).forEach(([id, p]) => {
+                    const tagHtml = p.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+                    const excerpt = getExcerpt(p.markdown, 110);
+                    html += `<div class="post-card" data-id="${id}" tabindex="0">
+                                <div class="post-body">
+                                    <div class="post-meta"><span>${p.date}</span> ${tagHtml} <span>📖 ${p.readTime}</span></div>
+                                    <h2 class="post-title">${escapeHtml(p.title)}</h2>
+                                    <p class="post-excerpt">${escapeHtml(excerpt)}</p>
+                                    <div class="post-footer"><a href="#" class="read-more" data-id="${id}">阅读全文 →</a><span class="post-date">${p.time}</span></div>
+                                </div>
+                            </div>`;
+                });
+                if(postContainer) postContainer.innerHTML = html;
             }
-            postContainer.innerHTML = html;
-            attachEvents();
-        }
+            function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 
-        function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+            function showArticle(id) {
+                const post = posts[id];
+                if(!post) return;
+                articleTitle.textContent = post.title;
+                articleMeta.innerHTML = `${post.date} · ${post.time} · ${post.readTime} ${post.tags.map(t => `<span class="tag">${t}</span>`).join(' ')}`;
+                articleContent.innerHTML = sanitizeAndRender(post.markdown);
+                enhanceCodeBlocks(articleContent);
+                listView.style.display = 'none';
+                articleView.style.display = 'block';
+                window.scrollTo(0,0);
+            }
 
-        function attachEvents() {
-            document.querySelectorAll('.read-more[data-post]').forEach(link => {
-                link.addEventListener('click', (e) => { e.preventDefault(); showArticle(link.getAttribute('data-post')); });
+            renderList();
+            postContainer?.addEventListener('click', (e) => {
+                const card = e.target.closest('.post-card');
+                if(!card) return;
+                if(e.target.closest('.read-more')) e.preventDefault();
+                const id = card.dataset.id;
+                if(id) showArticle(id);
             });
-            document.querySelectorAll('.post-card').forEach(card => {
-                const id = card.getAttribute('data-post-id');
-                if (!id) return;
-                card.addEventListener('click', (e) => { if (!e.target.closest('.read-more')) showArticle(id); });
-                card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showArticle(id); } });
+            backLink?.addEventListener('click', (e) => {
+                e.preventDefault();
+                listView.style.display = 'block';
+                articleView.style.display = 'none';
+                window.scrollTo(0,0);
             });
+            hideLoader(); // 内容已显示，立即隐藏加载屏
         }
 
-        function showArticle(postId) {
-            const post = posts[postId];
-            if (!post) return;
-            articleTitle.textContent = post.title;
-            const tagsHtml = post.tags.map(t => `<span class="tag ${t === 'Bash' ? 'bash' : 'tech'}">${t}</span>`).join(' ');
-            articleMetaSpan.innerHTML = `${post.date} · ${post.time} · ${post.readTime} ${tagsHtml}`;
-            articleContentDiv.innerHTML = post.content.join('');
-            addCopyButtons(articleContentDiv);
-            listView.style.display = 'none';
-            articleView.style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        backLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            listView.style.display = 'block';
-            articleView.style.display = 'none';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        renderPostList();
+        // 如果依赖加载很快，但 startApp 可能还没调用？确保最多 1 秒后启动 app (兜底)
+        setTimeout(() => { if(!appStarted) startApp(); }, 1200);
+        // 如果 DOM 已就绪且尚未启动，也尝试启动
+        if(document.readyState !== 'loading') { if(!appStarted) startApp(); }
+        else { document.addEventListener('DOMContentLoaded', () => { if(!appStarted) startApp(); }); }
     })();
 </script>
 </body>
