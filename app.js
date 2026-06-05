@@ -108,7 +108,7 @@
       profileCard.innerHTML =
         '<div class="profile-wrap">' +
         (profileConfig.avatar ? '<img class="profile-avatar" src="' + profileConfig.avatar + '" alt="avatar">' : '') +
-        '<div class="profile-name">' + (profileConfig.name || '') + '</div>' +
+        '<a href="https://snowblock.top" class="profile-name">' + (profileConfig.name || '') + '</a>' +
         '<div class="profile-divider"></div>' +
         (profileConfig.bio ? '<div class="profile-bio">' + profileConfig.bio + '</div>' : '') +
         (links ? '<div class="profile-links">' + links + '</div>' : '') +
