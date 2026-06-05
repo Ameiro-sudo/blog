@@ -453,7 +453,6 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 /* ===== 画廊 ===== */
 #galleryView { margin-bottom: 2rem; }
 .gallery-wrap {
-  background: rgba(0,0,0,0.25);
   border-radius: var(--radius-card);
   padding: 1.5rem 1.8rem;
 }
@@ -462,6 +461,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   font-size: clamp(1.6rem,5vw,2.4rem); font-weight: 400; font-family: var(--font-title);
   background: linear-gradient(135deg,#FFEFC0,#B8E4FF);
   -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 .album-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -505,15 +505,14 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .album-info { text-align: center; padding: 0 0.5rem; }
 .album-title { font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 0.2rem; text-shadow: 0 1px 6px rgba(0,0,0,0.4); }
 .album-date {
-  font-size: 0.65rem; color: rgba(220,240,255,0.65); font-family: var(--font-mono);
-  background: rgba(255,255,255,0.08); display: inline-block;
+  font-size: 0.65rem; color: rgba(220,240,255,0.9); font-family: var(--font-mono);
+  background: rgba(0,0,0,0.25); display: inline-block;
   padding: 1px 8px; border-radius: 4px; margin-bottom: 0.3rem;
 }
-.album-desc { font-size: 0.75rem; color: rgba(220,240,255,0.8); text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.album-desc { font-size: 0.75rem; color: rgba(255,255,255,0.9); text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
 
 /* 相册详情 */
 .album-detail-wrap {
-  background: rgba(0,0,0,0.25);
   border-radius: var(--radius-card);
   padding: 1.5rem 1.8rem;
 }
@@ -534,8 +533,8 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .album-detail-title { font-size: 1.6rem; font-weight: 600; color: #fff; font-family: var(--font-title); text-shadow: 0 1px 6px rgba(0,0,0,0.4); margin-bottom: 0.3rem; }
-.album-detail-meta { font-size: 0.75rem; color: rgba(220,240,255,0.5); font-family: var(--font-mono); margin-bottom: 0.4rem; }
-.album-detail-desc { font-size: 0.9rem; color: rgba(220,240,255,0.75); text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.album-detail-meta { font-size: 0.75rem; color: rgba(255,255,255,0.85); font-family: var(--font-mono); margin-bottom: 0.4rem; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+.album-detail-desc { font-size: 0.9rem; color: rgba(255,255,255,0.9); text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -602,8 +601,6 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   .profile-wrap::before { background: rgba(0,0,0,0.40); }
   .profile-links a { background: rgba(0,0,0,0.20); }
   .tag-filter { background: rgba(255,255,255,0.04); }
-  .gallery-wrap { background: rgba(0,0,0,0.35); }
-  .album-detail-wrap { background: rgba(0,0,0,0.35); }
   .archive-card { background: rgba(0,18,30,0.50); }
   .post-card, .article-card, .archive-card, .page-header { border-color: rgba(255,255,255,0.06); }
 /* ===== Toast ===== */
