@@ -220,6 +220,9 @@
           if (tag) { activeTag = tag; currentPage = 1; renderTagFilters(); applyFilters() }
         })
       })
+      postContainer.querySelectorAll('.post-card').forEach(function (el) {
+        el.addEventListener('click', function () { navigateTo(el.dataset.postId) })
+      })
     }
 
     // === 增强（代码复制、表格） ===
