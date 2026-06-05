@@ -634,7 +634,8 @@
       if (!a) return
       albumGrid.style.display = 'none'
       albumDetail.style.display = 'block'
-      var html = '<div class="album-detail-top">' +
+      var html = '<div class="album-detail-wrap">' +
+        '<div class="album-detail-top">' +
         '<button class="album-back" id="albumBack">&larr; 返回</button>' +
         '<span class="album-detail-title">' + a.title + '</span>' +
         '<span class="album-detail-meta">' + a.photos.length + ' 张</span>' +
@@ -645,7 +646,7 @@
           (p.caption ? '<div class="photo-hover"><div class="photo-hover-caption">' + p.caption + '</div></div>' : '') +
           '</div>'
       })
-      html += '</div>'
+      html += '</div></div>'
       albumDetail.innerHTML = html
       document.getElementById('albumBack').addEventListener('click', function () {
         albumDetail.style.display = 'none'
