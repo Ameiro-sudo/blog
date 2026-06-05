@@ -675,7 +675,7 @@
         '</div>' +
         '<div class="album-detail-header">' +
         '<div class="album-detail-title">' + a.title + '</div>' +
-        '<div class="album-detail-meta">' + a.date + ' \u00b7 ' + a.photos.length + ' \u5f20</div>' +
+        '<div class="album-detail-meta">' + a.date + ' \u00b7 ' + a.photos.length + ' \u4e2a\u77ac\u95f4</div>' +
         (a.description ? '<div class="album-detail-desc">' + a.description + '</div>' : '') +
         '</div><div class="photo-grid">'
       a.photos.forEach(function (p) {
