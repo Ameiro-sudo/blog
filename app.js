@@ -18,6 +18,7 @@
   }
 
   // === 音乐播放器 ===
+  try {
   (function() {
     var metingPlaylist = 'https://api.injahow.cn/meting/?server=netease&type=playlist&id=14164869977'
     var metingSong = 'https://api.injahow.cn/meting/?server=netease&type=song&id='
@@ -182,6 +183,7 @@
 
     loadAll()
   })()
+  } catch(e) {}
 
 
   const profileConfig = {
