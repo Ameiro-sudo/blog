@@ -88,6 +88,12 @@
     var archiveContent = document.getElementById('archiveContent')
     var navBlog = document.getElementById('navBlog')
     var navArchive = document.getElementById('navArchive')
+    var navRandom = document.getElementById('navRandom')
+    var backToTop = document.getElementById('backToTop')
+    var tocToggle = document.getElementById('tocToggle')
+    var tocPanel = document.getElementById('tocPanel')
+    var lightbox = document.getElementById('lightbox')
+    var lightboxImg = document.getElementById('lightboxImg')
     var pageHeader = document.getElementById('pageHeader')
 
     // === 简介卡片 ===
@@ -206,7 +212,7 @@
         var excerpt = allExcerpts[p.id] || ''
         html += '<div class="post-card" data-post-id="' + p.id + '" tabindex="0" role="button">' +
           '<div class="post-body">' +
-          '<div class="post-meta"><span>' + p.date + '</span> ' + tags + ' <span>📖 ' + p.readTime + '</span></div>' +
+           '<div class="post-meta"><span>' + p.date + '</span> ' + (p.pinned ? '<span class="pinned-badge">📌</span>' : '') + tags + ' <span>📖 ' + p.readTime + '</span></div>' +
           '<h2 class="post-title">' + p.title + '</h2>' +
           '<p class="post-excerpt">' + excerpt + '</p>' +
            '<div class="post-footer"><span class="post-date">' + p.date + ' · ' + p.time + '</span></div>' +
@@ -296,20 +302,52 @@
       var meta = postsMeta.find(function (p) { return p.id === id })
       if (!meta) { showListView(); return }
       fetch('posts/' + meta.file).then(function (r) { return r.text() }).then(function (mdText) {
-        // 去掉元数据段（标题 # 之后、--- 之前的部分）
         var content = stripMeta(mdText)
         articleTitle.textContent = meta.title
         var tags = meta.tags.map(function (t) {
           return '<span class="tag ' + (t === 'Bash' ? 'bash' : 'tech') + '">' + t + '</span>'
         }).join(' ')
-        articleMeta.innerHTML = meta.date + ' · ' + meta.time + ' · ' + meta.readTime + ' ' + tags
+        // 字数统计
+        var clean = content.replace(/\s+/g, '')
+        var wc = clean.length
+        var wcLabel = wc > 999 ? (wc / 1000).toFixed(1) + 'k' : wc
+        articleMeta.innerHTML = meta.date + ' · ' + meta.time + ' · ' + meta.readTime + ' · ' + wcLabel + '字 ' + tags
         articleContent.innerHTML = safeRender(content)
         enhance(articleContent)
+        // 代码语言标签
+        articleContent.querySelectorAll('pre').forEach(function (pre) {
+          var wrapper = pre.parentElement
+          if (!wrapper || !wrapper.classList.contains('code-block-wrapper')) return
+          var code = pre.querySelector('code')
+          if (!code) return
+          var lang = ''
+          code.className.replace(/language-(\w+)/, function (_, m) { lang = m })
+          if (lang && wrapper.querySelector('.code-lang')) return
+          if (lang) {
+            var lbl = document.createElement('span')
+            lbl.className = 'code-lang'
+            lbl.textContent = lang
+            wrapper.appendChild(lbl)
+          }
+        })
+        // 图片灯箱
+        articleContent.querySelectorAll('img').forEach(function (img) {
+          if (img.closest('.profile-avatar') || img.closest('.profile-links')) return
+          img.style.cursor = 'zoom-in'
+          img.addEventListener('click', function () {
+            lightboxImg.src = img.src
+            lightboxImg.alt = img.alt || ''
+            lightbox.classList.add('show')
+          })
+        })
+        // 文章目录
+        renderTOC()
         renderRelated(id)
         listView.style.display = 'none'
         archiveView.style.display = 'none'
         articleView.style.display = 'block'
         pageHeader.style.display = 'none'
+        tocToggle.classList.add('show')
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }).catch(function () { showListView() })
     }
@@ -319,8 +357,36 @@
       articleView.style.display = 'none'
       archiveView.style.display = 'none'
       pageHeader.style.display = 'block'
+      tocToggle.classList.remove('show')
+      tocPanel.classList.remove('show')
       window.scrollTo({ top: 0 })
     }
+
+    // === 文章目录 TOC ===
+    function renderTOC() {
+      tocPanel.innerHTML = ''
+      var headings = articleContent.querySelectorAll('h2, h3')
+      if (headings.length < 2) { tocPanel.classList.remove('show'); return }
+      var html = ''
+      headings.forEach(function (h) {
+        var id = h.textContent.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fff-]/g, '')
+        h.id = id
+        var tag = h.tagName.toLowerCase()
+        html += '<a class="toc-link ' + tag + '" href="#' + id + '">' + h.textContent + '</a>'
+      })
+      tocPanel.innerHTML = html
+      tocPanel.querySelectorAll('.toc-link').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          e.preventDefault()
+          var target = document.getElementById(a.getAttribute('href').slice(1))
+          if (target) target.scrollIntoView({ behavior: 'smooth' })
+        })
+      })
+    }
+
+    tocToggle.addEventListener('click', function () {
+      tocPanel.classList.toggle('show')
+    })
 
     // === 归档 ===
     function renderArchive() {
@@ -360,6 +426,8 @@
       articleView.style.display = 'none'
       archiveView.style.display = 'block'
       pageHeader.style.display = 'none'
+      tocToggle.classList.remove('show')
+      tocPanel.classList.remove('show')
       renderArchive()
       window.scrollTo({ top: 0 })
     }
@@ -386,6 +454,20 @@
 
     navBlog.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/' })
     navArchive.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/archive' })
+    navRandom.addEventListener('click', function (e) {
+      e.preventDefault()
+      var n = Math.floor(Math.random() * postsMeta.length)
+      navigateTo(postsMeta[n].id)
+    })
+
+    // === 回到顶部 ===
+    window.addEventListener('scroll', function () {
+      if (window.scrollY > 300) backToTop.classList.add('show')
+      else backToTop.classList.remove('show')
+    })
+    backToTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    })
 
     window.addEventListener('hashchange', handleHash)
 
@@ -401,6 +483,8 @@
 
     fetch('posts/index.json').then(function (r) { return r.json() }).then(function (data) {
       postsMeta = data
+      // 置顶文章排前面
+      postsMeta.sort(function (a, b) { return (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) })
       renderTagFilters()
       var loaded = 0
       var total = postsMeta.length
