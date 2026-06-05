@@ -550,11 +550,6 @@
       albumGrid.style.display = ''
       albumDetail.style.display = 'none'
       albumGrid.innerHTML = '<div class="gallery-wrap"><div class="gallery-header"><h1>照片墙</h1></div><div class="album-grid" id="albumGridInner"></div></div>'
-      albumGrid.style.display = ''
-      albumGrid.style.display = 'none'
-      setTimeout(function () {
-        albumGrid.style.display = ''
-      })
       renderAlbums()
       window.scrollTo({ top: 0 })
     }
