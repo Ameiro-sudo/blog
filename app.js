@@ -497,12 +497,11 @@
           '<div class="album-title">' + a.title + '</div>' +
           '<div class="album-date">' + a.date + '</div>' +
           (a.description ? '<div class="album-desc">' + a.description + '</div>' : '') +
-          '<div class="album-suffix">查看 &rarr;</div>' +
           '</div></div>'
       })
       grid.innerHTML = html
       grid.querySelectorAll('.album-card').forEach(function (el) {
-        el.addEventListener('click', function () { showAlbum(el.dataset.album) })
+        el.addEventListener('click', function () { location.hash = '#/gallery/' + el.dataset.album })
       })
     }
 
@@ -528,8 +527,7 @@
       html += '</div></div>'
       albumDetail.innerHTML = html
       document.getElementById('albumBack').addEventListener('click', function () {
-        albumDetail.style.display = 'none'
-        albumGrid.style.display = ''
+        location.hash = '#/gallery'
       })
       albumDetail.querySelectorAll('.photo-item img').forEach(function (img) {
         img.addEventListener('click', function () {
@@ -567,6 +565,12 @@
       if (!raw) { showListView(); setActiveNav('blog'); return }
       if (raw === 'archive') { showArchive(); setActiveNav('archive'); return }
       if (raw === 'gallery') { showGallery(); setActiveNav('gallery'); return }
+      if (raw.indexOf('gallery/') === 0) {
+        var albumId = raw.replace('gallery/', '')
+        showGallery()
+        showAlbum(albumId)
+        return
+      }
       var found = postsMeta.some(function (p) { return p.id === raw })
       if (found) { loadArticle(raw); setActiveNav(null); return }
       showListView(); setActiveNav('blog')

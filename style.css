@@ -514,11 +514,6 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   padding: 1px 8px; border-radius: 4px; margin-bottom: 0.3rem;
 }
 .album-desc { font-size: 0.75rem; color: rgba(220,240,255,0.8); text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-.album-suffix {
-  margin-top: 0.3rem; font-size: 0.68rem; color: var(--color-accent);
-  font-family: var(--font-mono); opacity: 0; transition: opacity 0.3s;
-}
-.album-card:hover .album-suffix { opacity: 1; }
 
 /* 相册详情 */
 .album-detail-wrap {
