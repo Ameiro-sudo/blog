@@ -56,5 +56,18 @@
     ],
     "pinned": false,
     "file": "post-4.md"
+  },
+  {
+    "id": "post-5",
+    "title": "如何添加画廊相册",
+    "date": "2026-06-06",
+    "time": "18:00",
+    "readTime": "3 分钟",
+    "tags": [
+      "画廊",
+      "教程"
+    ],
+    "pinned": false,
+    "file": "post-5.md"
   }
 ]
