@@ -32,5 +32,17 @@
       { "url": "https://picsum.photos/id/26/800/700", "caption": "夜晚" },
       { "url": "https://picsum.photos/id/29/800/1000", "caption": "灯光" }
     ]
+  },
+  {
+    "id": "nanchang-may",
+    "title": "南昌五一摄影",
+    "description": "随便拍拍",
+    "cover": "https://picsum.photos/id/15/600/450",
+    "date": "2026.05",
+    "photos": [
+      { "url": "https://picsum.photos/id/15/800/600", "caption": "街景" },
+      { "url": "https://picsum.photos/id/16/800/750", "caption": "随拍" },
+      { "url": "https://picsum.photos/id/17/800/900", "caption": "留念" }
+    ]
   }
 ]
