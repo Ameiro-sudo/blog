@@ -514,8 +514,7 @@
         '</div><div class="photo-grid">'
       a.photos.forEach(function (p) {
         html += '<div class="photo-item">' +
-          '<img src="' + p.url + '" alt="' + (p.caption || '') + '" loading="lazy">' +
-          (p.caption ? '<div class="photo-hover"><div class="photo-hover-caption">' + p.caption + '</div></div>' : '') +
+          '<img src="' + p.url + '" alt="" loading="lazy">' +
           '</div>'
       })
       html += '</div></div>'
@@ -527,10 +526,8 @@
       albumDetail.querySelectorAll('.photo-item img').forEach(function (img) {
         img.addEventListener('click', function () {
           lightboxImg.src = img.src
-          lightboxImg.alt = img.alt || ''
-          var parent = img.closest('.photo-item')
-          var cap = parent ? parent.querySelector('.photo-hover-caption') : null
-          lightboxCaption.textContent = cap ? cap.textContent : ''
+          lightboxImg.alt = ''
+          lightboxCaption.textContent = ''
           lightbox.classList.add('show')
         })
       })
