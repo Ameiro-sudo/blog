@@ -3,6 +3,30 @@
     history.replaceState(null, '', location.pathname + location.hash)
   }
 
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+
+  function showToast(msg, dur) {
+    if (!toast) return;
+    if (dur === undefined) dur = 2000;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() {
+      toast.classList.remove('show');
+    }, dur);
+  }
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js').then(function(reg) {
+        console.log('SW registered:', reg.scope);
+      }).catch(function(err) {
+        console.log('SW registration failed:', err);
+      });
+    });
+  }
+
   const profileConfig = {
     avatar: 'avatar.webp',
     name: 'ninasukiwww',
