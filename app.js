@@ -17,6 +17,169 @@
     }, dur);
   }
 
+  // === 音乐播放器 ===
+  (function() {
+    var ids = ['1809646618', '3361076230', '1859390262']
+    var metingApi = 'https://api.injahow.cn/meting/?server=netease&type=song&id='
+    var lrcApi = 'https://api.injahow.cn/meting/?server=netease&type=lyric&id='
+
+    var toggle = document.getElementById('musicToggle')
+    var panel = document.getElementById('musicPlayer')
+    var cover = document.getElementById('musicCover')
+    var title = document.getElementById('musicTitle')
+    var artist = document.getElementById('musicArtist')
+    var lyric = document.getElementById('musicLyric')
+    var progressFill = document.getElementById('musicProgressFill')
+    var progressBar = document.querySelector('.music-progress')
+    var playBtn = document.getElementById('musicPlayBtn')
+    var prevBtn = document.getElementById('musicPrev')
+    var nextBtn = document.getElementById('musicNext')
+
+    var songs = []
+    var currentIdx = 0
+    var audio = new Audio()
+    var lyrics = []
+    var currentLyricIdx = -1
+    var isPlaying = false
+
+    function parseLrc(text) {
+      var lines = text.split('\n')
+      var result = []
+      lines.forEach(function (line) {
+        var m = line.match(/\[(\d+):(\d+\.\d+)\](.*)/)
+        if (m) {
+          var time = parseInt(m[1]) * 60 + parseFloat(m[2])
+          result.push({ time: time, text: m[3].trim() })
+        }
+      })
+      return result
+    }
+
+    function loadSong(idx) {
+      var s = songs[idx]
+      if (!s) return
+      currentIdx = idx
+      cover.src = s.pic
+      title.textContent = s.name
+      artist.textContent = s.author
+      progressFill.style.width = '0%'
+      if (s.url) {
+        audio.src = s.url
+        audio.load()
+        if (isPlaying) audio.play()
+      }
+      // 加载歌词
+      lyrics = []
+      currentLyricIdx = -1
+      lyric.textContent = '加载歌词...'
+      lyric.className = 'music-lyric'
+      fetch(lrcApi + s.id).then(function (r) { return r.json() }).then(function (d) {
+        if (d && d.lyric) {
+          lyrics = parseLrc(d.lyric)
+          lyric.textContent = lyrics.length ? '' : '（纯音乐）'
+        } else {
+          lyric.textContent = '（无歌词）'
+        }
+      }).catch(function () { lyric.textContent = '' })
+    }
+
+    function loadAll() {
+      var fetched = 0
+      ids.forEach(function (id) {
+        fetch(metingApi + id).then(function (r) { return r.json() }).then(function (d) {
+          if (d && d[0]) {
+            songs.push(d[0])
+            fetched++
+            if (fetched === ids.length) {
+              toggle.style.display = ''
+              toggle.classList.add('show')
+              loadSong(0)
+            }
+          } else {
+            fetched++
+            if (fetched === ids.length) {
+              toggle.style.display = ''
+              toggle.classList.add('show')
+              if (songs.length) loadSong(0)
+            }
+          }
+        }).catch(function () {
+          fetched++
+          if (fetched === ids.length && songs.length) loadSong(0)
+        })
+      })
+    }
+
+    toggle.addEventListener('click', function () {
+      panel.classList.toggle('show')
+    })
+
+    playBtn.addEventListener('click', function () {
+      if (audio.paused) {
+        audio.play()
+      } else {
+        audio.pause()
+      }
+    })
+
+    audio.addEventListener('play', function () { isPlaying = true; playBtn.textContent = '⏸' })
+    audio.addEventListener('pause', function () { isPlaying = false; playBtn.textContent = '▶️' })
+
+    audio.addEventListener('timeupdate', function () {
+      if (audio.duration) {
+        var pct = (audio.currentTime / audio.duration) * 100
+        progressFill.style.width = pct + '%'
+        // 歌词同步
+        for (var i = lyrics.length - 1; i >= 0; i--) {
+          if (audio.currentTime >= lyrics[i].time) {
+            if (i !== currentLyricIdx) {
+              currentLyricIdx = i
+              lyric.textContent = lyrics[i].text
+              lyric.className = 'music-lyric active'
+            }
+            return
+          }
+        }
+        if (currentLyricIdx !== -1 && audio.currentTime < lyrics[0].time) {
+          currentLyricIdx = -1
+          lyric.textContent = ''
+          lyric.className = 'music-lyric'
+        }
+      }
+    })
+
+    audio.addEventListener('ended', function () {
+      next()
+    })
+
+    function next() {
+      var idx = (currentIdx + 1) % songs.length
+      loadSong(idx)
+    }
+
+    function prev() {
+      var idx = (currentIdx - 1 + songs.length) % songs.length
+      loadSong(idx)
+    }
+
+    nextBtn.addEventListener('click', next)
+    prevBtn.addEventListener('click', prev)
+
+    progressBar.addEventListener('click', function (e) {
+      var rect = progressBar.getBoundingClientRect()
+      var pct = (e.clientX - rect.left) / rect.width
+      audio.currentTime = pct * audio.duration
+    })
+
+    // 点击歌词切换播放/暂停
+    lyric.addEventListener('click', function () {
+      if (audio.paused) audio.play()
+      else audio.pause()
+    })
+
+    loadAll()
+  })()
+
 
   const profileConfig = {
     avatar: 'avatar.webp',

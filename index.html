@@ -287,6 +287,21 @@
 
 <div class="toast" id="toast" aria-live="polite"></div>
 <button id="backToTop" aria-label="回到顶部">↑</button>
+<button id="musicToggle" aria-label="音乐播放器" style="display:none;">🎵</button>
+<div id="musicPlayer" style="display:none;">
+  <div class="music-cover-wrap"><img id="musicCover" src="" alt=""></div>
+  <div class="music-info">
+    <div class="music-title" id="musicTitle">加载中...</div>
+    <div class="music-artist" id="musicArtist"></div>
+    <div class="music-lyric" id="musicLyric"></div>
+    <div class="music-progress"><div class="music-progress-bar" id="musicProgress"><div class="music-progress-fill" id="musicProgressFill"></div></div></div>
+    <div class="music-controls">
+      <button id="musicPrev">⏮</button>
+      <button id="musicPlayBtn">▶️</button>
+      <button id="musicNext">⏭</button>
+    </div>
+  </div>
+</div>
 <button id="tocToggle" aria-label="目录">📑</button>
 <div id="tocPanel"></div>
 <div id="lightbox" onclick="this.classList.remove('show')">
