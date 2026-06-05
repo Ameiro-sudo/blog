@@ -1,86 +1,55 @@
-# Markdown 样式展示大全
+# 三站设计统一 · 雪境设计系统
 date: 2026-06-05
-tags: 测试, Markdown, 排版
-time: 10:00
-readTime: 5 分钟
+tags: 更新, 设计, 前端
+time: 20:00
+readTime: 4 分钟
 ---
-这是一篇综合测试文章，用于展示各种 Markdown 渲染效果。
+SnowBlock 的三个子站迎来了一次设计语言的全面统一。
 
-## 标题层级
+## 统一了什么
 
-### 三级标题
-#### 四级标题
-##### 五级标题
-###### 六级标题
+以导航页 [snowblock.top](https://snowblock.top) 的设计规范为基准，对博客和 MC 状态页进行了对齐：
 
-## 文本样式
+**CSS 设计变量**
 
-普通文本，**加粗**，*斜体*，~~删除线~~，`行内代码`，[超链接](#)。
+- 统一了 `--radius-card: 3rem`、`--radius-item: 1.5rem` 等圆角标准
+- 统一了字体栈（`ZCOOL KuaiLe` 标题 + `Segoe UI` 正文）
+- 统一了毛玻璃参数（`--glass-bg`、`--glass-border`、`--glass-hover-bg`）
 
-## 引用
+**SVG 晶体加载器**
 
-> 这是一段引用文本。
-> 
-> 引用可以换行，也支持 **内嵌样式**。
->
-> > 嵌套引用也可以。
+三个站点现在使用同样的雪花晶体 SVG 动画作为页面加载器，取代了之前各自不同的简易加载图标。晶体的三条线层依次绘制，配合呼吸光晕，带来统一的视觉过渡体验。
 
-## 无序列表
+**暗色模式**
 
-- 第一项
-- 第二项
-  - 嵌套项甲
-  - 嵌套项乙
-- 第三项
+全部站点支持 `prefers-color-scheme: dark`，在系统暗色模式下自动切换深色背景和低对比度配色。
 
-## 有序列表
+**打印样式**
 
-1. 第一步
-2. 第二步
-   1. 子步骤 A
-   2. 子步骤 B
-3. 第三步
+三个站点均添加了打印优化样式，打印时自动去除毛玻璃效果、背景图、雪花动画，确保纸质输出清晰可读。
 
-## 图片
+## 博客新增功能
 
-![示例图片](https://picsum.photos/id/104/800/450)
+### 搜索
 
-## 表格
+文章列表顶部增加了搜索框，支持按标题、标签和日期实时筛选。输入即搜，250ms 防抖延迟，不打扰打字节奏。
 
-| 方案 | 吞吐量 | 延迟 | 成功率 |
-|------|--------|------|--------|
-| 方案 A | 12500 req/s | 12ms | 99.95% |
-| 方案 B | 9800 req/s | 18ms | 99.92% |
-| 方案 C | 15200 req/s | 9ms | 99.98% |
+### 分页
 
-## 任务列表
+文章列表改为每页 5 篇，底部分页栏支持跳转首尾页和中间页。搜索后的结果同样支持分页。
 
-- [x] 已完成任务
-- [ ] 未完成任务
-- [ ] 待办事项
+### Hash 路由修复
 
-## 分割线
+修复了之前存在的 URL 路由问题，现在每篇文章对应独立 URL（`blog.snowblock.top/#/文章ID`），前进/后退导航正常工作。
 
----
+## 变更列表
 
-## 内嵌 HTML
+| 站点 | URL | 变更内容 |
+|------|-----|----------|
+| 导航页 | snowblock.top | 设计基准，保持不变 |
+| 博客 | blog.snowblock.top | 设计对齐 + 搜索 + 分页 + 路由修复 |
+| MC 状态 | status.snowblock.top | 设计对齐 + 暗色模式 + 打印样式 |
 
-<div style="display:flex;gap:1rem;flex-wrap:wrap;margin:0.5rem 0;">
-  <span style="background:#1e2a32cc;padding:4px 12px;border-radius:40px;color:#b0f0cc;font-size:0.75rem;">状态: 正常</span>
-  <span style="background:#1e2a32cc;padding:4px 12px;border-radius:40px;color:#b0f0cc;font-size:0.75rem;">响应: 24ms</span>
-</div>
+## 技术栈
 
-<progress value="60" max="100" style="width:100%;height:8px;border-radius:20px;"></progress>
-
-<button style="background:#8fd8ef33;border:1px solid #8fd8ef;border-radius:60px;padding:6px 16px;color:white;cursor:pointer;" onclick="alert('测试通过')">点击测试</button>
-
-## 综合卡片
-
-<div style="display:flex;gap:12px;flex-wrap:wrap;">
-  <div style="background:linear-gradient(145deg,#ffffff10,#00000030);border-radius:24px;padding:16px;width:180px;text-align:center;">
-    存储<br><strong>120GB 可用</strong>
-  </div>
-  <div style="background:linear-gradient(145deg,#8fd8ef20,#00000030);border-radius:24px;padding:16px;width:180px;text-align:center;">
-    网络<br><strong>100Mbps</strong>
-  </div>
-</div>
+全部为纯静态页面，零依赖服务器，通过 GitHub Pages 托管。博客内容以 Markdown 文件存储在 `posts/` 目录，通过 `build.js` 自动生成文章索引。
