@@ -289,48 +289,44 @@
 <div class="toast" id="toast" aria-live="polite"></div>
 
 <div class="container" id="app">
-    <div class="main-card" id="mainCard">
-        <div class="main-card-header">
-            <div class="header-left">
-                <a href="https://snowblock.top" class="site-name">❄️ SnowBlock</a>
-                <nav class="nav-links">
-                    <a href="https://snowblock.top">导航</a>
-                    <a href="#" id="navBlog" class="active">博客</a>
-                    <a href="#" id="navArchive">归档</a>
-                    <a href="https://status.snowblock.top">MC 状态</a>
-                </nav>
-            </div>
-            <div id="profileCard"></div>
-        </div>
+    <header class="top-bar">
+        <a href="https://snowblock.top" class="site-name">❄️ SnowBlock</a>
+        <nav class="nav-links">
+            <a href="https://snowblock.top">导航</a>
+            <a href="#" id="navBlog" class="active">博客</a>
+            <a href="#" id="navArchive">归档</a>
+            <a href="https://status.snowblock.top">MC 状态</a>
+        </nav>
+    </header>
 
-        <div class="main-card-body">
-            <div class="page-header" id="pageHeader">
-                <h1>雪地笔记</h1>
-                <p class="sub"><a href="https://snowblock.top">❄️ SnowBlock</a><span class="dot">·</span>技术碎片 · 测试合集 · 代码光影</p>
-                <div class="search-bar"><input type="text" id="searchInput" class="search-input" placeholder="🔍 搜索文章..." aria-label="搜索"></div>
-                <div class="tag-filters" id="tagFilters"></div>
-            </div>
+    <div id="profileCard"></div>
 
-        <div id="postList">
-            <div id="dynamicPostList" class="post-list"></div>
-            <div class="pagination" id="pagination"></div>
-        </div>
+    <div class="page-header" id="pageHeader">
+        <h1>雪地笔记</h1>
+        <p class="sub"><a href="https://snowblock.top">❄️ SnowBlock</a><span class="dot">·</span>技术碎片 · 测试合集 · 代码光影</p>
+        <div class="search-bar"><input type="text" id="searchInput" class="search-input" placeholder="🔍 搜索文章..." aria-label="搜索"></div>
+        <div class="tag-filters" id="tagFilters"></div>
+    </div>
 
-        <div id="articleView" style="display:none;">
-            <div class="article-card">
-                <div class="article-body">
-                    <h1 class="article-title" id="articleTitle"></h1>
-                    <div class="article-meta" id="articleMeta"></div>
-                    <div class="article-content" id="articleContent"></div>
-                    <div id="relatedPosts"></div>
-                    <a href="#" id="backToList" class="back-link">← 返回文章列表</a>
-                </div>
+    <div id="postList">
+        <div id="dynamicPostList" class="post-list"></div>
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <div id="articleView" style="display:none;">
+        <div class="article-card">
+            <div class="article-body">
+                <h1 class="article-title" id="articleTitle"></h1>
+                <div class="article-meta" id="articleMeta"></div>
+                <div class="article-content" id="articleContent"></div>
+                <div id="relatedPosts"></div>
+                <a href="#" id="backToList" class="back-link">← 返回文章列表</a>
             </div>
         </div>
+    </div>
 
-        <div id="archiveView" style="display:none;">
-            <div class="archive-card"><div class="archive-body" id="archiveContent"></div></div>
-        </div>
+    <div id="archiveView" style="display:none;">
+        <div class="archive-card"><div class="archive-body" id="archiveContent"></div></div>
     </div>
 </div>
 
@@ -342,7 +338,7 @@
 <script>
 if(location.search.includes('_gl='))history.replaceState(null,'',location.pathname+location.hash)
 !function(){
-var l=document.getElementById('loader'),c=document.getElementById('mainCard'),i=new Image,b=!1,m=!1;
+var l=document.getElementById('loader'),i=new Image,b=!1,m=!1;
 i.src='https://snowblock.top/138936740_p0.webp';
 i.onload=function(){b=!0;f()};
 i.onerror=function(){b=!0;f()};
