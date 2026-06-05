@@ -672,8 +672,11 @@
       var html = '<div class="album-detail-wrap">' +
         '<div class="album-detail-top">' +
         '<button class="album-back" id="albumBack">&larr; 返回</button>' +
-        '<span class="album-detail-title">' + a.title + '</span>' +
-        '<span class="album-detail-meta">' + a.photos.length + ' 张</span>' +
+        '</div>' +
+        '<div class="album-detail-header">' +
+        '<div class="album-detail-title">' + a.title + '</div>' +
+        '<div class="album-detail-meta">' + a.date + ' \u00b7 ' + a.photos.length + ' \u5f20</div>' +
+        (a.description ? '<div class="album-detail-desc">' + a.description + '</div>' : '') +
         '</div><div class="photo-grid">'
       a.photos.forEach(function (p) {
         html += '<div class="photo-item">' +

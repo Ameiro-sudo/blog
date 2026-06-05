@@ -580,8 +580,15 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   transition: background 0.25s;
 }
 .album-back:hover { background: var(--glass-hover-bg); color: #fff; }
-.album-detail-title { font-size: 1.3rem; font-weight: 600; color: #fff; font-family: var(--font-title); text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
-.album-detail-meta { font-size: 0.8rem; color: rgba(220,240,255,0.65); font-family: var(--font-mono); margin-left: auto; }
+.album-detail-header {
+  text-align: center;
+  margin: 1rem 0 1.5rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.album-detail-title { font-size: 1.6rem; font-weight: 600; color: #fff; font-family: var(--font-title); text-shadow: 0 1px 6px rgba(0,0,0,0.4); margin-bottom: 0.3rem; }
+.album-detail-meta { font-size: 0.75rem; color: rgba(220,240,255,0.5); font-family: var(--font-mono); margin-bottom: 0.4rem; }
+.album-detail-desc { font-size: 0.9rem; color: rgba(220,240,255,0.75); text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 .photo-grid {
   column-count: 3; column-gap: 0.8rem;
 }
