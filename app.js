@@ -82,8 +82,6 @@
     var tagFilters = document.getElementById('tagFilters')
     var profileCard = document.getElementById('profileCard')
     var archiveContent = document.getElementById('archiveContent')
-    var navBlog = document.getElementById('navBlog')
-    var navArchive = document.getElementById('navArchive')
     var pageHeader = document.getElementById('pageHeader')
 
     // === 简介卡片 ===
@@ -362,26 +360,17 @@
     // === Hash 路由 ===
     function handleHash() {
       var raw = location.hash.replace(/^#\/?/, '')
-      if (!raw) { showListView(); setActiveNav('blog'); return }
-      if (raw === 'archive') { showArchive(); setActiveNav('archive'); return }
+      if (!raw) { showListView(); return }
+      if (raw === 'archive') { showArchive(); return }
       var found = postsMeta.some(function (p) { return p.id === raw })
-      if (found) { loadArticle(raw); setActiveNav(null); return }
+      if (found) { loadArticle(raw); return }
       showListView()
-      setActiveNav('blog')
-    }
-
-    function setActiveNav(which) {
-      navBlog.className = which === 'blog' ? 'active' : ''
-      navArchive.className = which === 'archive' ? 'active' : ''
     }
 
     backLink.addEventListener('click', function (e) {
       e.preventDefault()
       location.hash = '#/'
     })
-
-    navBlog.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/' })
-    navArchive.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/archive' })
 
     window.addEventListener('hashchange', handleHash)
 
