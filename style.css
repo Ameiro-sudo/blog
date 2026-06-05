@@ -40,7 +40,7 @@
 .profile-wrap::before {
   content: ''; position: absolute; inset: 0;
   border-radius: var(--radius-card);
-  background: rgba(0,0,0,0.25);
+  background: rgba(0,0,0,0.35);
   z-index: -1; pointer-events: none;
 }
 .profile-avatar {
@@ -140,7 +140,7 @@
 .post-card::before {
   content: ''; position: absolute; inset: 0;
   border-radius: var(--radius-card);
-  background: rgba(0,0,0,0.25);
+  background: rgba(0,0,0,0.35);
   z-index: -1; pointer-events: none;
 }
 .post-card:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; transform: scale(0.99); }
@@ -219,7 +219,7 @@
 .article-card::before {
   content: ''; position: absolute; inset: 0;
   border-radius: var(--radius-card);
-  background: rgba(0,0,0,0.25);
+  background: rgba(0,0,0,0.35);
   z-index: -1; pointer-events: none;
 }
 .article-body { position: relative; z-index: 1; padding: 2rem 2.2rem; }
@@ -307,7 +307,7 @@
 .archive-card::before {
   content: ''; position: absolute; inset: 0;
   border-radius: var(--radius-card);
-  background: rgba(0,0,0,0.25);
+  background: rgba(0,0,0,0.35);
   z-index: -1; pointer-events: none;
 }
 .archive-body { position: relative; z-index: 1; padding: 2rem 2.2rem; }
@@ -372,13 +372,6 @@
   .profile-links a:hover { background: var(--glass-hover-bg); transform: translateY(-3px); }
 }
 
-.theme-toggle {
-  background: none; border: none; cursor: pointer; font-size: 1.1rem;
-  color: rgba(230,245,255,0.9); padding: 0.2rem; line-height: 1;
-  transition: transform 0.25s; font-family: var(--font-sans);
-}
-.theme-toggle:hover { transform: scale(1.2); }
-
 /* ===== 暗色模式 ===== */
 @media (prefers-color-scheme: dark) {
   body { background: url(https://snowblock.top/138936740_p0.webp) center/cover fixed, linear-gradient(160deg,#0b1a24,#162b36); }
@@ -401,26 +394,6 @@
     background: rgba(0, 0, 0, 0.35);
   }
 }
-html.dark body { background: url(https://snowblock.top/138936740_p0.webp) center/cover fixed, linear-gradient(160deg,#0b1a24,#162b36); }
-html.dark body::before { background: rgba(0,0,0,0.25); }
-html.dark #loader { background: linear-gradient(135deg,#0d1f2b,#142a38,#0d1f2b); background-size: 200% 200%; }
-html.dark .top-bar { --glass-header-bg: rgba(0,15,25,0.70); }
-html.dark .post-card { background: rgba(0,18,30,0.50); }
-html.dark .post-card:hover { background: rgba(255,255,255,0.08); }
-html.dark .article-card { background: rgba(0,18,30,0.50); }
-html.dark .search-input { background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.08); }
-html.dark .search-input:focus { background: rgba(0,0,0,0.35); }
-html.dark .page-btn { background: rgba(0,0,0,0.20); border-color: rgba(255,255,255,0.06); }
-html.dark .page-btn:hover { background: rgba(255,255,255,0.08); }
-html.dark .page-btn.active { background: rgba(143,216,239,0.12); }
-html.dark .profile-wrap { background: rgba(0,18,30,0.45); }
-html.dark .profile-links a { background: rgba(0,0,0,0.20); }
-html.dark .tag-filter { background: rgba(255,255,255,0.04); }
-html.dark .archive-card { background: rgba(0,18,30,0.50); }
-html.dark .post-card::before, html.dark .article-card::before, html.dark .profile-wrap::before, html.dark .archive-card::before {
-  background: rgba(0, 0, 0, 0.35);
-}
-
 /* ===== Toast ===== */
 .toast {
     position: fixed;
@@ -452,8 +425,6 @@ html.dark .post-card::before, html.dark .article-card::before, html.dark .profil
 @media (prefers-color-scheme: dark) {
     .toast { background: rgba(0,0,0,0.80); border-color: rgba(255,255,255,0.06); }
 }
-html.dark .toast { background: rgba(0,0,0,0.80); border-color: rgba(255,255,255,0.06); }
-
 /* ===== 打印 ===== */
 @media print {
   body::before { display: none; }

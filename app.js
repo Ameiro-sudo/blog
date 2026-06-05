@@ -420,5 +420,4 @@
       postContainer.innerHTML = '<div style="color:white;text-align:center;padding:2rem;">文章加载失败</div>'
     })
   })
-!function(){var e=document.getElementById('themeToggle');if(!e)return;var t=localStorage.getItem('theme'),n=window.matchMedia('(prefers-color-scheme: dark)').matches;function o(t){t?(document.documentElement.classList.add('dark'),e.textContent='☀️'):(document.documentElement.classList.remove('dark'),e.textContent='🌙')}'dark'===t?o(!0):'light'===t?o(!1):o(n),e.addEventListener('click',function(){var t=document.documentElement.classList.toggle('dark');e.textContent=t?'☀️':'🌙',localStorage.setItem('theme',t?'dark':'light')})}();
 })()

@@ -63,11 +63,14 @@
             overflow-x: hidden;
         }
 
+        body.bg-loaded {
+            background: var(--color-bg-deep) url('https://snowblock.top/138936740_p0.webp') center/cover fixed;
+        }
         body::before {
             content: '';
             position: fixed;
             inset: 0;
-            background: rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.12);
             pointer-events: none;
             z-index: 0;
         }
@@ -287,7 +290,6 @@
             <a href="#" id="navBlog" class="active">博客</a>
             <a href="#" id="navArchive">归档</a>
             <a href="https://status.snowblock.top">MC 状态</a>
-            <button id="themeToggle" class="theme-toggle" aria-label="切换暗色模式">🌙</button>
         </nav>
     </header>
 
