@@ -481,7 +481,14 @@
       albums.forEach(function (a) {
         var layers = ''
         for (var i = 0; i < 3; i++) {
-          var imgUrl = a.photos[i] ? a.photos[i].url : a.cover
+          var imgUrl
+          if (i === 2) {
+            imgUrl = a.cover
+          } else if (a.photos[i]) {
+            imgUrl = a.photos[i].url
+          } else {
+            imgUrl = a.cover
+          }
           layers += '<div class="album-layer album-layer-' + i + '"><img src="' + imgUrl + '" alt="" loading="lazy"></div>'
         }
         html += '<div class="album-card" data-album="' + a.id + '">' +
