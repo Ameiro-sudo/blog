@@ -272,11 +272,16 @@
 .article-content a { color: var(--color-accent); text-decoration: none; border-bottom: 1px dotted rgba(143,216,239,0.4); }
 .article-content a:hover { color: white; border-bottom-color: white; }
 .back-link {
-  display: inline-block; margin-top: 2rem;
+  display: block; margin-top: 2rem; width: 100%;
+  padding: 0.7rem 1.2rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-item);
   color: rgba(220,240,255,0.85); font-family: var(--font-mono);
-  font-size: 0.85rem; text-decoration: none; transition: color 0.25s;
+  font-size: 0.85rem; text-decoration: none; text-align: center;
+  transition: background 0.25s, color 0.25s;
 }
-.back-link:hover { color: var(--color-accent); }
+.back-link:hover { background: rgba(255,255,255,0.12); color: var(--color-accent); }
 .hljs { background: transparent; }
 pre code { background: none !important; padding: 0; border-radius: 0; }
 
