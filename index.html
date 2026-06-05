@@ -629,6 +629,11 @@
 
 <script>
     (function(){
+        // 清理 GA 跨站追踪参数 _gl
+        if (location.search.includes('_gl=')) {
+            history.replaceState(null, '', location.pathname + location.hash);
+        }
+
         const loader = document.getElementById('loader');
         const bgImg = new Image();
         bgImg.src = 'https://snowblock.top/138936740_p0.webp';
@@ -674,6 +679,12 @@
 
         /* ========== 博客逻辑 ========== */
         window.addEventListener('load', () => {
+            // 清理 GA 跨站追踪参数 _gl，避免 URL 乱码
+            if (location.search.includes('_gl=')) {
+                const url = location.pathname + location.hash;
+                history.replaceState(null, '', url);
+            }
+
             if (!window.markdownit || !window.hljs || !window.DOMPurify) {
                 document.body.innerHTML += '<div style="color:white;text-align:center;padding:2rem;">核心依赖加载失败，请检查网络后刷新</div>';
                 return;
