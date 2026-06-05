@@ -4,7 +4,7 @@
   }
 
   const profileConfig = {
-    avatar: 'https://snowblock.top/138936740_p0.webp',
+    avatar: 'avatar.webp',
     name: 'ninasukiwww',
     bio: '❄️ 在雪地里写代码',
     links: [
