@@ -31,6 +31,7 @@ function parseMD(filepath) {
 
   const stem = filepath.split('/').pop().replace(/\.md$/, '')
   const tags = (meta.tags || '').split(',').map(t => t.trim()).filter(Boolean)
+  const pinned = meta.pinned === 'true'
 
   return {
     id: stem,
@@ -39,6 +40,7 @@ function parseMD(filepath) {
     time: meta.time || '',
     readTime: meta.readTime || '',
     tags,
+    pinned,
     file: stem + '.md'
   }
 }

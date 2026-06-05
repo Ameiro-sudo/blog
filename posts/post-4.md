@@ -3,6 +3,7 @@ date: 2026-06-05
 tags: 博客, 指南, 教程
 time: 22:00
 readTime: 3 分钟
+pinned: true
 ---
 ## 写一篇新文章
 

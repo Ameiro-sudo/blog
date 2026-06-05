@@ -10,6 +10,7 @@
       "设计",
       "前端"
     ],
+    "pinned": false,
     "file": "post-1.md"
   },
   {
@@ -23,6 +24,7 @@
       "Markdown",
       "排版"
     ],
+    "pinned": false,
     "file": "post-2.md"
   },
   {
@@ -37,6 +39,7 @@
       "排版",
       "测试"
     ],
+    "pinned": false,
     "file": "post-3.md"
   },
   {
@@ -50,6 +53,7 @@
       "指南",
       "教程"
     ],
+    "pinned": true,
     "file": "post-4.md"
   },
   {
@@ -62,6 +66,7 @@
       "模板",
       "指南"
     ],
+    "pinned": false,
     "file": "post-5.md"
   },
   {
@@ -74,6 +79,7 @@
       "更新",
       "日志"
     ],
+    "pinned": false,
     "file": "post-6.md"
   }
 ]
