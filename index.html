@@ -21,13 +21,22 @@
     <meta name="twitter:image" content="https://snowblock.top/138936740_p0.webp">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
 
+    <!-- 预加载 & 预连接 -->
     <link rel="preload" href="https://snowblock.top/138936740_p0.webp" as="image">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- 字体 -->
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
 
+    <!-- 核心依赖 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/14.1.0/markdown-it.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js" defer></script>
+
     <style>
-        /* ---------- 样式 (与原版保持一致) ---------- */
+        /* ---------- RESET & VARIABLES ---------- */
         :root {
             --bg-gradient: linear-gradient(160deg, #8DB8D8 0%, #C5DCEB 50%, #E8F0F5 100%);
             --color-bg-deep: #0b2b3b;
@@ -45,18 +54,23 @@
             --body-pad: 2rem;
             --transition: 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
+
         * { margin:0; padding:0; box-sizing:border-box; }
+
         body {
             min-height: 100vh;
             padding: var(--body-pad);
             font-family: var(--font-sans);
             background: var(--bg-gradient);
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             overflow-x: hidden;
         }
+
         body.bg-loaded {
             background: var(--color-bg-deep) url('https://snowblock.top/138936740_p0.webp') center/cover fixed;
         }
+
         body::before {
             content: '';
             position: fixed;
@@ -66,20 +80,23 @@
             pointer-events: none;
             z-index: 0;
         }
+
         body > * { position: relative; z-index: 1; }
+
         #snowCanvas {
             position: fixed; inset: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 0;
         }
+
         #loader {
             position: fixed; inset: 0; z-index: 9999;
             background: var(--bg-gradient);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 1rem;
-            transition: opacity 0.3s ease, visibility 0.3s;
+            transition: opacity 0.45s ease, visibility 0.45s;
             backdrop-filter: blur(2px);
         }
-        #loader.hide { opacity:0; visibility:hidden; pointer-events: none; }
+        #loader.hide { opacity:0; visibility:hidden; }
         .loader-icon {
             font-size: 3.2rem;
             animation: gentlePulse 1.6s infinite ease-in-out;
@@ -95,7 +112,9 @@
             font-size: 0.85rem; letter-spacing: 0.1em;
             text-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
+
         .container { max-width: 1000px; margin: 0 auto; }
+
         .top-bar {
             display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
             padding: 0.7rem 1.8rem;
@@ -122,6 +141,7 @@
         }
         .nav-links a:hover,
         .nav-links a.active { color: #fff; border-bottom-color: var(--color-accent); }
+
         .page-header { text-align: center; margin-bottom: 2.8rem; }
         .page-header h1 {
             font-size: clamp(2rem, 7vw, 3rem); font-weight: 400; font-family: var(--font-title);
@@ -134,6 +154,8 @@
             font-size: 0.8rem; margin-top: 0.5rem;
         }
         .page-header .sub a { color: var(--color-accent); text-decoration: none; }
+
+        /* 文章列表 */
         .post-list { display: flex; flex-direction: column; gap: 1.3rem; }
         .post-card {
             background: var(--glass-bg);
@@ -163,6 +185,12 @@
             font-size: 0.65rem; font-weight: 500;
             background: rgba(143,216,239,0.18); color: #b9e6ff; letter-spacing: 0.3px;
         }
+        .tag.bash { background: rgba(0,0,0,0.35); color: #b3e4ff; }
+        .tag.tech { background: rgba(76,175,80,0.2); color: #a5d6a5; }
+        .tag.game { background: rgba(255,152,0,0.2); color: #ffcd94; }
+        .tag.life { background: rgba(233,30,99,0.2); color: #ffb7c5; }
+        .tag.test { background: rgba(156,39,176,0.25); color: #daaaff; }
+
         .post-title {
             font-size: clamp(1.15rem, 3vw, 1.5rem); font-weight: 600;
             color: #fff; text-shadow: 0 1px 5px rgba(0,0,0,0.25);
@@ -184,6 +212,8 @@
         .post-date {
             color: rgba(200,230,250,0.45); font-size: 0.7rem; font-family: var(--font-mono);
         }
+
+        /* 文章详情 */
         .article-card {
             background: var(--glass-bg);
             backdrop-filter: blur(16px) saturate(1.3);
@@ -205,6 +235,7 @@
         .article-content {
             color: rgba(235,245,255,0.92); font-size: 0.96rem; line-height: 1.75;
         }
+        /* Markdown 生成元素风格化 */
         .article-content p { margin-bottom: 1rem; }
         .article-content h2 {
             font-size: 1.4rem; font-weight: 600; color: white;
@@ -225,6 +256,7 @@
             border: 1px solid rgba(255,255,255,0.1); font-family: var(--font-mono);
             font-size: 0.85rem;
         }
+        /* 代码复制按钮包装器 */
         .code-block-wrapper { position: relative; margin: 1rem 0; }
         .copy-btn {
             position: absolute; top: 0.5rem; right: 0.7rem;
@@ -238,7 +270,11 @@
             background: var(--color-accent); color: #0b2b3b; border-color: var(--color-accent);
         }
         .copy-btn.copied { background: #4caf50; color: white; border-color: #4caf50; }
-        .table-responsive { overflow-x: auto; margin: 1rem 0; border-radius: 12px; }
+
+        /* 表格滚动容器 */
+        .table-responsive {
+            overflow-x: auto; margin: 1rem 0; border-radius: 12px;
+        }
         .article-content table {
             width: 100%; border-collapse: collapse;
             background: rgba(0,0,0,0.25); border-radius: 14px; overflow: hidden;
@@ -256,6 +292,7 @@
             border-bottom: 1px dotted rgba(143,216,239,0.4);
         }
         .article-content a:hover { color: white; border-bottom-color: white; }
+
         .back-link {
             display: inline-block; margin-top: 2rem;
             color: rgba(210,235,250,0.7); font-family: var(--font-mono);
@@ -263,6 +300,8 @@
             transition: color var(--transition);
         }
         .back-link:hover { color: var(--color-accent); }
+
+        /* highlight.js 主题覆盖 (atom-one-dark) */
         .hljs {
             background: transparent !important;
             color: #e0e0e0;
@@ -271,6 +310,8 @@
         .hljs-string { color: #c3e88d; }
         .hljs-number, .hljs-literal { color: #f78c6c; }
         .hljs-comment { color: #546e7a; font-style: italic; }
+
+        /* 响应式 */
         @media (max-width: 760px) {
             :root { --body-pad: 1rem; }
             .top-bar { padding: 0.6rem 1.2rem; }
@@ -282,22 +323,12 @@
             .post-title { font-size: 1.2rem; }
             .article-title { font-size: 1.6rem; }
         }
+
         @media (prefers-reduced-motion: reduce) {
             * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
             #snowCanvas { display: none; }
             body { background: var(--color-bg-deep) url('https://snowblock.top/138936740_p0.webp') center/cover fixed; }
             .post-card:hover { transform: none; }
-        }
-        .error-message {
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(16px);
-            border-radius: 2rem; padding: 2rem; text-align: center;
-            border: 1px solid #ffab91; color: #ffccbc;
-            margin: 2rem auto; max-width: 500px;
-        }
-        .error-message button {
-            background: var(--color-accent); border: none; color: #0b2b3b;
-            padding: 6px 18px; border-radius: 30px; margin-top: 1rem;
-            cursor: pointer; font-weight: bold;
         }
     </style>
 </head>
@@ -305,7 +336,7 @@
 
 <div id="loader">
     <div class="loader-icon">❄️</div>
-    <div class="loader-text">正在加载雪地笔记...</div>
+    <div class="loader-text">Snow dust loading...</div>
 </div>
 
 <canvas id="snowCanvas"></canvas>
@@ -346,195 +377,274 @@
 </div>
 
 <script>
-    (function() {
-        // ---------- 强制隐藏加载屏的超时 ----------
+    (function(){
+        // ========== 背景加载与 Loader ==========
         const loader = document.getElementById('loader');
-        let loaderHidden = false;
-        function hideLoader() {
-            if (loaderHidden || !loader) return;
-            loaderHidden = true;
-            loader.classList.add('hide');
-            setTimeout(() => loader?.remove(), 500);
-        }
-        // 绝对超时：任何情况下 2.5 秒后强制隐藏加载屏（避免卡死）
-        setTimeout(hideLoader, 2500);
-
-        // ---------- 背景图片加载（不影响界面）----------
+        let bgReady = false, timeReady = false;
+        const MIN_LOAD = 650;
         const bgImg = new Image();
-        bgImg.onload = () => document.body.classList.add('bg-loaded');
-        bgImg.onerror = () => document.body.classList.add('bg-loaded');
-        bgImg.src = 'https://snowblock.top/138936740_p0.webp';
-        if (bgImg.complete) document.body.classList.add('bg-loaded');
-
-        // ---------- 雪花动画（轻量）----------
-        const canvas = document.getElementById('snowCanvas');
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            let particles = [], w, h;
-            function resizeCanvas() {
-                w = canvas.width = window.innerWidth;
-                h = canvas.height = window.innerHeight;
-                if (particles.length) particles.forEach(p => { if(p.x > w+15) p.x=w-5; if(p.x<-15) p.x=5; if(p.y>h+30) p.y=-10; });
-            }
-            function createParticle() { return { x: Math.random() * w, y: Math.random() * h - 20, r: Math.random() * 2.4 + 1.0, speed: Math.random() * 0.6 + 0.2, wind: Math.random() * 0.3 - 0.12, alpha: Math.random() * 0.4 + 0.15 }; }
-            function initSnow() { if(w&&h) particles = Array.from({ length: 48 }, createParticle); }
-            function drawSnow() {
-                if(!ctx||!w||!h) return;
-                ctx.clearRect(0, 0, w, h);
-                for(let p of particles){
-                    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-                    ctx.fillStyle = `rgba(255,255,255,${p.alpha})`; ctx.fill();
-                    p.y += p.speed; p.x += p.wind;
-                    if(p.y > h+25) { const idx = particles.indexOf(p); if(idx!==-1) particles[idx]=createParticle(); }
-                    if(p.x > w+20) p.x = -15; if(p.x < -20) p.x = w+10;
-                }
-                while(particles.length<55) particles.push(createParticle());
-                requestAnimationFrame(drawSnow);
-            }
-            window.addEventListener('resize', () => { resizeCanvas(); if(!particles.length) initSnow(); });
-            resizeCanvas(); initSnow(); drawSnow();
-        }
-
-        // ---------- 文章数据 (内置) ----------
-        const posts = {
-            1: { title: '图床测试 · 静态资源占位', date: '2026-06-05', tags: ['测试','图床'], readTime: '3 分钟', time: '09:30', markdown: `测试图片加载和样式兼容性：\n\n![示例图片](https://picsum.photos/id/104/800/450)\n\n此图片仅用于验证页面布局和加载性能。\n\n> 编号 1` },
-            2: { title: 'Bash 命令示例 · 系统检查', date: '2026-06-04', tags: ['Bash','终端'], readTime: '5 分钟', time: '14:20', markdown: `显示系统资源和状态：\n\n\`\`\`bash\n#!/bin/bash\n# 显示磁盘使用情况\ndf -h | grep -E "^(/dev/)"\n# 内存使用\nfree -m\n# 系统负载\nuptime\n\`\`\`\n\n批量处理文件：\n\n\`\`\`bash\nfor file in *.txt; do\n  mv "$file" "${file%.txt}.bak"\ndone\n\`\`\`` },
-            3: { title: 'HTML 渲染 · UI 组件测试', date: '2026-06-03', tags: ['HTML','UI'], readTime: '4 分钟', time: '11:05', markdown: `HTML/CSS 元素测试：\n\n<div style="display: flex; gap: 1rem; flex-wrap: wrap;">\n  <div class="status-badge" style="background:#1e2a32cc; padding:4px 12px; border-radius:40px; font-family:monospace; color:#b0f0cc; font-size:0.75rem;">服务状态: 正常</div>\n  <div class="status-badge" style="background:#1e2a32cc; padding:4px 12px; border-radius:40px; font-family:monospace; color:#b0f0cc; font-size:0.75rem;">响应时间: 24ms</div>\n</div>\n\n<div style="background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.2)); border-radius: 1rem; padding: 0.8rem; margin: 0.5rem 0;">\n  <strong>进度条示例</strong><br>\n  <progress value="60" max="100" style="width: 100%; height: 8px; border-radius: 20px;"></progress>\n  <p style="font-size:0.8rem; margin-top:8px;">完成度 60%</p>\n</div>\n\n<button style="background: #8fd8ef33; border: 1px solid #8fd8ef; border-radius: 60px; padding: 6px 16px; color: white; cursor: pointer; backdrop-filter: blur(4px);" onclick="alert('组件测试通过')">点击测试</button>` },
-            4: { title: '数据表格示例 · 性能对比', date: '2026-06-02', tags: ['表格','数据'], readTime: '3 分钟', time: '16:30', markdown: `## 性能数据示例\n\n| 方案   | 吞吐量      | 延迟 | 成功率  |\n|--------|------------|------|--------|\n| 方案 A | 12500 req/s | 12ms | 99.95% |\n| 方案 B | 9800 req/s  | 18ms | 99.92% |\n| 方案 C | 15200 req/s | 9ms  | 99.98% |\n\n数据仅用于演示表格样式，无实际性能含义。` },
-            5: { title: '综合测试 · 多格式示例', date: '2026-06-01', tags: ['测试','全格式'], readTime: '6 分钟', time: '20:15', markdown: `## 图像占位\n![示例图](https://picsum.photos/id/26/800/400)\n\n## Bash 示例\n\`\`\`bash\n# 统计日志唯一 IP\ncat access.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -5\n\`\`\`\n\n## HTML 卡片\n<div style="display: flex; gap: 12px; flex-wrap: wrap;">\n  <div style="background: linear-gradient(145deg, #ffffff10, #00000030); border-radius: 24px; padding: 16px; width: 180px; text-align: center;">\n    <div>存储</div><strong>120GB 可用</strong>\n  </div>\n  <div style="background: linear-gradient(145deg, #8fd8ef20, #00000030); border-radius: 24px; padding: 16px; width: 180px; text-align: center;">\n    <div>网络</div><strong>100Mbps</strong>\n  </div>\n</div>\n\n图像、Bash、HTML 多格式测试，验证页面兼容性。` },
-            6: { title: '引用与列表测试 · 排版验证', date: '2026-05-31', tags: ['排版','引用'], readTime: '2 分钟', time: '22:40', markdown: `> 此处为引用文本，用于测试排版样式。\n\n- 无序列表项一\n- 无序列表项二\n  - 嵌套子项 A\n  - 嵌套子项 B\n\n1. 有序列表项 1\n2. 有序列表项 2\n\n内联代码示例：\`npm install\` 或 \`pip install package\`。\n\n\`\`\`\n// 纯文本代码块\nfunction hello() {\n  console.log("示例测试");\n}\n\`\`\`` }
-        };
-
-        // ---------- 降级渲染器 (不依赖任何外部库，保证永远可用) ----------
-        function safeRenderFallback(markdown) {
-            // 极简转换：只处理基本内联和代码块、标题、图片等，但为了保持可读性，直接用 <pre> 包裹? 不，我们做一个简易但安全的渲染
-            // 为了避免 XSS，先转义 HTML 实体
-            let escaped = markdown.replace(/[&<>]/g, function(m) {
-                if(m === '&') return '&amp;';
-                if(m === '<') return '&lt;';
-                if(m === '>') return '&gt;';
-                return m;
-            });
-            // 处理代码块 ```lang \n code \n ```
-            escaped = escaped.replace(/```(\w*)\n([\s\S]*?)```/g, function(_, lang, code) {
-                return '<pre><code>' + code.replace(/</g, '&lt;') + '</code></pre>';
-            });
-            // 处理行内代码
-            escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
-            // 处理标题
-            escaped = escaped.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-            escaped = escaped.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-            escaped = escaped.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-            // 处理图片
-            escaped = escaped.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width:100%">');
-            // 处理链接
-            escaped = escaped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-            // 粗体/斜体
-            escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-            escaped = escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-            // 段落
-            escaped = escaped.replace(/\n\n/g, '</p><p>');
-            escaped = '<p>' + escaped + '</p>';
-            // 修复多余的 p 标签
-            escaped = escaped.replace(/<p><\/p>/g, '');
-            return escaped;
-        }
-
-        // 尝试加载外部库，但绝不阻塞页面
-        let md = null, hljs = null, DOMPurify = null;
-        let libReady = false;
-        let appStarted = false;
-
-        function loadScript(src, name) {
-            return new Promise((resolve) => {
-                const script = document.createElement('script');
-                script.src = src;
-                script.crossOrigin = 'anonymous';
-                script.onload = () => resolve(true);
-                script.onerror = () => { console.warn(name + ' 加载失败'); resolve(false); };
-                document.head.appendChild(script);
-            });
-        }
-
-        Promise.all([
-            loadScript('https://cdnjs.cloudflare.com/ajax/libs/markdown-it/14.1.0/markdown-it.min.js', 'markdown-it'),
-            loadScript('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js', 'highlight.js'),
-            loadScript('https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js', 'DOMPurify')
-        ]).then(() => {
-            if (window.markdownit && window.hljs && window.DOMPurify) {
-                md = window.markdownit({ html: true, linkify: true, typographer: true, breaks: false,
-                    highlight: function(str, lang) {
-                        if (lang && window.hljs.getLanguage(lang)) {
-                            try {
-                                return '<pre class="hljs"><code>' + window.hljs.highlight(str, { language: lang, ignoreIllegals: true }).value + '</code></pre>';
-                            } catch(e) {}
-                        }
-                        return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
-                    }
+        function tryFinish() {
+            if (bgReady && timeReady) {
+                document.body.classList.add('bg-loaded');
+                requestAnimationFrame(() => {
+                    loader.classList.add('hide');
+                    setTimeout(() => loader?.remove(), 500);
                 });
-                hljs = window.hljs;
-                DOMPurify = window.DOMPurify;
-                libReady = true;
-            } else {
-                console.warn("部分库未成功挂载，使用降级渲染");
             }
-        }).catch(() => console.warn("库加载异常，使用降级渲染")).finally(() => {
-            if (!appStarted) startApp();
+        }
+        bgImg.onload = () => { bgReady = true; tryFinish(); };
+        bgImg.onerror = () => { bgReady = true; tryFinish(); };
+        bgImg.src = 'https://snowblock.top/138936740_p0.webp';
+        if (bgImg.complete) bgReady = true;
+        setTimeout(() => { timeReady = true; tryFinish(); }, MIN_LOAD);
+
+        // ========== 雪花 Canvas ==========
+        const canvas = document.getElementById('snowCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let w, h;
+        function resizeCanvas() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+            particles.forEach(p => {
+                if (p.x > w + 15) p.x = w - 5;
+                if (p.x < -15) p.x = 5;
+                if (p.y > h + 30) p.y = -10;
+            });
+        }
+        function createParticle() {
+            return {
+                x: Math.random() * w,
+                y: Math.random() * h - 20,
+                r: Math.random() * 2.4 + 1.0,
+                speed: Math.random() * 0.6 + 0.2,
+                wind: Math.random() * 0.3 - 0.12,
+                alpha: Math.random() * 0.4 + 0.15
+            };
+        }
+        function initSnow() {
+            particles = Array.from({ length: 48 }, createParticle);
+        }
+        function drawSnow() {
+            ctx.clearRect(0, 0, w, h);
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(255,255,255,${p.alpha})`;
+                ctx.fill();
+                p.y += p.speed;
+                p.x += p.wind;
+                if (p.y > h + 25) particles[i] = createParticle();
+                if (p.x > w + 20) particles[i].x = -15;
+                if (p.x < -20) particles[i].x = w + 10;
+            }
+            while (particles.length < 55) particles.push(createParticle());
+            requestAnimationFrame(drawSnow);
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        initSnow();
+        drawSnow();
+
+        // ========== 等待依赖加载 ==========
+        // 依赖通过 defer 加载，确保 markdown-it, hljs, DOMPurify 可用
+        window.addEventListener('load', () => {
+            if (!window.markdownit || !window.hljs || !window.DOMPurify) {
+                document.body.innerHTML += '<div style="color:white;text-align:center;padding:2rem;">依赖加载失败，请刷新页面</div>';
+                return;
+            }
+            initApp();
         });
 
-        function sanitizeAndRender(markdownStr) {
-            if (libReady && md && DOMPurify) {
-                const raw = md.render(markdownStr);
-                return DOMPurify.sanitize(raw, { ALLOWED_TAGS: ['h1','h2','h3','h4','h5','h6','p','blockquote','ul','ol','li','a','strong','em','code','pre','img','br','hr','table','thead','tbody','tr','th','td','span','div','button','progress','style','input'], ALLOWED_ATTR: ['href','src','alt','class','id','loading','style','type','value','max','onclick'] });
-            } else {
-                return safeRenderFallback(markdownStr);
-            }
-        }
-
-        function getExcerpt(mdText, maxLen=110) {
-            const html = sanitizeAndRender(mdText);
-            const div = document.createElement('div');
-            div.innerHTML = html;
-            const text = (div.textContent || '').replace(/\s+/g, ' ').trim();
-            return text.length > maxLen ? text.slice(0, maxLen) + '…' : text;
-        }
-
-        function enhanceCodeBlocks(container) {
-            if(!container) return;
-            container.querySelectorAll('pre').forEach(pre => {
-                if(pre.parentElement?.classList.contains('code-block-wrapper')) return;
-                const wrapper = document.createElement('div');
-                wrapper.className = 'code-block-wrapper';
-                pre.parentNode.insertBefore(wrapper, pre);
-                wrapper.appendChild(pre);
-                const btn = document.createElement('button');
-                btn.className = 'copy-btn';
-                btn.textContent = '复制';
-                btn.onclick = async (e) => {
-                    e.stopPropagation();
-                    const code = pre.innerText;
-                    try {
-                        await navigator.clipboard.writeText(code);
-                        btn.textContent = '已复制 ✓';
-                        btn.classList.add('copied');
-                        setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 2000);
-                    } catch { btn.textContent = '失败'; setTimeout(() => btn.textContent = '复制', 1500); }
-                };
-                wrapper.appendChild(btn);
-            });
-            container.querySelectorAll('table').forEach(table => {
-                if(!table.closest('.table-responsive')) {
-                    const wrap = document.createElement('div');
-                    wrap.className = 'table-responsive';
-                    table.parentNode.insertBefore(wrap, table);
-                    wrap.appendChild(table);
+        function initApp() {
+            // ========== Markdown 解析器配置 ==========
+            const md = window.markdownit({
+                html: true,          // 允许内嵌 HTML（但会经过 DOMPurify 净化）
+                linkify: true,
+                typographer: true,
+                breaks: false,
+                highlight: function (str, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        try {
+                            return '<pre class="hljs"><code>' +
+                                   hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                                   '</code></pre>';
+                        } catch (__) {}
+                    }
+                    return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
                 }
             });
-        }
 
-        function startApp() {
-            if(appStarted) return;
-            appStarted = true;
+            // DOMPurify 白名单配置
+            const purifyConfig = {
+                ALLOWED_TAGS: ['h2','h3','h4','h5','h6','p','blockquote','ul','ol','li','a','strong','em','code','pre','img','br','hr','table','thead','tbody','tr','th','td','span','div','button','progress','style','input'],
+                ALLOWED_ATTR: ['href','src','alt','class','id','loading','style','type','value','max','onclick'],
+                ALLOW_DATA_ATTR: false,
+                ALLOW_UNKNOWN_PROTOCOLS: false
+            };
+
+            // 净化函数
+            function safeRender(markdown) {
+                const rawHtml = md.render(markdown);
+                return DOMPurify.sanitize(rawHtml, purifyConfig);
+            }
+
+            // ========== 文章数据 (Markdown) ==========
+            const posts = {
+                1: {
+                    title: '图床测试 · 静态资源占位',
+                    date: '2026-06-05',
+                    tags: ['测试','图床'],
+                    readTime: '3 分钟',
+                    time: '09:30',
+                    markdown: `
+测试图片加载和样式兼容性：
+
+![示例图片](https://picsum.photos/id/104/800/450)
+
+此图片仅用于验证页面布局和加载性能。
+
+> 编号 1
+                    `
+                },
+                2: {
+                    title: 'Bash 命令示例 · 系统检查',
+                    date: '2026-06-04',
+                    tags: ['Bash','终端'],
+                    readTime: '5 分钟',
+                    time: '14:20',
+                    markdown: `
+显示系统资源和状态：
+
+\`\`\`bash
+#!/bin/bash
+# 显示磁盘使用情况
+df -h | grep -E "^(/dev/)"
+# 内存使用
+free -m
+# 系统负载
+uptime
+\`\`\`
+
+批量处理文件：
+
+\`\`\`bash
+for file in *.txt; do
+  mv "$file" "${file%.txt}.bak"
+done
+\`\`\`
+                    `
+                },
+                3: {
+                    title: 'HTML 渲染 · UI 组件测试',
+                    date: '2026-06-03',
+                    tags: ['HTML','UI'],
+                    readTime: '4 分钟',
+                    time: '11:05',
+                    markdown: `
+HTML/CSS 元素测试：
+
+<div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+  <div class="status-badge" style="background:#1e2a32cc; padding:4px 12px; border-radius:40px; font-family:monospace; color:#b0f0cc; font-size:0.75rem;">服务状态: 正常</div>
+  <div class="status-badge" style="background:#1e2a32cc; padding:4px 12px; border-radius:40px; font-family:monospace; color:#b0f0cc; font-size:0.75rem;">响应时间: 24ms</div>
+</div>
+
+<div style="background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.2)); border-radius: 1rem; padding: 0.8rem; margin: 0.5rem 0;">
+  <strong>进度条示例</strong><br>
+  <progress value="60" max="100" style="width: 100%; height: 8px; border-radius: 20px;"></progress>
+  <p style="font-size:0.8rem; margin-top:8px;">完成度 60%</p>
+</div>
+
+<button style="background: #8fd8ef33; border: 1px solid #8fd8ef; border-radius: 60px; padding: 6px 16px; color: white; cursor: pointer; backdrop-filter: blur(4px);" onclick="alert('组件测试通过')">点击测试</button>
+                    `
+                },
+                4: {
+                    title: '数据表格示例 · 性能对比',
+                    date: '2026-06-02',
+                    tags: ['表格','数据'],
+                    readTime: '3 分钟',
+                    time: '16:30',
+                    markdown: `
+## 性能数据示例
+
+| 方案   | 吞吐量      | 延迟 | 成功率  |
+|--------|------------|------|--------|
+| 方案 A | 12500 req/s | 12ms | 99.95% |
+| 方案 B | 9800 req/s  | 18ms | 99.92% |
+| 方案 C | 15200 req/s | 9ms  | 99.98% |
+
+数据仅用于演示表格样式，无实际性能含义。
+                    `
+                },
+                5: {
+                    title: '综合测试 · 多格式示例',
+                    date: '2026-06-01',
+                    tags: ['测试','全格式'],
+                    readTime: '6 分钟',
+                    time: '20:15',
+                    markdown: `
+## 图像占位
+![示例图](https://picsum.photos/id/26/800/400)
+
+## Bash 示例
+\`\`\`bash
+# 统计日志唯一 IP
+cat access.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -5
+\`\`\`
+
+## HTML 卡片
+<div style="display: flex; gap: 12px; flex-wrap: wrap;">
+  <div style="background: linear-gradient(145deg, #ffffff10, #00000030); border-radius: 24px; padding: 16px; width: 180px; text-align: center;">
+    <div>存储</div><strong>120GB 可用</strong>
+  </div>
+  <div style="background: linear-gradient(145deg, #8fd8ef20, #00000030); border-radius: 24px; padding: 16px; width: 180px; text-align: center;">
+    <div>网络</div><strong>100Mbps</strong>
+  </div>
+</div>
+
+图像、Bash、HTML 多格式测试，验证页面兼容性。
+                    `
+                },
+                6: {
+                    title: '引用与列表测试 · 排版验证',
+                    date: '2026-05-31',
+                    tags: ['排版','引用'],
+                    readTime: '2 分钟',
+                    time: '22:40',
+                    markdown: `
+> 此处为引用文本，用于测试排版样式。
+
+- 无序列表项一
+- 无序列表项二
+  - 嵌套子项 A
+  - 嵌套子项 B
+
+1. 有序列表项 1
+2. 有序列表项 2
+
+内联代码示例：\`npm install\` 或 \`pip install package\`。
+
+\`\`\`
+// 纯文本代码块
+function hello() {
+  console.log("示例测试");
+}
+\`\`\`
+                    `
+                }
+            };
+
+            // ========== 智能摘要提取 ==========
+            function getTextExcerpt(mdText, maxLen = 120) {
+                const html = safeRender(mdText);
+                const div = document.createElement('div');
+                div.innerHTML = html;
+                const text = (div.textContent || '').replace(/\s+/g, ' ').trim();
+                return text.length > maxLen ? text.slice(0, maxLen) + '…' : text;
+            }
+
+            // ========== DOM 元素 ==========
             const postContainer = document.getElementById('dynamicPostList');
             const listView = document.getElementById('postList');
             const articleView = document.getElementById('articleView');
@@ -543,58 +653,131 @@
             const articleContent = document.getElementById('articleContent');
             const backLink = document.getElementById('backToList');
 
-            function renderList() {
+            // ========== 代码复制按钮 & 表格包装 ==========
+            function enhanceContent(container) {
+                // 代码复制按钮
+                container.querySelectorAll('pre').forEach(pre => {
+                    if (pre.parentElement?.classList.contains('code-block-wrapper')) return;
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'code-block-wrapper';
+                    pre.parentNode.insertBefore(wrapper, pre);
+                    wrapper.appendChild(pre);
+                    const btn = document.createElement('button');
+                    btn.className = 'copy-btn';
+                    btn.textContent = '复制';
+                    btn.setAttribute('aria-label', '复制代码片段');
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const code = pre.innerText;
+                        try {
+                            await navigator.clipboard.writeText(code);
+                            btn.textContent = '已复制 ✓';
+                            btn.classList.add('copied');
+                            setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 2000);
+                        } catch {
+                            btn.textContent = '失败';
+                            setTimeout(() => btn.textContent = '复制', 1500);
+                        }
+                    });
+                    wrapper.appendChild(btn);
+                });
+
+                // 表格响应式容器
+                container.querySelectorAll('table').forEach(table => {
+                    if (!table.closest('.table-responsive')) {
+                        const wrap = document.createElement('div');
+                        wrap.className = 'table-responsive';
+                        table.parentNode.insertBefore(wrap, table);
+                        wrap.appendChild(table);
+                    }
+                });
+            }
+
+            // ========== 渲染文章列表 (事件委托) ==========
+            function renderPostList() {
                 let html = '';
                 Object.entries(posts).forEach(([id, p]) => {
-                    const tagHtml = p.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
-                    const excerpt = getExcerpt(p.markdown, 110);
-                    html += `<div class="post-card" data-id="${id}" tabindex="0">
-                                <div class="post-body">
-                                    <div class="post-meta"><span>${p.date}</span> ${tagHtml} <span>📖 ${p.readTime}</span></div>
-                                    <h2 class="post-title">${escapeHtml(p.title)}</h2>
-                                    <p class="post-excerpt">${escapeHtml(excerpt)}</p>
-                                    <div class="post-footer"><a href="#" class="read-more" data-id="${id}">阅读全文 →</a><span class="post-date">${p.time}</span></div>
+                    const tagHtml = p.tags.map(t => {
+                        let cls = 'tag';
+                        if (t === 'Bash' || t === '终端') cls += ' bash';
+                        else if (['表格','数据'].includes(t)) cls += ' test';
+                        else cls += ' tech';
+                        return `<span class="${cls}">${t}</span>`;
+                    }).join('');
+                    const excerpt = getTextExcerpt(p.markdown, 110);
+                    html += `
+                        <div class="post-card" data-post-id="${id}" tabindex="0" role="button" aria-label="阅读文章：${escapeHtml(p.title)}">
+                            <div class="post-body">
+                                <div class="post-meta">
+                                    <span>${p.date}</span> ${tagHtml} <span>📖 ${p.readTime}</span>
                                 </div>
-                            </div>`;
+                                <h2 class="post-title">${escapeHtml(p.title)}</h2>
+                                <p class="post-excerpt">${escapeHtml(excerpt)}</p>
+                                <div class="post-footer">
+                                    <a href="#" class="read-more" data-post="${id}" aria-label="阅读全文">阅读全文 →</a>
+                                    <span class="post-date">${p.time}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 });
-                if(postContainer) postContainer.innerHTML = html;
-            }
-            function escapeHtml(str) { return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
+                postContainer.innerHTML = html;
 
-            function showArticle(id) {
-                const post = posts[id];
-                if(!post) return;
+                // 事件委托 (点击与键盘)
+                postContainer.addEventListener('click', handlePostClick);
+                postContainer.addEventListener('keydown', handlePostKeydown);
+            }
+
+            function escapeHtml(str) {
+                return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]);
+            }
+
+            function handlePostClick(e) {
+                const card = e.target.closest('.post-card');
+                if (!card) return;
+                if (e.target.closest('.read-more')) {
+                    e.preventDefault();
+                }
+                const id = card.dataset.postId;
+                if (id) showArticle(id);
+            }
+
+            function handlePostKeydown(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    const card = e.target.closest('.post-card');
+                    if (card) {
+                        e.preventDefault();
+                        const id = card.dataset.postId;
+                        if (id) showArticle(id);
+                    }
+                }
+            }
+
+            // ========== 显示文章详情 ==========
+            function showArticle(postId) {
+                const post = posts[postId];
+                if (!post) return;
                 articleTitle.textContent = post.title;
-                articleMeta.innerHTML = `${post.date} · ${post.time} · ${post.readTime} ${post.tags.map(t => `<span class="tag">${t}</span>`).join(' ')}`;
-                articleContent.innerHTML = sanitizeAndRender(post.markdown);
-                enhanceCodeBlocks(articleContent);
+                const tagsHtml = post.tags.map(t => `<span class="tag ${t==='Bash'?'bash':'tech'}">${t}</span>`).join(' ');
+                articleMeta.innerHTML = `${post.date} · ${post.time} · ${post.readTime} ${tagsHtml}`;
+                const cleanHtml = safeRender(post.markdown);
+                articleContent.innerHTML = cleanHtml;
+                enhanceContent(articleContent);
                 listView.style.display = 'none';
                 articleView.style.display = 'block';
-                window.scrollTo(0,0);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            renderList();
-            postContainer?.addEventListener('click', (e) => {
-                const card = e.target.closest('.post-card');
-                if(!card) return;
-                if(e.target.closest('.read-more')) e.preventDefault();
-                const id = card.dataset.id;
-                if(id) showArticle(id);
-            });
-            backLink?.addEventListener('click', (e) => {
+            backLink.addEventListener('click', (e) => {
                 e.preventDefault();
                 listView.style.display = 'block';
                 articleView.style.display = 'none';
-                window.scrollTo(0,0);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
-            hideLoader(); // 内容已显示，立即隐藏加载屏
-        }
 
-        // 如果依赖加载很快，但 startApp 可能还没调用？确保最多 1 秒后启动 app (兜底)
-        setTimeout(() => { if(!appStarted) startApp(); }, 1200);
-        // 如果 DOM 已就绪且尚未启动，也尝试启动
-        if(document.readyState !== 'loading') { if(!appStarted) startApp(); }
-        else { document.addEventListener('DOMContentLoaded', () => { if(!appStarted) startApp(); }); }
+            // ========== 启动 ==========
+            renderPostList();
+        }
     })();
 </script>
 </body>
