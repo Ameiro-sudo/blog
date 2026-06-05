@@ -1,7 +1,7 @@
 # 更新日志
 date: 2026-06-05
 tags: 更新, 日志
-time: 23:55
+time: 23:00
 readTime: 2 分钟
 ---
 ## 2026-06-05
@@ -35,7 +35,7 @@ readTime: 2 分钟
 - 移除 Google Analytics 和跨站追踪参数
 - 移除 Cache-Control 和 service worker 缓存
 - 新增 `deploy.sh` 一键推送脚本
-- 整理文章编号为连续（post-1 ~ post-5）
+- 整理文章编号为连续（post-1 ~ post-6）
 - 修复代码块底色不一致
 - 修复文章元数据被渲染到正文的问题
 - 修复 Toast 组件 ID 为空导致复制无反馈
