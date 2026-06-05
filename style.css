@@ -152,7 +152,9 @@
 .post-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 25px 40px -18px rgba(0,0,0,0.5);
-  background: rgba(255,255,255,0.18);
+  background:
+    linear-gradient(rgba(0,0,0,0.28), rgba(0,0,0,0.28)),
+    rgba(255,255,255,0.18);
 }
 .post-body { padding: 1.4rem 1.8rem; }
 .post-meta {
@@ -187,8 +189,6 @@
   margin-top: 1rem; padding-top: 0.7rem;
   border-top: 1px solid rgba(255,255,255,0.1);
 }
-.read-more { color: var(--color-accent); font-size: 0.8rem; font-family: var(--font-mono); text-decoration: none; transition: color 0.25s; }
-.read-more:hover { color: white; }
 .post-date { color: rgba(210,235,250,0.6); font-size: 0.7rem; font-family: var(--font-mono); }
 
 /* ===== 分页 ===== */
@@ -373,7 +373,7 @@
   .top-bar { --glass-header-bg: rgba(0,15,25,0.70); }
   .page-header { background: rgba(0,18,30,0.50); }
   .post-card { background: rgba(0,18,30,0.50); }
-  .post-card:hover { background: rgba(255,255,255,0.08); }
+  .post-card:hover { background: rgba(20,40,60,0.55); }
   .article-card { background: rgba(0,18,30,0.50); }
   .search-input { background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.08); }
   .search-input:focus { background: rgba(0,0,0,0.35); }
@@ -385,7 +385,7 @@
   .profile-links a { background: rgba(0,0,0,0.20); }
   .tag-filter { background: rgba(255,255,255,0.04); }
   .archive-card { background: rgba(0,18,30,0.50); }
-}
+  .post-card, .article-card, .archive-card, .page-header { border-color: rgba(255,255,255,0.06); }
 /* ===== Toast ===== */
 .toast {
     position: fixed;
@@ -423,7 +423,7 @@
   body { background: #fff !important; padding: 1rem; }
   #loader, #snowCanvas, .search-bar, .tag-filters, .back-link, .copy-btn { display: none; }
   .top-bar { background: #f5f5f5; backdrop-filter: none; border-color: #ddd; }
-  .page-header { background: #f5f5f5; backdrop-filter: none; border: 1px solid #ddd; box-shadow: none; }
+  .page-header { background: #f5f5f5 !important; backdrop-filter: none; border: 1px solid #ddd; box-shadow: none; }
   .profile-wrap { background: #fafafa !important; backdrop-filter: none; border: 1px solid #ddd; }
   .profile-wrap::before { display: none; }
   .profile-divider { background: #aaa; }
