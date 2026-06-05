@@ -298,7 +298,7 @@
         html += '<span class="tag-filter ' + active + '" data-tag="' + t + '">' + t + '</span>'
       })
       if (activeTag) {
-        html += '<span class="tag-filter active" data-tag="">✕ 清除筛选</span>'
+        html += '<span class="tag-filter active" data-tag="">x 清除筛选</span>'
       }
       tagFilters.innerHTML = html
       tagFilters.querySelectorAll('.tag-filter').forEach(function (el) {
@@ -417,7 +417,7 @@
           e.stopPropagation()
           try {
             navigator.clipboard.writeText(pre.innerText).then(function () {
-              btn.textContent = '已复制 ✓'
+              btn.textContent = '已复制 V'
               btn.classList.add('copied')
               setTimeout(function () { btn.textContent = '复制'; btn.classList.remove('copied') }, 2000)
             })
