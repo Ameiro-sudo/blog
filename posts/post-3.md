@@ -26,36 +26,32 @@ readTime: 3 分钟
 - 多个标签用英文逗号分隔
 - `---` 后面是正文
 
-## 构建索引
+## 一键推送（推荐）
+
+写完 `.md` 文件后，直接跑：
 
 ```bash
-node build.js
+./deploy.sh
 ```
 
-这个脚本会扫描 `posts/` 目录下所有 `.md` 文件，提取元数据，生成 `posts/index.json`。
+脚本会自动：构建索引 → `git add` → `git commit` → `git push`。
 
-## 推送上线
+也可以加自定义提交信息：
 
 ```bash
+./deploy.sh "add: Rust 入门指南"
+```
+
+## 手动推送
+
+```bash
+node build.js          # 构建索引
 git add -A
-git commit -m "add: 新文章标题"
-git push
+git commit -m "add: 文章标题"
+git push               # 推送上线
 ```
 
 推送后 GitHub Pages 会自动部署，等一两分钟就能看到。
-
-## 完整流程示例
-
-```bash
-# 1. 写文章
-vim posts/post-5.md
-
-# 2. 构建
-node build.js
-
-# 3. 提交推送
-git add -A && git commit -m "add: 新文章" && git push
-```
 
 ## 本地预览
 
