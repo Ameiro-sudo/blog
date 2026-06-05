@@ -98,10 +98,9 @@
       profileCard.innerHTML =
         '<div class="profile-wrap">' +
         (profileConfig.avatar ? '<img class="profile-avatar" src="' + profileConfig.avatar + '" alt="avatar">' : '') +
-        '<div class="profile-info">' +
         '<div class="profile-name">' + (profileConfig.name || '') + '</div>' +
+        '<div class="profile-divider"></div>' +
         (profileConfig.bio ? '<div class="profile-bio">' + profileConfig.bio + '</div>' : '') +
-        '</div>' +
         (links ? '<div class="profile-links">' + links + '</div>' : '') +
         '</div>'
     }
