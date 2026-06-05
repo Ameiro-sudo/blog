@@ -29,15 +29,20 @@
 /* ===== 简介卡片 ===== */
 #profileCard { margin-bottom: 2rem; display: none; }
 .profile-wrap {
-  background:
-    linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
-    var(--glass-bg);
+  position: relative;
+  background: var(--glass-bg);
   backdrop-filter: blur(14px) saturate(1.2);
   border-radius: var(--radius-card);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-item);
   padding: 1.2rem 1.8rem;
   display: flex; align-items: center; gap: 1rem;
+}
+.profile-wrap::before {
+  content: ''; position: absolute; inset: -1px;
+  border-radius: var(--radius-card);
+  background: rgba(0,0,0,0.35);
+  z-index: -1; pointer-events: none;
 }
 .profile-avatar {
   width: 56px; height: 56px; border-radius: 50%;
@@ -369,6 +374,7 @@
   .page-btn:hover { background: rgba(255,255,255,0.08); }
   .page-btn.active { background: rgba(143,216,239,0.12); }
   .profile-wrap { background: rgba(0,18,30,0.45); }
+  .profile-wrap::before { background: rgba(0,0,0,0.35); }
   .profile-links a { background: rgba(0,0,0,0.20); }
   .tag-filter { background: rgba(255,255,255,0.04); }
   .archive-card { background: rgba(0,18,30,0.50); }
@@ -412,6 +418,7 @@
   .top-bar { background: #f5f5f5; backdrop-filter: none; border-color: #ddd; }
   .page-header { background: #f5f5f5; backdrop-filter: none; border: 1px solid #ddd; box-shadow: none; }
   .profile-wrap { background: #fafafa !important; backdrop-filter: none; border: 1px solid #ddd; }
+  .profile-wrap::before { display: none; }
   .site-name { background: none; color: #0b2b3b; }
   .nav-links a { color: #555; }
   .article-card, .post-card { background: #fafafa; backdrop-filter: none; border: 1px solid #ddd; box-shadow: none; }
@@ -423,8 +430,7 @@
   .article-content pre { background: #f5f5f5; border-color: #ddd; }
   .post-title { color: #0b2b3b; text-shadow: none; }
   .post-excerpt { color: #555; }
-  .profile-wrap { background: #f5f5f5; }
-  .archive-card { background: #fafafa; border: 1px solid #ddd; }
+  .archive-card { background: #fafafa !important; border: 1px solid #ddd; }
   .archive-year-header { color: #0b2b3b; }
   .archive-item-title { color: #333; }
 }
