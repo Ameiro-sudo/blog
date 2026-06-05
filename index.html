@@ -38,21 +38,21 @@
 
     <style>
         :root {
-            --bg-gradient: linear-gradient(160deg, #8DB8D8 0%, #C5DCEB 50%, #E8F0F5 100%);
             --color-bg-deep: #0b2b3b;
             --color-accent: #8fd8ef;
             --glass-bg: rgba(255,255,255,0.12);
             --glass-border: rgba(255,255,255,0.20);
+            --glass-hover-bg: rgba(255,255,255,0.22);
             --glass-header-bg: rgba(11,43,59,0.55);
             --shadow-card: 0 30px 60px -16px rgba(0,0,0,0.45);
-            --shadow-item: 0 8px 20px -8px rgba(0,0,0,0.2);
-            --radius-card: 2rem;
-            --radius-item: 1rem;
+            --shadow-item: 0 4px 16px -6px rgba(0,0,0,0.15);
+            --shadow-toast: 0 8px 30px rgba(0,0,0,0.35);
+            --radius-card: 3rem;
+            --radius-item: 1.5rem;
             --font-mono: 'SF Mono','Cascadia Code','Fira Code','Consolas',monospace;
-            --font-sans: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            --font-sans: 'Segoe UI',Roboto,'Helvetica Neue',system-ui,-apple-system,sans-serif;
             --font-title: 'ZCOOL KuaiLe', cursive, var(--font-sans);
-            --body-pad: 2rem;
-            --transition: 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            --body-pad: clamp(1.2rem, 5.88vw, 2.5rem);
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -74,8 +74,7 @@
             content: '';
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.35);
-            backdrop-filter: blur(1px);
+            background: rgba(255,255,255,0.08);
             pointer-events: none;
             z-index: 0;
         }
@@ -89,32 +88,99 @@
             transition: opacity 1.5s ease 0.5s;
         }
         body.bg-loaded #snowCanvas { opacity: 1; }
+        #loader.hidden ~ #snowCanvas { opacity: 1; }
 
-        /* ---------- 加载器（极简，2 秒强制消失） ---------- */
+        /* ===== 加载层（导航页统一风格） ===== */
         #loader {
             position: fixed;
             inset: 0;
             background: linear-gradient(135deg, #d4eaf7, #b8d8ee, #d4eaf7);
             background-size: 200% 200%;
             animation: loaderBgShift 6s ease infinite;
+            backdrop-filter: blur(6px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 1.2rem;
             z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            transition: opacity 0.5s ease, visibility 0.5s ease, transform 0.5s ease;
         }
 
         @keyframes loaderBgShift {
-            0%,100% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
+            0%   { background-position: 0% 0%; }
+            50%  { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
         }
 
         #loader.hidden {
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
+            transform: scale(1.05);
+        }
+
+        .loader-crystal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .crystal-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .crystal-svg {
+            width: 90px;
+            height: 90px;
+            animation: crystalFloat 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 12px rgba(143,216,239,0.3));
+        }
+
+        @keyframes crystalFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25%      { transform: translateY(-8px) rotate(3deg); }
+            75%      { transform: translateY(4px) rotate(-2deg); }
+        }
+
+        .crystal-svg .main-line {
+            stroke-dasharray: 360;
+            stroke-dashoffset: 360;
+            animation: drawCrystal 3.5s ease-in-out infinite alternate;
+        }
+
+        .crystal-svg .inner-line {
+            stroke-dasharray: 240;
+            stroke-dashoffset: 240;
+            animation: drawCrystal 3.5s ease-in-out 0.6s infinite alternate;
+        }
+
+        .crystal-svg .core-line {
+            stroke-dasharray: 80;
+            stroke-dashoffset: 80;
+            animation: drawCrystal 2.5s ease-in-out 1.2s infinite alternate;
+        }
+
+        @keyframes drawCrystal {
+            0%   { stroke-dashoffset: 360; }
+            60%  { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: 0; }
+        }
+
+        .crystal-glow {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(143,216,239,0.15), transparent 70%);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50%      { opacity: 0.8; transform: scale(1.2); }
         }
 
         .loader-text-frost {
@@ -122,19 +188,22 @@
             font-size: 1.3rem;
             background: linear-gradient(135deg, #8fd8ef, #c0f0ff, #ffe6b0, #8fd8ef);
             background-size: 300% 300%;
-            -webkit-background-clip: text; background-clip: text;
+            background-clip: text;
+            -webkit-background-clip: text;
             color: transparent;
             animation: frostShift 4s ease infinite;
         }
 
         @keyframes frostShift {
-            0%,100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .loader-dots {
             display: flex;
             gap: 6px;
+            margin-top: 0.2rem;
         }
 
         .loader-dots span {
@@ -148,7 +217,7 @@
 
         @keyframes dotBounce {
             0%,100% { transform: translateY(0); opacity: 0.3; }
-            50% { transform: translateY(-8px); opacity: 1; }
+            50%      { transform: translateY(-8px); opacity: 1; }
         }
 
         /* ---------- 主内容区 ---------- */
@@ -321,9 +390,131 @@
         }
         .back-link:hover { color: var(--color-accent); }
 
+        /* ===== 搜索栏 ===== */
+        .search-bar {
+            margin-top: 1.2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 480px;
+            padding: 0.7rem 1.2rem;
+            background: rgba(255,255,255,0.10);
+            backdrop-filter: blur(8px) saturate(1.2);
+            -webkit-backdrop-filter: blur(8px) saturate(1.2);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-item);
+            color: #fff;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            outline: none;
+            transition: border var(--transition), background var(--transition);
+        }
+
+        .search-input::placeholder { color: rgba(200,235,250,0.50); }
+        .search-input:focus {
+            border-color: var(--color-accent);
+            background: rgba(255,255,255,0.16);
+        }
+
+        /* ===== 分页 ===== */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.6rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(8px) saturate(1.2);
+            -webkit-backdrop-filter: blur(8px) saturate(1.2);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: var(--radius-item);
+            color: rgba(220,240,255,0.80);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background var(--transition), color var(--transition);
+            outline: none;
+        }
+
+        .page-btn:hover { background: var(--glass-hover-bg); color: #fff; }
+        .page-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+        .page-btn.active {
+            background: rgba(143,216,239,0.20);
+            color: var(--color-accent);
+            border-color: rgba(143,216,239,0.30);
+        }
+        .page-btn:disabled { opacity: 0.35; cursor: default; }
+
+        .page-info {
+            color: rgba(200,235,250,0.50);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0 0.3rem;
+        }
+
         .hljs { background: transparent !important; }
 
-        @media (max-width: 760px) {
+        /* ===== 暗色模式 ===== */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background:
+                    url('https://snowblock.top/138936740_p0.webp') center / cover no-repeat fixed,
+                    linear-gradient(160deg, #0b1a24, #162b36);
+            }
+
+            body::before {
+                background: rgba(0,0,0,0.25);
+            }
+
+            #loader {
+                background: linear-gradient(135deg, #0d1f2b, #142a38, #0d1f2b);
+                background-size: 200% 200%;
+            }
+
+            .top-bar {
+                --glass-header-bg: rgba(0, 15, 25, 0.70);
+            }
+
+            .post-card { background: rgba(0, 18, 30, 0.50); }
+            .post-card:hover { background: rgba(255,255,255,0.08); }
+            .article-card { background: rgba(0, 18, 30, 0.50); }
+            .search-input { background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.08); }
+            .search-input:focus { background: rgba(0,0,0,0.35); }
+            .page-btn { background: rgba(0,0,0,0.20); border-color: rgba(255,255,255,0.06); }
+            .page-btn:hover { background: rgba(255,255,255,0.08); }
+            .page-btn.active { background: rgba(143,216,239,0.12); }
+        }
+
+        /* ===== 打印 ===== */
+        @media print {
+            body::before { display: none; }
+            body { background: #fff !important; padding: 1rem; }
+            #loader { display: none; }
+            #snowCanvas { display: none; }
+            .top-bar { background: #f5f5f5; backdrop-filter: none; border-color: #ddd; }
+            .top-bar .site-name { background: none; color: #0b2b3b; }
+            .nav-links a { color: #555; }
+            .article-card { background: #fafafa; backdrop-filter: none; border: 1px solid #ddd; box-shadow: none; }
+            .article-title { color: #0b2b3b; text-shadow: none; }
+            .article-content { color: #333; }
+            .article-content code { background: #f0f0f0; color: #333; }
+            .article-content a { color: #1a73e8; }
+            .back-link, .search-bar { display: none; }
+            .article-content pre { background: #f5f5f5; border-color: #ddd; }
+            .copy-btn { display: none; }
+            .post-card { background: #fafafa; backdrop-filter: none; border: 1px solid #ddd; box-shadow: none; }
+            .post-card:hover { transform: none; }
+            .post-title { color: #0b2b3b; text-shadow: none; }
+            .post-excerpt { color: #555; }
+        }
             :root { --body-pad: 1rem; }
             .top-bar { padding: 0.6rem 1.2rem; }
             .post-body { padding: 1rem 1.2rem; }
@@ -344,11 +535,54 @@
 </head>
 <body>
 
-<!-- ===== 加载器（2 秒后自动消失） ===== -->
+<!-- ===== 加载层 ===== -->
 <div id="loader">
-    <div class="loader-text-frost">❄️ 正在连接雪境</div>
-    <div class="loader-dots">
-        <span></span><span></span><span></span>
+    <div class="loader-crystal">
+        <div class="crystal-wrapper">
+            <div class="crystal-glow"></div>
+            <svg class="crystal-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path class="main-line" stroke="#8fd8ef" stroke-width="2.2" stroke-linecap="round"
+                      fill="none"
+                      d="M50 5 L50 95
+                         M50 5 L75 25 L50 50
+                         M50 5 L25 25 L50 50
+                         M50 95 L75 75 L50 50
+                         M50 95 L25 75 L50 50
+                         M50 50 L95 50
+                         M75 25 L95 50
+                         M25 25 L5 50
+                         M75 75 L95 50
+                         M25 75 L5 50" />
+                <path class="inner-line" stroke="#c0f0ff" stroke-width="1.4" stroke-linecap="round"
+                      fill="none"
+                      d="M50 15 L50 85
+                         M50 15 L65 30 L50 50
+                         M50 15 L35 30 L50 50
+                         M50 85 L65 70 L50 50
+                         M50 85 L35 70 L50 50
+                         M50 50 L85 50
+                         M65 30 L85 50
+                         M35 30 L15 50
+                         M65 70 L85 50
+                         M35 70 L15 50" />
+                <path class="core-line" stroke="#ffe6b0" stroke-width="1.8" stroke-linecap="round"
+                      fill="none"
+                      d="M50 38 L50 62
+                         M50 38 L57 44 L50 50
+                         M50 38 L43 44 L50 50
+                         M50 62 L57 56 L50 50
+                         M50 62 L43 56 L50 50
+                         M50 50 L62 50
+                         M57 44 L62 50
+                         M43 44 L38 50
+                         M57 56 L62 50
+                         M43 56 L38 50" />
+            </svg>
+        </div>
+        <div class="loader-text-frost">❄️ 正在连接雪境</div>
+        <div class="loader-dots">
+            <span></span><span></span><span></span>
+        </div>
     </div>
 </div>
 
@@ -371,10 +605,14 @@
             <span style="color:rgba(200,235,250,0.3);margin:0 6px;">·</span>
             技术碎片 · 测试合集 · 代码光影
         </p>
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 搜索文章标题、标签或内容..." aria-label="搜索文章">
+        </div>
     </div>
 
     <div id="postList">
         <div id="dynamicPostList" class="post-list"></div>
+        <div class="pagination" id="pagination"></div>
     </div>
 
     <div id="articleView" style="display:none;">
@@ -473,14 +711,19 @@
             }
 
             const postContainer = document.getElementById('dynamicPostList');
+            const paginationEl = document.getElementById('pagination');
             const listView = document.getElementById('postList');
             const articleView = document.getElementById('articleView');
             const articleTitle = document.getElementById('articleTitle');
             const articleMeta = document.getElementById('articleMeta');
             const articleContent = document.getElementById('articleContent');
             const backLink = document.getElementById('backToList');
+            const searchInput = document.getElementById('searchInput');
 
             let postsMeta = [];
+            let allExcerpts = {};
+            let currentPage = 1;
+            const PER_PAGE = 5;
 
             function enhance(container) {
                 container.querySelectorAll('pre').forEach(pre => {
@@ -515,9 +758,76 @@
                 });
             }
 
-            function renderList() {
+            function filterPosts(query) {
+                if (!query) return postsMeta;
+                const q = query.toLowerCase();
+                return postsMeta.filter(p => {
+                    if (p.title.toLowerCase().includes(q)) return true;
+                    if (p.tags.some(t => t.toLowerCase().includes(q))) return true;
+                    if (p.date.toLowerCase().includes(q)) return true;
+                    return false;
+                });
+            }
+
+            function getPageCount(filtered) {
+                return Math.ceil(filtered.length / PER_PAGE) || 1;
+            }
+
+            function getPagePosts(filtered, page) {
+                const start = (page - 1) * PER_PAGE;
+                return filtered.slice(start, start + PER_PAGE);
+            }
+
+            function renderPagination(filtered, current) {
+                const total = getPageCount(filtered);
                 let html = '';
-                postsMeta.forEach(p => {
+
+                if (total <= 1) { paginationEl.innerHTML = ''; return; }
+
+                const prevDisabled = current <= 1 ? 'disabled' : '';
+                const nextDisabled = current >= total ? 'disabled' : '';
+
+                html += `<button class="page-btn" data-page="${current - 1}" ${prevDisabled}>← 上一页</button>`;
+
+                const range = 2;
+                let startPage = Math.max(1, current - range);
+                let endPage = Math.min(total, current + range);
+
+                if (startPage > 1) {
+                    html += `<button class="page-btn" data-page="1">1</button>`;
+                    if (startPage > 2) html += `<span class="page-info">…</span>`;
+                }
+                for (let i = startPage; i <= endPage; i++) {
+                    const active = i === current ? 'active' : '';
+                    html += `<button class="page-btn ${active}" data-page="${i}">${i}</button>`;
+                }
+                if (endPage < total) {
+                    if (endPage < total - 1) html += `<span class="page-info">…</span>`;
+                    html += `<button class="page-btn" data-page="${total}">${total}</button>`;
+                }
+
+                html += `<button class="page-btn" data-page="${current + 1}" ${nextDisabled}>下一页 →</button>`;
+
+                paginationEl.innerHTML = html;
+
+                paginationEl.querySelectorAll('.page-btn:not([disabled])').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const page = parseInt(btn.dataset.page);
+                        if (page && page !== current) {
+                            currentPage = page;
+                            renderFiltered(filterPosts(searchInput.value));
+                        }
+                    });
+                });
+            }
+
+            function renderFiltered(filtered) {
+                const page = Math.min(currentPage, getPageCount(filtered));
+                currentPage = page;
+                const posts = getPagePosts(filtered, page);
+
+                let html = '';
+                posts.forEach(p => {
                     const tags = p.tags.map(t => {
                         let cls = 'tag';
                         if (t === 'Bash' || t === '终端') cls += ' bash';
@@ -525,23 +835,46 @@
                         else cls += ' tech';
                         return `<span class="${cls}">${t}</span>`;
                     }).join('');
+                    const excerpt = allExcerpts[p.id] || '';
                     html += `<div class="post-card" data-post-id="${p.id}" tabindex="0" role="button">
                         <div class="post-body">
                             <div class="post-meta"><span>${p.date}</span> ${tags} <span>📖 ${p.readTime}</span></div>
                             <h2 class="post-title">${p.title}</h2>
-                            <p class="post-excerpt" id="excerpt-${p.id}"></p>
+                            <p class="post-excerpt">${excerpt}</p>
                             <div class="post-footer"><a href="#/${p.id}" class="read-more">阅读全文 →</a><span class="post-date">${p.time}</span></div>
                         </div>
                     </div>`;
                 });
+
+                if (!html) {
+                    html = '<div style="color:rgba(200,235,250,0.6);text-align:center;padding:2rem;">没有匹配的文章</div>';
+                }
+
                 postContainer.innerHTML = html;
+                renderPagination(filtered, page);
+            }
+
+            function initList() {
+                allExcerpts = {};
+                let loaded = 0;
+                const total = postsMeta.length;
 
                 postsMeta.forEach(p => {
                     fetch('posts/' + p.file).then(r => r.text()).then(mdText => {
-                        const excerpt = document.getElementById('excerpt-' + p.id);
-                        if (excerpt) excerpt.textContent = getTextExcerpt(mdText);
-                    }).catch(() => {});
+                        allExcerpts[p.id] = getTextExcerpt(mdText);
+                        loaded++;
+                        if (loaded === total) {
+                            renderFiltered(filterPosts(searchInput.value));
+                        }
+                    }).catch(() => {
+                        loaded++;
+                        if (loaded === total) {
+                            renderFiltered(filterPosts(searchInput.value));
+                        }
+                    });
                 });
+
+                if (total === 0) renderFiltered([]);
 
                 postContainer.addEventListener('click', e => {
                     const card = e.target.closest('.post-card');
@@ -557,9 +890,17 @@
                 });
             }
 
+            let searchTimer = null;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => {
+                    currentPage = 1;
+                    renderFiltered(filterPosts(searchInput.value));
+                }, 250);
+            });
+
             function navigateTo(id) {
-                history.pushState(null, '', '#/' + id);
-                loadArticle(id);
+                location.hash = '#/' + id;
             }
 
             async function loadArticle(id) {
@@ -588,9 +929,9 @@
             }
 
             function handleHash() {
-                const match = location.hash.match(/^#\/(.+)/);
-                if (match && postsMeta.some(p => p.id === match[1])) {
-                    loadArticle(match[1]);
+                const raw = location.hash.replace(/^#\/?/, '');
+                if (raw && postsMeta.some(p => p.id === raw)) {
+                    loadArticle(raw);
                 } else {
                     showList();
                 }
@@ -598,18 +939,19 @@
 
             backLink.addEventListener('click', e => {
                 e.preventDefault();
-                history.pushState(null, '', '#/');
+                if (location.hash !== '#/' && location.hash !== '') {
+                    history.pushState(null, '', '#/');
+                }
                 showList();
             });
 
             window.addEventListener('hashchange', handleHash);
-            window.addEventListener('popstate', handleHash);
 
             fetch('posts/index.json')
                 .then(r => r.json())
                 .then(data => {
                     postsMeta = data;
-                    renderList();
+                    initList();
                     handleHash();
                 })
                 .catch(() => {
