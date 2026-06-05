@@ -19,9 +19,8 @@
 
   // === 音乐播放器 ===
   (function() {
-    var ids = ['1809646618', '3361076230', '1859390262']
-    var metingApi = 'https://api.injahow.cn/meting/?server=netease&type=song&id='
-    var lrcApi = 'https://api.injahow.cn/meting/?server=netease&type=lyric&id='
+    var metingPlaylist = 'https://api.injahow.cn/meting/?server=netease&type=playlist&id=14164869977'
+    var metingSong = 'https://api.injahow.cn/meting/?server=netease&type=song&id='
 
     var toggle = document.getElementById('musicToggle')
     var panel = document.getElementById('musicPlayer')
@@ -59,54 +58,58 @@
       var s = songs[idx]
       if (!s) return
       currentIdx = idx
-      cover.src = s.pic
-      title.textContent = s.name
-      artist.textContent = s.author
+      cover.src = s.pic || ''
+      title.textContent = s.name || '未知'
+      artist.textContent = s.author || ''
       progressFill.style.width = '0%'
+      lyrics = []
+      currentLyricIdx = -1
+      lyric.textContent = ''
+      lyric.className = 'music-lyric'
       if (s.url) {
         audio.src = s.url
         audio.load()
-        if (isPlaying) audio.play()
+        if (isPlaying) audio.play().catch(function () {})
       }
-      // 加载歌词
-      lyrics = []
-      currentLyricIdx = -1
-      lyric.textContent = '加载歌词...'
-      lyric.className = 'music-lyric'
-      fetch(lrcApi + s.id).then(function (r) { return r.json() }).then(function (d) {
-        if (d && d.lyric) {
-          lyrics = parseLrc(d.lyric)
+      // 歌词
+      if (s.lyric) {
+        fetch(s.lyric).then(function (r) { return r.text() }).then(function (text) {
+          lyrics = parseLrc(text)
           lyric.textContent = lyrics.length ? '' : '（纯音乐）'
-        } else {
-          lyric.textContent = '（无歌词）'
-        }
-      }).catch(function () { lyric.textContent = '' })
+        }).catch(function () { lyric.textContent = '' })
+      }
     }
 
     function loadAll() {
+      // 先尝试加载歌单
+      fetch(metingPlaylist).then(function (r) { return r.json() }).then(function (data) {
+        if (data && data.length) {
+          songs = data
+          toggle.style.display = ''
+          toggle.classList.add('show')
+          loadSong(0)
+          return
+        }
+        fallbackSongs()
+      }).catch(function () { fallbackSongs() })
+    }
+
+    function fallbackSongs() {
+      // 歌单失败，尝试单曲
+      var ids = ['1809646618']
       var fetched = 0
       ids.forEach(function (id) {
-        fetch(metingApi + id).then(function (r) { return r.json() }).then(function (d) {
-          if (d && d[0]) {
-            songs.push(d[0])
-            fetched++
-            if (fetched === ids.length) {
+        fetch(metingSong + id).then(function (r) { return r.json() }).then(function (d) {
+          if (d && d[0]) songs.push(d[0])
+          fetched++
+          if (fetched === ids.length) {
+            if (songs.length) {
               toggle.style.display = ''
               toggle.classList.add('show')
               loadSong(0)
             }
-          } else {
-            fetched++
-            if (fetched === ids.length) {
-              toggle.style.display = ''
-              toggle.classList.add('show')
-              if (songs.length) loadSong(0)
-            }
           }
-        }).catch(function () {
-          fetched++
-          if (fetched === ids.length && songs.length) loadSong(0)
-        })
+        }).catch(function () { fetched++; if (fetched === ids.length && songs.length) { toggle.style.display = ''; toggle.classList.add('show'); loadSong(0) } })
       })
     }
 
@@ -255,7 +258,6 @@
     var navBlog = document.getElementById('navBlog')
     var navArchive = document.getElementById('navArchive')
     var navGallery = document.getElementById('navGallery')
-    var navRandom = document.getElementById('navRandom')
     var backToTop = document.getElementById('backToTop')
     var tocToggle = document.getElementById('tocToggle')
     var tocPanel = document.getElementById('tocPanel')
@@ -695,11 +697,6 @@
     navBlog.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/' })
     navArchive.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/archive' })
     navGallery.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/gallery' })
-    navRandom.addEventListener('click', function (e) {
-      e.preventDefault()
-      var n = Math.floor(Math.random() * postsMeta.length)
-      navigateTo(postsMeta[n].id)
-    })
 
     // === 回到顶部 ===
     window.addEventListener('scroll', function () {
