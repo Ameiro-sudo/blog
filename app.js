@@ -8,9 +8,9 @@
     name: 'ninasukiwww',
     bio: '世界は大きい、君は行かなければならない',
     links: [
-      { name: 'GH', url: 'https://github.com/ninasukiwww-png' },
-      { name: 'B站', url: 'https://space.bilibili.com/3493084421687360' },
-      { name: '博客', url: 'https://blog.snowblock.top' }
+      { name: 'GitHub', icon: 'fa7-brands/github', url: 'https://github.com/ninasukiwww-png' },
+      { name: 'Bilibili', icon: 'fa7-brands/bilibili', url: 'https://space.bilibili.com/3493084421687360' },
+      { name: '博客', icon: 'material-symbols/article-outline', url: 'https://blog.snowblock.top' }
     ]
   }
 
@@ -76,7 +76,9 @@
       if (!profileConfig.name) { profileCard.style.display = 'none'; return }
       profileCard.style.display = 'block'
       var links = (profileConfig.links || []).map(function (l) {
-        return '<a href="' + l.url + '" target="_blank" rel="noopener" title="' + l.name + '">' + l.name + '</a>'
+        var iconSrc = l.icon ? 'https://api.iconify.design/' + l.icon + '.svg' : ''
+        var icon = iconSrc ? '<img src="' + iconSrc + '" alt="' + l.name + '" style="width:1.1rem;height:1.1rem;filter:brightness(0) invert(0.8);">' : l.name
+        return '<a href="' + l.url + '" target="_blank" rel="noopener" title="' + l.name + '">' + icon + '</a>'
       }).join('')
       profileCard.innerHTML =
         '<div class="profile-wrap">' +
