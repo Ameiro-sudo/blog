@@ -545,10 +545,12 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .album-detail-meta { font-size: 0.75rem; color: rgba(220,240,255,0.5); font-family: var(--font-mono); margin-bottom: 0.4rem; }
 .album-detail-desc { font-size: 0.9rem; color: rgba(220,240,255,0.75); text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 .photo-grid {
-  column-count: 3; column-gap: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.8rem;
 }
 .photo-item {
-  break-inside: avoid; margin-bottom: 0.8rem;
+  break-inside: unset; margin-bottom: 0;
   border-radius: 0.8rem; overflow: hidden; cursor: zoom-in;
   transition: transform 0.3s, box-shadow 0.3s;
   position: relative;
@@ -559,7 +561,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .photo-item:hover img { transform: scale(1.05); }
 
 @media (max-width: 600px) {
-  .photo-grid { column-count: 2; }
+  .photo-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
   .album-grid { grid-template-columns: 1fr; gap: 2rem; }
 }
 
