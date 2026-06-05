@@ -185,6 +185,20 @@
   })()
   } catch(e) {}
 
+  // === 灯箱全局事件 ===
+  document.getElementById('lightbox-close').addEventListener('click', function () {
+    document.getElementById('lightbox').classList.remove('show')
+  })
+  document.getElementById('lightbox').addEventListener('click', function () {
+    this.classList.remove('show')
+  })
+  document.getElementById('lightboxImg').addEventListener('click', function (e) {
+    e.stopPropagation()
+  })
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('show')
+  })
+
 
   const profileConfig = {
     avatar: 'avatar.webp',
@@ -265,6 +279,7 @@
     var tocPanel = document.getElementById('tocPanel')
     var lightbox = document.getElementById('lightbox')
     var lightboxImg = document.getElementById('lightboxImg')
+    var lightboxCaption = document.getElementById('lightboxCaption')
     var albums = []
     var pageHeader = document.getElementById('pageHeader')
 
@@ -509,6 +524,7 @@
           img.addEventListener('click', function () {
             lightboxImg.src = img.src
             lightboxImg.alt = img.alt || ''
+            lightboxCaption.textContent = ''
             lightbox.classList.add('show')
           })
         })
@@ -675,6 +691,9 @@
         img.addEventListener('click', function () {
           lightboxImg.src = img.src
           lightboxImg.alt = img.alt || ''
+          var parent = img.closest('.photo-item')
+          var cap = parent ? parent.querySelector('.photo-hover-caption') : null
+          lightboxCaption.textContent = cap ? cap.textContent : ''
           lightbox.classList.add('show')
         })
       })
