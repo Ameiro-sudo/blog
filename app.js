@@ -606,12 +606,17 @@
     function renderAlbums() {
       var html = ''
       albums.forEach(function (a) {
+        var layers = ''
+        for (var i = 0; i < 3; i++) {
+          var imgUrl = a.photos[i] ? a.photos[i].url : a.cover
+          layers += '<div class="album-layer album-layer-' + i + '"><img src="' + imgUrl + '" alt="" loading="lazy"></div>'
+        }
         html += '<div class="album-card" data-album="' + a.id + '">' +
-          '<img class="album-cover" src="' + a.cover + '" alt="" loading="lazy">' +
+          '<div class="album-stack">' + layers + '</div>' +
           '<div class="album-info">' +
           '<div class="album-title">' + a.title + '</div>' +
+          '<div class="album-date">' + a.date + '</div>' +
           (a.description ? '<div class="album-desc">' + a.description + '</div>' : '') +
-          '<div class="album-count">' + a.photos.length + ' 张</div>' +
           '</div></div>'
       })
       albumGrid.innerHTML = html
@@ -625,14 +630,15 @@
       if (!a) return
       albumGrid.style.display = 'none'
       albumDetail.style.display = 'block'
-      var html = '<div class="album-detail-header">' +
-        '<button class="album-back" id="albumBack">← 返回相册</button>' +
+      var html = '<div class="album-detail-top">' +
+        '<button class="album-back" id="albumBack">&larr; 返回</button>' +
         '<span class="album-detail-title">' + a.title + '</span>' +
+        '<span class="album-detail-meta">' + a.photos.length + ' 张</span>' +
         '</div><div class="photo-grid">'
       a.photos.forEach(function (p) {
         html += '<div class="photo-item">' +
           '<img src="' + p.url + '" alt="' + (p.caption || '') + '" loading="lazy">' +
-          (p.caption ? '<div class="photo-caption">' + p.caption + '</div>' : '') +
+          (p.caption ? '<div class="photo-hover"><div class="photo-hover-caption">' + p.caption + '</div></div>' : '') +
           '</div>'
       })
       html += '</div>'
