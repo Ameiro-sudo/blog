@@ -1,109 +1,53 @@
-# 代码与排版测试
+# 博客使用指南
 date: 2026-06-05
-tags: Bash, 代码, 排版, 测试
-time: 21:00
+tags: 博客, 指南, 教程, 模板
+time: 22:00
 readTime: 4 分钟
+pinned: true
 ---
-## Bash 脚本
+## 写一篇新文章
+
+在 `posts/` 目录下新建 `.md` 文件，按以下格式写：
+
+```markdown
+# 文章标题
+date: 2026-06-05
+tags: 标签1, 标签2
+time: 14:20
+readTime: 3 分钟
+---
+正文从这里开始，支持 **Markdown** 语法。
+```
+
+第一行必须是 `# 标题`，`date`/`tags`/`time`/`readTime` 写在标题和 `---` 之间，`---` 后面是正文。多个标签用英文逗号分隔。
+
+## 一键推送
 
 ```bash
-#!/bin/bash
-# 系统信息检查
-echo "=== 系统信息 ==="
-uname -a
-
-echo "=== 磁盘使用 ==="
-df -h | grep -E "^(/dev/)" | awk '{print $1, $4, $5}'
-
-echo "=== 内存状态 ==="
-free -h | awk '/^Mem:/ {print "已用:", $3, "可用:", $4}'
-
-echo "=== 运行时间 ==="
-uptime
+./deploy.sh
 ```
 
-## 批量文件处理
+脚本自动：构建索引 → git add → commit → push。也可加自定义信息：
 
 ```bash
-#!/bin/bash
-# 批量重命名 .txt 为 .bak
-for file in *.txt; do
-  if [ -f "$file" ]; then
-    mv "$file" "${file%.txt}.bak"
-    echo "已重命名: $file → ${file%.txt}.bak"
-  fi
-done
+./deploy.sh "add: 文章标题"
 ```
 
-## JavaScript 示例
+## 手动推送
 
-```javascript
-function fibonacci(n) {
-  if (n <= 1) return n;
-  let a = 0, b = 1;
-  for (let i = 2; i <= n; i++) {
-    [a, b] = [b, a + b];
-  }
-  return b;
-}
-
-console.log(fibonacci(10)); // 55
+```bash
+node build.js          # 构建索引
+git add -A
+git commit -m "add: 标题"
+git push               # 推送上线
 ```
 
-## Python
+推送后 GitHub Pages 自动部署，等一两分钟就能看到。
 
-```python
-from datetime import datetime
+## 关于其他子站
 
-def greet():
-    hour = datetime.now().hour
-    if hour < 12:
-        return "早上好"
-    elif hour < 18:
-        return "下午好"
-    else:
-        return "晚上好"
+MC 状态、导航页这些子站很多只是空壳，进不去是正常的。有内容的话会在这里更新。
 
-print(f"{greet()}，今天也要加油！")
-```
+## 本地预览
 
-## 引用与嵌套
-
-> 代码是写给人看的，顺便能在机器上运行。
->
-> —— Harold Abelson
-
-嵌套引用：
-
-> 编程语言
-> > Python
-> > JavaScript
-> > Rust
->
-> 各有千秋
-
-## 内联代码
-
-在文本中可以使用 `npm install` 或 `pip install requests` 这样的内联代码。
-
-路径示例：`/usr/local/bin/node`、`C:\Users\name\AppData`
-
-## 无语法高亮的代码块
-
-```
-This is a plain code block
-No syntax highlighting applied
-Just monospace text
-```
-
-## 混合列表
-
-1. 准备工作
-   - 安装依赖：`npm install`
-   - 配置环境变量
-2. 运行测试
-   ```bash
-   npm run test -- --coverage
-   ```
-3. 部署上线
-   > 确保所有测试通过后再部署
+直接用浏览器打开 `index.html` 即可预览，文章从 `posts/` 动态加载。

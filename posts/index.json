@@ -15,62 +15,37 @@
   },
   {
     "id": "post-2",
-    "title": "Markdown 样式展示大全",
+    "title": "Markdown 样式与代码排版测试",
     "date": "2026-06-05",
     "time": "20:30",
-    "readTime": "5 分钟",
+    "readTime": "6 分钟",
     "tags": [
       "测试",
       "Markdown",
-      "排版"
+      "排版",
+      "Bash",
+      "代码"
     ],
     "pinned": false,
     "file": "post-2.md"
   },
   {
     "id": "post-3",
-    "title": "代码与排版测试",
+    "title": "博客使用指南",
     "date": "2026-06-05",
-    "time": "21:00",
+    "time": "22:00",
     "readTime": "4 分钟",
     "tags": [
-      "Bash",
-      "代码",
-      "排版",
-      "测试"
+      "博客",
+      "指南",
+      "教程",
+      "模板"
     ],
-    "pinned": false,
+    "pinned": true,
     "file": "post-3.md"
   },
   {
     "id": "post-4",
-    "title": "博客更新指南 · 写文章与推送",
-    "date": "2026-06-05",
-    "time": "22:00",
-    "readTime": "3 分钟",
-    "tags": [
-      "博客",
-      "指南",
-      "教程"
-    ],
-    "pinned": false,
-    "file": "post-4.md"
-  },
-  {
-    "id": "post-5",
-    "title": "文章模板",
-    "date": "2026-06-05",
-    "time": "22:30",
-    "readTime": "1 分钟",
-    "tags": [
-      "模板",
-      "指南"
-    ],
-    "pinned": false,
-    "file": "post-5.md"
-  },
-  {
-    "id": "post-6",
     "title": "更新日志",
     "date": "2026-06-05",
     "time": "23:00",
@@ -80,19 +55,6 @@
       "日志"
     ],
     "pinned": false,
-    "file": "post-6.md"
-  },
-  {
-    "id": "post-7",
-    "title": "关于其他子站",
-    "date": "2026-06-05",
-    "time": "23:00",
-    "readTime": "1 分钟",
-    "tags": [
-      "站点",
-      "说明"
-    ],
-    "pinned": true,
-    "file": "post-7.md"
+    "file": "post-4.md"
   }
 ]
