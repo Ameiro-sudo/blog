@@ -21,6 +21,19 @@ readTime: 3 分钟
 
 第一行必须是 `# 标题`，`date`/`tags`/`time`/`readTime` 写在标题和 `---` 之间，`---` 后面是正文。多个标签用英文逗号分隔。
 
+如果想置顶，加一行 `pinned: true`：
+
+```markdown
+# 文章标题
+date: 2026-06-05
+tags: 标签1, 标签2
+time: 14:20
+readTime: 3 分钟
+pinned: true
+---
+正文...
+```
+
 ## 一键推送
 
 ```bash
