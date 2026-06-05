@@ -86,14 +86,19 @@
     var tagFilters = document.getElementById('tagFilters')
     var profileCard = document.getElementById('profileCard')
     var archiveContent = document.getElementById('archiveContent')
+    var galleryView = document.getElementById('galleryView')
+    var albumGrid = document.getElementById('albumGrid')
+    var albumDetail = document.getElementById('albumDetail')
     var navBlog = document.getElementById('navBlog')
     var navArchive = document.getElementById('navArchive')
+    var navGallery = document.getElementById('navGallery')
     var navRandom = document.getElementById('navRandom')
     var backToTop = document.getElementById('backToTop')
     var tocToggle = document.getElementById('tocToggle')
     var tocPanel = document.getElementById('tocPanel')
     var lightbox = document.getElementById('lightbox')
     var lightboxImg = document.getElementById('lightboxImg')
+    var albums = []
     var pageHeader = document.getElementById('pageHeader')
 
     // === 简介卡片 ===
@@ -356,6 +361,7 @@
       listView.style.display = 'block'
       articleView.style.display = 'none'
       archiveView.style.display = 'none'
+      galleryView.style.display = 'none'
       pageHeader.style.display = 'block'
       tocToggle.classList.remove('show')
       tocPanel.classList.remove('show')
@@ -424,6 +430,7 @@
     function showArchive() {
       listView.style.display = 'none'
       articleView.style.display = 'none'
+      galleryView.style.display = 'none'
       archiveView.style.display = 'block'
       pageHeader.style.display = 'none'
       tocToggle.classList.remove('show')
@@ -432,11 +439,74 @@
       window.scrollTo({ top: 0 })
     }
 
+    // === 画廊 ===
+    function renderAlbums() {
+      var html = ''
+      albums.forEach(function (a) {
+        html += '<div class="album-card" data-album="' + a.id + '">' +
+          '<img class="album-cover" src="' + a.cover + '" alt="" loading="lazy">' +
+          '<div class="album-info">' +
+          '<div class="album-title">' + a.title + '</div>' +
+          (a.description ? '<div class="album-desc">' + a.description + '</div>' : '') +
+          '<div class="album-count">📷 ' + a.photos.length + ' 张</div>' +
+          '</div></div>'
+      })
+      albumGrid.innerHTML = html
+      albumGrid.querySelectorAll('.album-card').forEach(function (el) {
+        el.addEventListener('click', function () { showAlbum(el.dataset.album) })
+      })
+    }
+
+    function showAlbum(id) {
+      var a = albums.find(function (x) { return x.id === id })
+      if (!a) return
+      albumGrid.style.display = 'none'
+      albumDetail.style.display = 'block'
+      var html = '<div class="album-detail-header">' +
+        '<button class="album-back" id="albumBack">← 返回相册</button>' +
+        '<span class="album-detail-title">' + a.title + '</span>' +
+        '</div><div class="photo-grid">'
+      a.photos.forEach(function (p) {
+        html += '<div class="photo-item">' +
+          '<img src="' + p.url + '" alt="' + (p.caption || '') + '" loading="lazy">' +
+          (p.caption ? '<div class="photo-caption">' + p.caption + '</div>' : '') +
+          '</div>'
+      })
+      html += '</div>'
+      albumDetail.innerHTML = html
+      document.getElementById('albumBack').addEventListener('click', function () {
+        albumDetail.style.display = 'none'
+        albumGrid.style.display = ''
+      })
+      albumDetail.querySelectorAll('.photo-item img').forEach(function (img) {
+        img.addEventListener('click', function () {
+          lightboxImg.src = img.src
+          lightboxImg.alt = img.alt || ''
+          lightbox.classList.add('show')
+        })
+      })
+    }
+
+    function showGallery() {
+      listView.style.display = 'none'
+      articleView.style.display = 'none'
+      archiveView.style.display = 'none'
+      galleryView.style.display = 'block'
+      pageHeader.style.display = 'none'
+      tocToggle.classList.remove('show')
+      tocPanel.classList.remove('show')
+      albumGrid.style.display = ''
+      albumDetail.style.display = 'none'
+      renderAlbums()
+      window.scrollTo({ top: 0 })
+    }
+
     // === Hash 路由 ===
     function handleHash() {
       var raw = location.hash.replace(/^#\/?/, '')
       if (!raw) { showListView(); setActiveNav('blog'); return }
       if (raw === 'archive') { showArchive(); setActiveNav('archive'); return }
+      if (raw === 'gallery') { showGallery(); setActiveNav('gallery'); return }
       var found = postsMeta.some(function (p) { return p.id === raw })
       if (found) { loadArticle(raw); setActiveNav(null); return }
       showListView(); setActiveNav('blog')
@@ -445,6 +515,7 @@
     function setActiveNav(which) {
       navBlog.className = which === 'blog' ? 'active' : ''
       navArchive.className = which === 'archive' ? 'active' : ''
+      navGallery.className = which === 'gallery' ? 'active' : ''
     }
 
     backLink.addEventListener('click', function (e) {
@@ -454,6 +525,7 @@
 
     navBlog.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/' })
     navArchive.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/archive' })
+    navGallery.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/gallery' })
     navRandom.addEventListener('click', function (e) {
       e.preventDefault()
       var n = Math.floor(Math.random() * postsMeta.length)
@@ -480,6 +552,10 @@
 
     // === 初始化 ===
     renderProfile()
+
+    fetch('albums/index.json').then(function (r) { return r.json() }).then(function (data) {
+      albums = data
+    }).catch(function () {})
 
     fetch('posts/index.json').then(function (r) { return r.json() }).then(function (data) {
       postsMeta = data
