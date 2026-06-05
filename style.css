@@ -39,7 +39,7 @@
   display: flex; align-items: center; gap: 1rem;
 }
 .profile-wrap::before {
-  content: ''; position: absolute; inset: -1px;
+  content: ''; position: absolute; inset: 0;
   border-radius: var(--radius-card);
   background: rgba(0,0,0,0.35);
   z-index: -1; pointer-events: none;
@@ -73,7 +73,22 @@
 .profile-links a:hover { background: var(--glass-hover-bg); color: #fff; }
 
 /* ===== 页面头部 ===== */
-.page-header { text-align: center; margin-bottom: 2.8rem; }
+.page-header {
+  position: relative;
+  text-align: center; margin-bottom: 2rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px) saturate(1.2);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-item);
+  padding: 1.5rem 1.8rem 1.2rem;
+}
+.page-header::before {
+  content: ''; position: absolute; inset: 0;
+  border-radius: var(--radius-card);
+  background: rgba(0,0,0,0.35);
+  z-index: -1; pointer-events: none;
+}
 .page-header h1 {
   font-size: clamp(2rem, 7vw, 3rem); font-weight: 400; font-family: var(--font-title);
   background: linear-gradient(135deg, #FFEFC0, #B8E4FF);
@@ -130,7 +145,7 @@
   cursor: pointer; outline: none;
 }
 .post-card::before {
-  content: ''; position: absolute; inset: -1px;
+  content: ''; position: absolute; inset: 0;
   border-radius: var(--radius-card);
   background: rgba(0,0,0,0.35);
   z-index: -1; pointer-events: none;
@@ -209,7 +224,7 @@
   box-shadow: var(--shadow-card); overflow: hidden;
 }
 .article-card::before {
-  content: ''; position: absolute; inset: -1px;
+  content: ''; position: absolute; inset: 0;
   border-radius: var(--radius-card);
   background: rgba(0,0,0,0.35);
   z-index: -1; pointer-events: none;
@@ -297,7 +312,7 @@
   box-shadow: var(--shadow-card); overflow: hidden;
 }
 .archive-card::before {
-  content: ''; position: absolute; inset: -1px;
+  content: ''; position: absolute; inset: 0;
   border-radius: var(--radius-card);
   background: rgba(0,0,0,0.35);
   z-index: -1; pointer-events: none;
@@ -369,6 +384,7 @@
   body::before { background: rgba(0,0,0,0.25); }
   #loader { background: linear-gradient(135deg,#0d1f2b,#142a38,#0d1f2b); background-size: 200% 200%; }
   .top-bar { --glass-header-bg: rgba(0,15,25,0.70); }
+  .page-header { background: rgba(0,18,30,0.50); }
   .post-card { background: rgba(0,18,30,0.50); }
   .post-card:hover { background: rgba(255,255,255,0.08); }
   .article-card { background: rgba(0,18,30,0.50); }
@@ -422,6 +438,10 @@
   body { background: #fff !important; padding: 1rem; }
   #loader, #snowCanvas, .search-bar, .tag-filters, .back-link, .copy-btn { display: none; }
   .top-bar { background: #f5f5f5; backdrop-filter: none; border-color: #ddd; }
+  .page-header { background: #f5f5f5; backdrop-filter: none; border: 1px solid #ddd; box-shadow: none; }
+  .page-header::before { display: none; }
+  .profile-wrap { background: #fafafa; backdrop-filter: none; border: 1px solid #ddd; }
+  .profile-wrap::before { display: none; }
   .site-name { background: none; color: #0b2b3b; }
   .nav-links a { color: #555; }
   .article-card, .post-card { background: #fafafa; backdrop-filter: none; border: 1px solid #ddd; box-shadow: none; }
