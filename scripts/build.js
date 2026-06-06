@@ -218,9 +218,17 @@ function escXml(s) {
 // ============================
 function versionAssets() {
   const css = readFileSync(join(ROOT, 'assets', 'css', 'style.css'), 'utf-8')
-  const js = readFileSync(join(ROOT, 'assets', 'js', 'app.js'), 'utf-8')
   const cssHash = createHash('md5').update(css).digest('hex').slice(0, 8)
-  const jsHash = createHash('md5').update(js).digest('hex').slice(0, 8)
+
+  // concatenate split JS sources into app.js
+  const JS_SRC = ['snowblock.js', 'profile.js', 'posts.js', 'article.js', 'archive.js', 'gallery.js', 'router.js', 'init.js']
+  const jsDir = join(ROOT, 'assets', 'js')
+  const jsContent = JS_SRC.map(function(f) {
+    return readFileSync(join(jsDir, f), 'utf-8')
+  }).join('\n')
+  writeFileSync(join(jsDir, 'app.js'), jsContent, 'utf-8')
+  const jsHash = createHash('md5').update(jsContent).digest('hex').slice(0, 8)
+
   let html = readFileSync(join(ROOT, 'index.html'), 'utf-8')
   html = html.replace(/(href="assets\/css\/style\.css)(?:\?v=[^"]*)?(")/, '$1?v=' + cssHash + '"')
   html = html.replace(/(src="assets\/js\/app\.js)(?:\?v=[^"]*)?(")/, '$1?v=' + jsHash + '"')
