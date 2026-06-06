@@ -7,16 +7,20 @@
     "date": "2026.06",
     "photos": [
       {
-        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/1777596763325.jpg"
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/1777596763325.jpg",
+        "caption": "示例图片"
       },
       {
-        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/HE5AMPkbgAA2ZcF.jpeg"
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/HE5AMPkbgAA2ZcF.jpeg",
+        "caption": "图2"
       },
       {
-        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/HE5ARzubAAEWDO0.jpeg"
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/HE5ARzubAAEWDO0.jpeg",
+        "caption": "图3"
       },
       {
-        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/HE5ARzzbcAEwVtA.jpeg"
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/HE5ARzzbcAEwVtA.jpeg",
+        "caption": "图4"
       }
     ]
   }

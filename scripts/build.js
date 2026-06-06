@@ -126,7 +126,8 @@ function buildAlbums() {
     } catch (e) {}
 
     const photos = files.map(function(f) {
-      return { url: CDN_BASE + '/' + dir + '/' + f }
+      const caption = (meta.photos && meta.photos[f]) || ''
+      return { url: CDN_BASE + '/' + dir + '/' + f, caption: caption }
     })
 
     return {
