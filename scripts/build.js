@@ -218,6 +218,7 @@ function versionAssets() {
   let html = readFileSync(join(ROOT, 'index.html'), 'utf-8')
   html = html.replace(/(href="assets\/css\/style\.css)(?:\?v=[^"]*)?(")/, '$1?v=' + cssHash + '"')
   html = html.replace(/(src="assets\/js\/app\.js)(?:\?v=[^"]*)?(")/, '$1?v=' + jsHash + '"')
+  html = html.replace(/(<meta name="build-ts" content=")\d*(")/, '$1' + BUILD_TS + '"')
   writeFileSync(join(ROOT, 'index.html'), html, 'utf-8')
   console.log('  version: ok (' + cssHash + ', ' + jsHash + ')')
 }

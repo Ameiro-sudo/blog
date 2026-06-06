@@ -1016,7 +1016,7 @@
       navigator.serviceWorker.register('sw.js')
     }
 
-    fetch('content/albums/index.json').then(function (r) { return r.json() }).then(function (data) {
+    fetch('content/albums/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
       albums = data
     }).catch(function () {})
 
