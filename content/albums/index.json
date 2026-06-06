@@ -3,20 +3,20 @@
     "id": "kayi",
     "title": "凯怡test",
     "description": "测试",
-    "cover": "assets/img/1777596763325.jpg",
+    "cover": "https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/blog/1777596763325.jpg",
     "date": "2026.06",
     "photos": [
       {
-        "url": "assets/img/1777596763325.jpg"
+        "url": "https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/blog/1777596763325.jpg"
       },
       {
-        "url": "assets/img/HE5AMPkbgAA2ZcF.jpeg"
+        "url": "https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/blog/HE5AMPkbgAA2ZcF.jpeg"
       },
       {
-        "url": "assets/img/HE5ARzubAAEWDO0.jpeg"
+        "url": "https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/blog/HE5ARzubAAEWDO0.jpeg"
       },
       {
-        "url": "assets/img/HE5ARzzbcAEwVtA.jpeg"
+        "url": "https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/blog/HE5ARzzbcAEwVtA.jpeg"
       }
     ]
   }
