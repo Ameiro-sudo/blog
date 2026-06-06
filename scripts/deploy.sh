@@ -14,7 +14,7 @@ if [ -s "$NVM_DIR/nvm.sh" ]; then
 fi
 
 echo "🔨 构建索引..."
-node scripts/build.js && node scripts/build-albums.js
+node scripts/build.js
 
 echo "📦 提交并推送..."
 git add -A

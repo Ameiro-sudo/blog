@@ -3,58 +3,108 @@ import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const postsDir = join(__dirname, '..', 'content', 'posts')
+const ROOT = join(__dirname, '..')
 
-function parseMD(filepath) {
-  const text = readFileSync(filepath, 'utf-8')
+const POSTS_DIR = join(ROOT, 'content', 'posts')
+const ALBUMS_DIR = join(ROOT, 'content', 'albums')
+const CDN_BASE = 'https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/blog'
+
+function parseFrontmatter(text) {
   const lines = text.split('\n')
   const meta = {}
-  let title = ''
-  let contentStart = 0
+  let bodyStart = 0
 
-  if (lines[0]?.startsWith('# ')) {
-    title = lines[0].slice(2).trim()
-    contentStart = 1
-  }
-
-  let i = 1
-  while (i < lines.length) {
-    const line = lines[i].trim()
-    if (line === '---') {
-      contentStart = i + 1
-      break
+  if (lines[0]?.trim() === '---') {
+    let i = 1
+    while (i < lines.length) {
+      const line = lines[i].trim()
+      if (line === '---') { bodyStart = i + 1; break }
+      const m = line.match(/^(\w+)\s*:\s*(.+)$/)
+      if (m) meta[m[1]] = m[2].trim()
+      i++
     }
-    const m = line.match(/^(\w+)\s*:\s*(.+)$/)
-    if (m) meta[m[1]] = m[2].trim()
-    i++
   }
 
+  const body = lines.slice(bodyStart).join('\n').trim()
+  return { meta, body }
+}
+
+function parsePost(filepath) {
+  const text = readFileSync(filepath, 'utf-8')
+  const { meta } = parseFrontmatter(text)
   const stem = filepath.split('/').pop().replace(/\.md$/, '')
+
+  let title = meta.title || stem
+  if (!meta.title && text.startsWith('# ')) {
+    title = text.split('\n')[0].slice(2).trim()
+  }
+
   const tags = (meta.tags || '').split(',').map(t => t.trim()).filter(Boolean)
   const pinned = meta.pinned === 'true'
 
   return {
     id: stem,
-    title: title || stem,
+    title,
     date: meta.date || '',
     time: meta.time || '',
     readTime: meta.readTime || '',
     tags,
     pinned,
-    file: stem + '.md'
+    file: stem + '.md',
   }
 }
 
-const files = readdirSync(postsDir)
-  .filter(f => f.endsWith('.md') && f !== 'index.json')
-  .sort()
+function parseAlbum(filepath) {
+  const text = readFileSync(filepath, 'utf-8')
+  const { meta, body } = parseFrontmatter(text)
+  const stem = filepath.split('/').pop().replace(/\.md$/, '')
 
-const posts = files.map(f => parseMD(join(postsDir, f)))
+  const photos = body.split('\n')
+    .map(l => l.trim())
+    .filter(Boolean)
+    .map(f => ({ url: `${CDN_BASE}/${f}` }))
 
-writeFileSync(
-  join(postsDir, 'index.json'),
-  JSON.stringify(posts, null, 2) + '\n',
-  'utf-8'
-)
+  return {
+    id: stem,
+    title: meta.title || stem,
+    description: meta.description || '',
+    cover: meta.cover ? `${CDN_BASE}/${meta.cover}` : photos[0]?.url || '',
+    date: meta.date || '',
+    photos,
+  }
+}
 
-console.log(`Generated posts/index.json with ${posts.length} posts`)
+function buildPosts() {
+  const files = readdirSync(POSTS_DIR)
+    .filter(f => f.endsWith('.md') && f !== 'index.json')
+    .sort()
+
+  const posts = files.map(f => parsePost(join(POSTS_DIR, f)))
+
+  writeFileSync(
+    join(POSTS_DIR, 'index.json'),
+    JSON.stringify(posts, null, 2) + '\n',
+    'utf-8'
+  )
+  console.log(`  posts: ${posts.length} articles`)
+}
+
+function buildAlbums() {
+  const files = readdirSync(ALBUMS_DIR)
+    .filter(f => f.endsWith('.md') && f !== 'index.json')
+    .sort()
+
+  const albums = files.map(f => parseAlbum(join(ALBUMS_DIR, f)))
+
+  writeFileSync(
+    join(ALBUMS_DIR, 'index.json'),
+    JSON.stringify(albums, null, 2) + '\n',
+    'utf-8'
+  )
+  console.log(`  albums: ${albums.length} albums`)
+}
+
+console.log('Building indexes...')
+buildPosts()
+buildAlbums()
+console.log('Done.')
