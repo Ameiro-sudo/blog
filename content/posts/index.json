@@ -1,7 +1,7 @@
 [
   {
     "id": "changelog",
-    "title": "博客更新日志 · 2026-06-06",
+    "title": "博客更新日志",
     "date": "2026-06-06",
     "time": "11:00",
     "readTime": "3 分钟",
@@ -13,111 +13,39 @@
     "file": "changelog.md",
     "description": "",
     "image": "",
-    "excerpt": "新增功能 热力图 归档页顶部增加 GitHub 风格的年度贡献图，直观显示每日发文量。支持切换年份，点击方块查看当日文章列表。 全文搜索 搜索框现在同时搜索标题、标签、日期和文章正文摘要，搜索结果更全面。 搜索结果高亮 匹配的关键词在标题和摘要中以黄色高亮显示。 RSS 订阅 站点提供 feed.xml，支持 RSS 阅读器订阅。 Sitemap 自动生成 sitemap.xml，帮助搜索引擎抓取"
-  },
-  {
-    "id": "post-1",
-    "title": "三站设计统一 · 雪境设计系统",
-    "date": "2026-06-05",
-    "time": "20:00",
-    "readTime": "4 分钟",
-    "tags": [
-      "更新",
-      "设计",
-      "前端"
-    ],
-    "pinned": false,
-    "file": "post-1.md",
-    "description": "",
-    "image": "",
-    "excerpt": "SnowBlock 的三个子站迎来了一次设计语言的全面统一。 统一了什么 以导航页 snowblock.tophttps://snowblock.top 的设计规范为基准，对博客和 MC 状态页进行了对齐： CSS 设计变量 - 统一了 --radius-card: 3rem、--radius-item: 1.5rem 等圆角标准 - 统一了字体栈（ZCOOL KuaiLe 标题 + Segoe "
-  },
-  {
-    "id": "post-2",
-    "title": "Markdown 样式与代码排版测试",
-    "date": "2026-06-05",
-    "time": "20:30",
-    "readTime": "6 分钟",
-    "tags": [
-      "测试",
-      "Markdown",
-      "排版",
-      "Bash",
-      "代码"
-    ],
-    "pinned": false,
-    "file": "post-2.md",
-    "description": "",
-    "image": "",
-    "excerpt": "这是一篇综合测试文章，用于展示各种 Markdown 渲染效果。 标题层级 三级标题 四级标题 五级标题 六级标题 文本样式 普通文本，加粗，斜体，删除线，行内代码，超链接。 引用 这是一段引用文本。 引用可以换行，也支持 内嵌样式。 嵌套引用也可以。 嵌套引用： 编程语言 Python JavaScript Rust 各有千秋 无序列表 - 第一项 - 第二项 - 嵌套项甲 - 嵌套项乙 - 第"
+    "excerpt": "当前功能 - 文章系统：Markdown 写作，置顶 / 分页 / 搜索 / 标签筛选 - 归档热力图：年度发文分布，点击方块查看当日文章 - 画廊：瀑布流相册，分批加载，灯箱缩放，EXIF 展示 - 文章目录：自动提取标题，滚动高亮当前章节 - 阅读进度条：顶部渐变色进度指示 - 随机文章：/random 路由 - 全文搜索：标题 / 标签 / 日期 / 正文，搜索高亮 - RSS / Site"
   },
   {
     "id": "post-3",
-    "title": "博客使用指南",
+    "title": "文章与相册维护指南",
     "date": "2026-06-06",
     "time": "20:00",
-    "readTime": "5 分钟",
+    "readTime": "6 分钟",
     "tags": [
       "博客",
       "指南",
-      "教程",
-      "模板"
+      "教程"
     ],
     "pinned": true,
     "file": "post-3.md",
     "description": "",
     "image": "",
-    "excerpt": "写一篇新文章 在 content/posts/ 下新建 .md 文件，按以下格式： markdown 文章标题 date: 2026-06-05 tags: 标签1, 标签2 time: 14:20 readTime: 3 分钟 --- 正文从这里开始，支持 Markdown 语法。 - 第一行 标题 用作文章标题 - date / tags / time / readTime 写在标题和 ---"
-  },
-  {
-    "id": "post-4",
-    "title": "更新日志",
-    "date": "2026-06-05",
-    "time": "23:00",
-    "readTime": "2 分钟",
-    "tags": [
-      "更新",
-      "日志"
-    ],
-    "pinned": false,
-    "file": "post-4.md",
-    "description": "",
-    "image": "",
-    "excerpt": "2026-06-05 三站设计统一 导航页、博客、MC 状态页完成设计语言统一： - 统一毛玻璃参数、圆角标准、字体栈 - SVG 晶体加载器替换各自不同的加载动画 - 加载策略统一：背景图加载 + 最少 1500ms 展示 + 5000ms 超时兜底 - 全站支持 prefers-color-scheme: dark 暗色模式 - 全站支持打印样式和 prefers-reduced-motion"
-  },
-  {
-    "id": "post-5",
-    "title": "图床配置：PicGo + GitHub + jsDelivr 一步到位",
-    "date": "2026-06-06",
-    "time": "09:30",
-    "readTime": "3 分钟",
-    "tags": [
-      "图床",
-      "PicGo",
-      "GitHub",
-      "CDN",
-      "教程"
-    ],
-    "pinned": false,
-    "file": "post-5.md",
-    "description": "",
-    "image": "",
-    "excerpt": "从截图到生成可访问的图片链接，全程只需要两步，中间没有任何手动上传、等待、复制的冗余操作。 原理 截图 → Ctrl+V → PicGo 自动上传 GitHub → jsDelivr CDN 加速 → 链接已复制到剪贴板 准备工作 1. 创建公开仓库 去 GitHub 新建一个 Public 仓库，用来存放图片。仓库名随意，比如 my-images。 2. 生成 Token GitHub \"Set"
+    "excerpt": "写一篇新文章 在 content/posts/ 下新建 .md 文件： markdown 文章标题 date: 2026-06-05 tags: 标签1, 标签2 time: 14:20 readTime: 3 分钟 --- 正文从这里开始，支持 Markdown 语法。 - 第一行 标题 用作文章标题 - date / tags / time / readTime 写在标题和 --- 之间 - "
   },
   {
     "id": "usage",
     "title": "博客使用指南",
     "date": "2026-06-06",
     "time": "11:00",
-    "readTime": "5 分钟",
+    "readTime": "4 分钟",
     "tags": [
-      "说明",
-      "指南"
+      "指南",
+      "功能"
     ],
     "pinned": false,
     "file": "usage.md",
     "description": "",
     "image": "",
-    "excerpt": "浏览文章 首页按时间倒序列出所有文章，置顶文章排在最前。 搜索 顶部搜索框支持实时筛选，匹配标题、标签、日期和文章正文摘要。 标签筛选 点击文章标签或搜索栏下方的标签按钮筛选特定分类。 分页 每页 5 篇，底部翻页栏支持跳转。 键盘快捷键 - Ctrl+K / Cmd+K：聚焦搜索框 - Esc：关闭图片灯箱 归档 导航栏「归档」查看所有文章时间轴，顶部热力图显示发文频率。 画廊 导航栏「画廊」展"
+    "excerpt": "浏览文章 首页默认按时间倒序列出文章，置顶文章在最前。每页 5 篇，底部可翻页跳转。 点击文章卡片进入阅读，点击标题下方标签可快速筛选同类文章。 搜索 顶部搜索框支持实时筛选，匹配标题、标签、日期和正文，输入即搜。Ctrl+K / Cmd+K 快速聚焦搜索框。 标签筛选 搜索栏下方展示所有标签，字号大小反映使用频率。点击标签筛选，再次点击清除筛选。 归档 导航栏「归档」按年月分组展示所有文章和相册"
   }
 ]

@@ -1,14 +1,14 @@
-# 博客使用指南
+# 文章与相册维护指南
 date: 2026-06-06
-tags: 博客, 指南, 教程, 模板
+tags: 博客, 指南, 教程
 time: 20:00
-readTime: 5 分钟
+readTime: 6 分钟
 pinned: true
 ---
 
 ## 写一篇新文章
 
-在 `content/posts/` 下新建 `.md` 文件，按以下格式：
+在 `content/posts/` 下新建 `.md` 文件：
 
 ```markdown
 # 文章标题
@@ -23,45 +23,39 @@ readTime: 3 分钟
 - 第一行 `# 标题` 用作文章标题
 - `date` / `tags` / `time` / `readTime` 写在标题和 `---` 之间
 - 多个标签用英文逗号分隔
-- 想置顶加 `pinned: true`
-- 图片上传到图床后用 CDN 链接引用
+- 置顶加 `pinned: true`
+- 可选 `description` 自定义摘要（否则自动截取正文前 200 字）
+- 可选 `image` 自定义分享卡片图
 
 ---
 
 ## 添加画廊相册
 
-在 `content/albums/` 下新建 `.md` 文件：
+图片存放在 [my-images](https://github.com/ninasukiwww-png/my-images) 仓库的 `blog/` 目录下，每个相册一个子目录。
 
-```markdown
----
-title: 相册名称
-date: 2026-06
-cover: cover-photo.jpg
----
-photo1.webp
-photo2.webp
-photo3.webp
+相册目录内放 `meta.json`：
+
+```json
+{"title":"相册名","date":"2026.06","description":"简介","cover":"文件名.jpg"}
 ```
 
-照片文件名基于 CDN 根目录（`my-images/blog/`）自动拼接完整 URL。
+照片列在 `albums/index.json` 中，由构建脚本自动生成。
 
 ---
 
 ## 构建索引
 
-添加或修改文章/相册后，需要重新生成索引：
-
 ```bash
 node scripts/build.js
 ```
 
-输出：
-```
-Building indexes...
-  posts: 5 articles
-  albums: 1 albums
-Done.
-```
+自动生成：
+- `content/posts/index.json` — 文章索引
+- `content/albums/index.json` — 相册索引（含 EXIF 信息）
+- `feed.xml` — RSS
+- `sitemap.xml` — 站点地图
+- 给 `style.css` / `app.js` 打版本哈希
+- 给 `index.html` 写入构建时间戳（缓存控制）
 
 ---
 
@@ -71,28 +65,22 @@ Done.
 ./deploy.sh "提交说明"
 ```
 
-自动执行：
-1. 构建索引（`node scripts/build.js`）
-2. 提交所有改动（`git add -A && git commit`）
-3. 推送到 GitHub（`git push`）
+流程：构建 → 提交 → 推送博客仓库 → GitHub Pages 自动部署。
 
-> 不加参数会自动生成提交信息，检测到新文章 → `"add: 新文章"`，新相册 → `"add: 新相册"`，其余 → `"update: 月-日 时:分"`。
+附带 `deploy-full.sh`：先 WebP 转换 → 推 my-images → 再推博客。加 `-n` 跳过转换。
 
 ---
 
-## 手动部署
+## 图片处理
 
-```bash
-node scripts/build.js    # 构建索引
-git add -A
-git commit -m "add: 标题"
-git push                 # GitHub Pages 自动部署
-```
+所有图片通过 `raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/` 引用（jsDelivr 已弃用）。
 
-等一两分钟生效。
+构建时加上 `?t=构建时间戳` 刷新 CDN 缓存。
+
+EXIF 信息（相机型号、ISO、光圈等）由 `exifr` 包在构建时自动提取，存入相册索引。
 
 ---
 
-## 本地预览
+## Service Worker
 
-直接用浏览器打开 `index.html`，文章从 `content/posts/` 动态加载。无需服务器。
+博客注册了 Service Worker，自动缓存 CDN 图片，提升重复访问速度。
