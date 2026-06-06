@@ -11,7 +11,9 @@ if ! $SKIP_CONVERT; then
 echo "==> 转换 WebP..."
 cd "$IMAGES_DIR"
 CONVERTED=0
-while IFS= read -r -d '' f; do
+shopt -s globstar nullglob
+for f in blog/**/*.jpg blog/**/*.jpeg blog/**/*.png blog/**/*.bmp; do
+  [ ! -f "$f" ] && continue
   webp="${f%.*}.webp"
   [ -f "$webp" ] && continue
   before=$(stat -c%s "$f" 2>/dev/null || echo 0)
@@ -26,7 +28,7 @@ while IFS= read -r -d '' f; do
     echo "    !! 转换失败，跳过: ${f#blog/}"
     rm -f "$webp"
   fi
-done < <(find blog/ -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.bmp' \) -print0)
+done
 if [ "$CONVERTED" -gt 0 ]; then
   echo "    转换完成: $CONVERTED 张"
 else
