@@ -6,7 +6,7 @@ function loadArticle(id) {
   fetch('content/posts/' + meta.file).then(function (r) { return r.text() }).then(function (mdText) {
     var content = stripMeta(mdText)
     articleTitle.textContent = meta.title
-    document.title = meta.title + ' . SnowBlock'
+    document.title = meta.title + ' · SnowBlock'
     setOGTag('og:title', meta.title)
     setOGTag('og:description', meta.description || (getExcerpt ? getExcerpt(content, 200) : ''))
     setOGTag('og:image', meta.image || 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/bg.webp')
@@ -77,8 +77,9 @@ function showAbout() {
   pageHeader.style.display = 'none'
   tocToggle.classList.remove('show')
   tocPanel.classList.remove('show')
-  document.title = '关于 . SnowBlock'
-  setOGTag('og:title', '关于 . SnowBlock')
+  resetOG()
+  document.title = '关于 · SnowBlock'
+  setOGTag('og:title', '关于 · SnowBlock')
   fetch('content/pages/about.md').then(function (r) { return r.text() }).then(function (mdText) {
     articleTitle.textContent = '关于'
     articleMeta.innerHTML = ''

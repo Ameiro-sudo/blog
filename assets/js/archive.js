@@ -217,6 +217,9 @@ function showArchive() {
   pageHeader.style.display = 'none'
   tocToggle.classList.remove('show')
   tocPanel.classList.remove('show')
+  resetOG()
+  document.title = '归档 · SnowBlock'
+  setOGTag('og:title', '归档 · SnowBlock')
   renderArchive()
   window.scrollTo({ top: 0 })
 }

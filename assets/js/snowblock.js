@@ -218,9 +218,9 @@ function setOGTag(prop, val) {
 }
 
 function resetOG() {
-  document.title = 'SnowBlock . 雪地博客'
-  setOGTag('og:title', 'SnowBlock . 博客')
-  setOGTag('og:description', '雪地笔记 --- 技术、游戏、日常与碎片思考')
+  document.title = 'SnowBlock · 雪地笔记'
+  setOGTag('og:title', 'SnowBlock · 博客')
+  setOGTag('og:description', '雪地笔记 — 技术、游戏、日常与碎片思考')
   setOGTag('og:image', 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/bg.webp')
   setOGTag('og:url', 'https://blog.snowblock.top')
 }

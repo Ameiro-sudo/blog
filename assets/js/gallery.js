@@ -115,6 +115,9 @@ function showGallery() {
   pageHeader.style.display = 'none'
   tocToggle.classList.remove('show')
   tocPanel.classList.remove('show')
+  resetOG()
+  document.title = '画廊 · SnowBlock'
+  setOGTag('og:title', '画廊 · SnowBlock')
   albumGrid.style.display = ''
   albumDetail.style.display = 'none'
   albumGrid.innerHTML = '<div class="gallery-wrap"><div class="gallery-header"><h1>照片墙</h1></div><div class="album-grid" id="albumGridInner"></div></div>'

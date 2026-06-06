@@ -218,9 +218,9 @@ function setOGTag(prop, val) {
 }
 
 function resetOG() {
-  document.title = 'SnowBlock . 雪地博客'
-  setOGTag('og:title', 'SnowBlock . 博客')
-  setOGTag('og:description', '雪地笔记 --- 技术、游戏、日常与碎片思考')
+  document.title = 'SnowBlock · 雪地笔记'
+  setOGTag('og:title', 'SnowBlock · 博客')
+  setOGTag('og:description', '雪地笔记 — 技术、游戏、日常与碎片思考')
   setOGTag('og:image', 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/bg.webp')
   setOGTag('og:url', 'https://blog.snowblock.top')
 }
@@ -387,7 +387,7 @@ function loadArticle(id) {
   fetch('content/posts/' + meta.file).then(function (r) { return r.text() }).then(function (mdText) {
     var content = stripMeta(mdText)
     articleTitle.textContent = meta.title
-    document.title = meta.title + ' . SnowBlock'
+    document.title = meta.title + ' · SnowBlock'
     setOGTag('og:title', meta.title)
     setOGTag('og:description', meta.description || (getExcerpt ? getExcerpt(content, 200) : ''))
     setOGTag('og:image', meta.image || 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/bg.webp')
@@ -458,8 +458,9 @@ function showAbout() {
   pageHeader.style.display = 'none'
   tocToggle.classList.remove('show')
   tocPanel.classList.remove('show')
-  document.title = '关于 . SnowBlock'
-  setOGTag('og:title', '关于 . SnowBlock')
+  resetOG()
+  document.title = '关于 · SnowBlock'
+  setOGTag('og:title', '关于 · SnowBlock')
   fetch('content/pages/about.md').then(function (r) { return r.text() }).then(function (mdText) {
     articleTitle.textContent = '关于'
     articleMeta.innerHTML = ''
@@ -783,6 +784,9 @@ function showArchive() {
   pageHeader.style.display = 'none'
   tocToggle.classList.remove('show')
   tocPanel.classList.remove('show')
+  resetOG()
+  document.title = '归档 · SnowBlock'
+  setOGTag('og:title', '归档 · SnowBlock')
   renderArchive()
   window.scrollTo({ top: 0 })
 }
@@ -904,6 +908,9 @@ function showGallery() {
   pageHeader.style.display = 'none'
   tocToggle.classList.remove('show')
   tocPanel.classList.remove('show')
+  resetOG()
+  document.title = '画廊 · SnowBlock'
+  setOGTag('og:title', '画廊 · SnowBlock')
   albumGrid.style.display = ''
   albumDetail.style.display = 'none'
   albumGrid.innerHTML = '<div class="gallery-wrap"><div class="gallery-header"><h1>照片墙</h1></div><div class="album-grid" id="albumGridInner"></div></div>'
