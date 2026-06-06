@@ -4,6 +4,10 @@ set -e
 BLOG_DIR="$(cd "$(dirname "$0")" && pwd)"
 IMAGES_DIR="$(cd "$BLOG_DIR/../my-images" && pwd)"
 
+SKIP_CONVERT=false
+[ "$1" = "-n" ] && SKIP_CONVERT=true
+
+if ! $SKIP_CONVERT; then
 echo "==> 转换 WebP..."
 cd "$IMAGES_DIR"
 CONVERTED=0
@@ -27,6 +31,7 @@ if [ "$CONVERTED" -gt 0 ]; then
   echo "    转换完成: $CONVERTED 张"
 else
   echo "    无需转换"
+fi
 fi
 
 echo ""
@@ -62,7 +67,9 @@ if [ -z "$STAGED" ] || [ "$STAGED" -eq 0 ]; then
   echo "    博客无变更，跳过提交"
 else
   echo "    变更文件数: $STAGED"
-  if [ -n "$1" ]; then
+  if $SKIP_CONVERT && [ -n "$2" ]; then
+    MSG="$2"
+  elif ! $SKIP_CONVERT && [ -n "$1" ]; then
     MSG="$1"
   elif [ -n "$NEW_POST" ]; then
     MSG="add: 新文章"
