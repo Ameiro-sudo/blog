@@ -132,7 +132,7 @@
 
 
   const profileConfig = {
-    avatar: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/avatar.webp',
+    avatar: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/profile.webp',
     name: 'ninasukiwww',
     bio: '世界は大きい、君は行かなければならない',
     links: [
@@ -461,7 +461,7 @@
         document.title = meta.title + ' · SnowBlock'
         setOGTag('og:title', meta.title)
         setOGTag('og:description', meta.description || (getExcerpt ? getExcerpt(content, 200) : ''))
-        setOGTag('og:image', meta.image || 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/138936740_p0.webp')
+        setOGTag('og:image', meta.image || 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/bg.webp')
         setOGTag('og:url', 'https://blog.snowblock.top/#' + id)
         var tags = meta.tags.map(function (t) {
           return '<span class="tag ' + (t === 'Bash' ? 'bash' : 'tech') + '">' + t + '</span>'
@@ -522,7 +522,7 @@
       document.title = 'SnowBlock · 雪地博客'
       setOGTag('og:title', 'SnowBlock · 博客')
       setOGTag('og:description', '雪地笔记 — 技术、游戏、日常与碎片思考')
-      setOGTag('og:image', 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/138936740_p0.webp')
+      setOGTag('og:image', 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/bg.webp')
       setOGTag('og:url', 'https://blog.snowblock.top')
     }
 
