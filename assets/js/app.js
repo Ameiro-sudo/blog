@@ -116,7 +116,6 @@
     var tocPanel = document.getElementById('tocPanel')
     var lightbox = document.getElementById('lightbox')
     var lightboxImg = document.getElementById('lightboxImg')
-    var lightboxCaption = document.getElementById('lightboxCaption')
     var albums = []
     var pageHeader = document.getElementById('pageHeader')
 
@@ -378,7 +377,6 @@
           img.addEventListener('click', function () {
             lightboxImg.src = img.src
             lightboxImg.alt = img.alt || ''
-            lightboxCaption.textContent = ''
             lightbox.classList.add('show')
           })
         })
@@ -747,7 +745,6 @@
         img.addEventListener('click', function () {
           lightboxImg.src = img.src
           lightboxImg.alt = ''
-          lightboxCaption.textContent = ''
           lightbox.classList.add('show')
         })
       })
