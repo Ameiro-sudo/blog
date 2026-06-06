@@ -1,8 +1,26 @@
 (function () {
+
   if (location.search.includes('_gl=')) {
     history.replaceState(null, '', location.pathname + location.hash)
   }
 
+  // ============================================
+  // CONFIG
+  // ============================================
+  const profileConfig = {
+    avatar: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/profile.webp',
+    name: 'ninasukiwww',
+    bio: '世界は大きい、君は行かなければならない',
+    links: [
+      { name: 'GitHub', icon: 'fa7-brands/github', url: 'https://github.com/ninasukiwww-png' },
+      { name: 'Shizukuレモン', icon: 'fa7-brands/bilibili', url: 'https://space.bilibili.com/3493084421687360' },
+      { name: '博客', icon: 'material-symbols/article-outline', url: 'https://blog.snowblock.top' }
+    ]
+  }
+
+  // ============================================
+  // TOAST
+  // ============================================
   var toast = document.getElementById('toast');
   var toastTimer = null;
 
@@ -17,29 +35,34 @@
     }, dur);
   }
 
-
-
-  // === 灯箱全局事件 ===
-  document.getElementById('lightbox-close').addEventListener('click', function () {
-    document.getElementById('lightbox').classList.remove('show')
-  })
-  document.getElementById('lightbox').addEventListener('click', function () {
-    this.classList.remove('show')
-  })
-  document.getElementById('lightboxImg').addEventListener('click', function (e) {
-    e.stopPropagation()
-  })
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('show')
-  })
-
-  // === 灯箱缩放 ===
+  // ============================================
+  // LIGHTBOX
+  // ============================================
+  var lightbox = document.getElementById('lightbox')
+  var lightboxImg = document.getElementById('lightboxImg')
   var zoomLevel = 1
   var zoomPanX = 0
   var zoomPanY = 0
   var zoomPanning = false
   var zoomStartX, zoomStartY
+  var zoomLastTap = 0
+  var currentExif = null
 
+  // --- close ---
+  document.getElementById('lightbox-close').addEventListener('click', function () {
+    lightbox.classList.remove('show')
+  })
+  lightbox.addEventListener('click', function () {
+    this.classList.remove('show')
+  })
+  lightboxImg.addEventListener('click', function (e) {
+    e.stopPropagation()
+  })
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') lightbox.classList.remove('show')
+  })
+
+  // --- zoom ---
   lightboxImg.addEventListener('wheel', function (e) {
     e.preventDefault()
     var dir = e.deltaY > 0 ? -1 : 1
@@ -48,6 +71,25 @@
     applyZoomTransform()
   }, { passive: false })
 
+  lightboxImg.addEventListener('dblclick', function (e) {
+    e.stopPropagation()
+    if (zoomLevel > 1) { zoomLevel = 1; zoomPanX = 0; zoomPanY = 0 }
+    else zoomLevel = 2.5
+    applyZoomTransform()
+  })
+
+  lightboxImg.addEventListener('touchend', function (e) {
+    var now = Date.now()
+    if (now - zoomLastTap < 300 && e.changedTouches.length === 1) {
+      if (zoomLevel > 1) { zoomLevel = 1; zoomPanX = 0; zoomPanY = 0 }
+      else zoomLevel = 2.5
+      applyZoomTransform()
+      e.preventDefault()
+    }
+    zoomLastTap = now
+  })
+
+  // --- pan ---
   lightboxImg.addEventListener('mousedown', function (e) {
     if (zoomLevel <= 1) return
     zoomPanning = true
@@ -68,31 +110,11 @@
     if (zoomLevel > 1) lightboxImg.style.cursor = 'grab'
   })
 
-  var zoomLastTap = 0
-  lightboxImg.addEventListener('touchend', function (e) {
-    var now = Date.now()
-    if (now - zoomLastTap < 300 && e.changedTouches.length === 1) {
-      if (zoomLevel > 1) { zoomLevel = 1; zoomPanX = 0; zoomPanY = 0 }
-      else zoomLevel = 2.5
-      applyZoomTransform()
-      e.preventDefault()
-    }
-    zoomLastTap = now
-  })
-
-  lightboxImg.addEventListener('dblclick', function (e) {
-    e.stopPropagation()
-    if (zoomLevel > 1) { zoomLevel = 1; zoomPanX = 0; zoomPanY = 0 }
-    else zoomLevel = 2.5
-    applyZoomTransform()
-  })
-
   function applyZoomTransform() {
     lightboxImg.style.transform = 'translate(' + zoomPanX + 'px,' + zoomPanY + 'px) scale(' + zoomLevel + ')'
   }
 
-  var currentExif = null
-
+  // --- EXIF ---
   function updateLightboxExif() {
     var el = document.getElementById('lightboxExif')
     if (!el) return
@@ -116,6 +138,7 @@
     el.textContent = parts.join('  ·  ')
   }
 
+  // --- reset on open/close ---
   ;(function () {
     var obs = new MutationObserver(function () {
       if (lightbox.classList.contains('show')) {
@@ -130,17 +153,6 @@
     obs.observe(lightbox, { attributes: true, attributeFilter: ['class'] })
   })()
 
-
-  const profileConfig = {
-    avatar: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/profile.webp',
-    name: 'ninasukiwww',
-    bio: '世界は大きい、君は行かなければならない',
-    links: [
-      { name: 'GitHub', icon: 'fa7-brands/github', url: 'https://github.com/ninasukiwww-png' },
-      { name: 'Shizukuレモン', icon: 'fa7-brands/bilibili', url: 'https://space.bilibili.com/3493084421687360' },
-      { name: '博客', icon: 'material-symbols/article-outline', url: 'https://blog.snowblock.top' }
-    ]
-  }
 
   window.addEventListener('load', function () {
     if (!window.markdownit || !window.hljs || !window.DOMPurify) {
@@ -168,6 +180,9 @@
       return mdImage(tokens, idx, options, env, self)
     }
 
+    // ============================
+    // MARKDOWN + PURIFY CONFIG
+    // ============================
     const purifyConfig = {
       ALLOWED_TAGS: ['h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'ul', 'ol', 'li', 'a', 'strong', 'em', 'code', 'pre', 'img', 'br', 'hr', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'button', 'progress'],
       ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'id', 'loading', 'style', 'type', 'value', 'max', 'onclick']
@@ -189,6 +204,9 @@
       return text.replace(/^# .+\n[\s\S]*?\n---\n?/, '')
     }
 
+    // ============================
+    // STATE
+    // ============================
     var postsMeta = []
     var allExcerpts = {}
     var currentPage = 1
@@ -196,7 +214,12 @@
     var PER_PAGE = 5
     var currentHeatmapYear = null
     var heatmapDayPosts = {}
+    var albums = []
+    var tocSpy = null
 
+    // ============================
+    // DOM REFERENCES
+    // ============================
     var postContainer = document.getElementById('dynamicPostList')
     var paginationEl = document.getElementById('pagination')
     var listView = document.getElementById('postList')
@@ -221,8 +244,6 @@
     var backToTop = document.getElementById('backToTop')
     var tocToggle = document.getElementById('tocToggle')
     var tocPanel = document.getElementById('tocPanel')
-    var lightbox = document.getElementById('lightbox')
-    var lightboxImg = document.getElementById('lightboxImg')
     var albums = []
     var pageHeader = document.getElementById('pageHeader')
     var tocSpy = null

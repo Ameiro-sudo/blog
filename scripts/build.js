@@ -5,35 +5,20 @@ import { fileURLToPath } from 'url'
 import { createHash } from 'crypto'
 import exifr from 'exifr'
 
+// ============================
+// PATHS & CONSTANTS
+// ============================
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
-
 const POSTS_DIR = join(ROOT, 'content', 'posts')
 const ALBUMS_DIR = join(ROOT, 'content', 'albums')
 const CDN_BASE = 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog'
 const BUILD_TS = Date.now()
 const SITE_URL = 'https://blog.snowblock.top'
 
-function parseFrontmatter(text) {
-  const lines = text.split('\n')
-  const meta = {}
-  let bodyStart = 0
-
-  if (lines[0]?.trim() === '---') {
-    let i = 1
-    while (i < lines.length) {
-      const line = lines[i].trim()
-      if (line === '---') { bodyStart = i + 1; break }
-      const m = line.match(/^(\w+)\s*:\s*(.+)$/)
-      if (m) meta[m[1]] = m[2].trim()
-      i++
-    }
-  }
-
-  const body = lines.slice(bodyStart).join('\n').trim()
-  return { meta, body }
-}
-
+// ============================
+// PARSE POST
+// ============================
 function parsePost(filepath) {
   const text = readFileSync(filepath, 'utf-8')
   const lines = text.split('\n')
@@ -88,6 +73,9 @@ function parsePost(filepath) {
   }
 }
 
+// ============================
+// BUILD: POSTS INDEX
+// ============================
 function buildPosts() {
   const files = readdirSync(POSTS_DIR)
     .filter(f => f.endsWith('.md') && f !== 'index.json' && !f.startsWith('_'))
@@ -103,6 +91,9 @@ function buildPosts() {
   console.log(`  posts: ${posts.length} articles`)
 }
 
+// ============================
+// BUILD: ALBUMS INDEX (async, EXIF extraction)
+// ============================
 async function buildAlbums() {
   const IMAGES_DIR = join(ROOT, '..', 'my-images', 'blog')
   let dirs = []
@@ -163,6 +154,9 @@ async function buildAlbums() {
   console.log('  albums: ' + albums.length + ' (auto)')
 }
 
+// ============================
+// BUILD: RSS FEED
+// ============================
 function buildFeed() {
   const posts = JSON.parse(readFileSync(join(POSTS_DIR, 'index.json'), 'utf-8'))
   const now = new Date().toUTCString()
@@ -192,6 +186,9 @@ function buildFeed() {
   console.log('  feed: ok')
 }
 
+// ============================
+// BUILD: SITEMAP
+// ============================
 function buildSitemap() {
   const posts = JSON.parse(readFileSync(join(POSTS_DIR, 'index.json'), 'utf-8'))
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -209,10 +206,16 @@ function buildSitemap() {
   console.log('  sitemap: ok')
 }
 
+// ============================
+// HELPERS
+// ============================
 function escXml(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
+// ============================
+// BUILD: VERSION HASHING
+// ============================
 function versionAssets() {
   const css = readFileSync(join(ROOT, 'assets', 'css', 'style.css'), 'utf-8')
   const js = readFileSync(join(ROOT, 'assets', 'js', 'app.js'), 'utf-8')
@@ -226,6 +229,9 @@ function versionAssets() {
   console.log('  version: ok (' + cssHash + ', ' + jsHash + ')')
 }
 
+// ============================
+// MAIN
+// ============================
 console.log('Building indexes...')
 buildPosts()
 await buildAlbums()

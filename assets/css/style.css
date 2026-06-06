@@ -725,6 +725,8 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   .tag-filter { background: rgba(255,255,255,0.04); }
   .archive-card { background: rgba(0,18,30,0.50); }
   .post-card, .article-card, .archive-card, .page-header { border-color: rgba(255,255,255,0.06); }
+}
+
 /* ===== Toast ===== */
 .toast {
     position: fixed;
@@ -756,6 +758,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 @media (prefers-color-scheme: dark) {
     .toast { background: rgba(0,0,0,0.80); border-color: rgba(255,255,255,0.06); }
 }
+
 /* ===== 打印 ===== */
 @media print {
   body::before { display: none; }
