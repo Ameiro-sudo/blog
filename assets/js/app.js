@@ -88,7 +88,9 @@
   })
 
   function applyZoomTransform() {
-    lightboxImg.style.transform = 'translate(' + zoomPanX + 'px,' + zoomPanY + 'px) scale(' + zoomLevel + ')'
+    var t = 'translate(' + zoomPanX + 'px,' + zoomPanY + 'px) scale(' + zoomLevel + ')'
+    lightboxImg.style.transform = t
+    lightboxImgOverlay.style.transform = t
   }
 
   ;(function () {
@@ -97,6 +99,9 @@
         zoomLevel = 1; zoomPanX = 0; zoomPanY = 0
         lightboxImg.style.transform = ''
         lightboxImg.style.cursor = 'zoom-out'
+        lightboxImgOverlay.style.transform = ''
+        lightboxImgOverlay.style.opacity = '0'
+        lightboxImgOverlay.src = ''
       }
     })
     obs.observe(lightbox, { attributes: true, attributeFilter: ['class'] })
@@ -195,6 +200,7 @@
     var tocPanel = document.getElementById('tocPanel')
     var lightbox = document.getElementById('lightbox')
     var lightboxImg = document.getElementById('lightboxImg')
+    var lightboxImgOverlay = document.getElementById('lightboxImgOverlay')
     var albums = []
     var pageHeader = document.getElementById('pageHeader')
     var tocSpy = null
@@ -904,19 +910,35 @@
       slideAlbum = null
     }
 
+    var slideReqId = 0
+
     function showSlidePhoto() {
       if (!slideAlbum || !slideAlbum.photos[slideIndex]) return
       zoomLevel = 1; zoomPanX = 0; zoomPanY = 0
-      lightboxImg.style.transform = ''
+      var t = ''
+      lightboxImg.style.transform = t
+      lightboxImgOverlay.style.transform = t
       lightboxImg.style.cursor = 'zoom-out'
-      lightboxImg.style.opacity = '0'
       updateSlideCounter()
-      setTimeout(function () {
-        lightboxImg.src = slideAlbum.photos[slideIndex].url
-        lightboxImg.alt = ''
-        lightbox.classList.add('show')
-        setTimeout(function () { lightboxImg.style.opacity = '1' }, 50)
-      }, 150)
+      lightbox.classList.add('show')
+      slideReqId++
+      var myId = slideReqId
+      var pre = new Image()
+      pre.onload = function () {
+        if (myId !== slideReqId) return
+        lightboxImgOverlay.src = pre.src
+        lightboxImgOverlay.style.opacity = '1'
+        lightboxImg.style.opacity = '0'
+        setTimeout(function () {
+          if (myId !== slideReqId) return
+          lightboxImg.src = pre.src
+          lightboxImg.alt = ''
+          lightboxImg.style.opacity = '1'
+          lightboxImgOverlay.style.opacity = '0'
+          lightboxImgOverlay.src = ''
+        }, 300)
+      }
+      pre.src = slideAlbum.photos[slideIndex].url
     }
 
     function slidePrev() {

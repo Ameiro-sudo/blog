@@ -257,11 +257,17 @@
   cursor: zoom-out;
 }
 #lightbox.show { opacity: 1; pointer-events: auto; }
+.lightbox-img-wrap { position: relative; display: flex; }
 #lightbox img {
   max-width: 90vw; max-height: 85vh;
   border-radius: 0.8rem; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   cursor: zoom-out; object-fit: contain;
   transition: opacity 0.3s, transform 0.2s;
+}
+#lightboxImgOverlay {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  box-shadow: none;
 }
 .lightbox-nav {
   position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
