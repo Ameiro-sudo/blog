@@ -35,7 +35,7 @@
 
 
   const profileConfig = {
-    avatar: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/avatar.webp',
+    avatar: 'assets/img/avatar.webp',
     name: 'ninasukiwww',
     bio: '世界は大きい、君は行かなければならない',
     links: [

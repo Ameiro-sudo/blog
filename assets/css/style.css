@@ -584,7 +584,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 
 /* ===== 暗色模式 ===== */
 @media (prefers-color-scheme: dark) {
-  body { background: url('https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/138936740_p0.webp') center/cover fixed, linear-gradient(160deg,#0b1a24,#162b36); }
+  body { background: url('assets/img/138936740_p0.webp') center/cover fixed, linear-gradient(160deg,#0b1a24,#162b36); }
   body::before { background: rgba(0,0,0,0.25); }
   #loader { background: linear-gradient(135deg,#0d1f2b,#142a38,#0d1f2b); background-size: 200% 200%; }
   .top-bar { --glass-header-bg: rgba(0,15,25,0.70); }
@@ -663,6 +663,6 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   #snowCanvas { display: none; }
-  body { background: var(--color-bg-deep) url('https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/138936740_p0.webp') center/cover fixed; }
+  body { background: var(--color-bg-deep) url('assets/img/138936740_p0.webp') center/cover fixed; }
   .post-card:hover { transform: none; }
 }
