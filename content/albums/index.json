@@ -189,9 +189,18 @@
     "id": "test_diff",
     "title": "测试",
     "description": "格式测试",
-    "cover": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/1681517522000.png",
+    "cover": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/001.png",
     "date": "2026.06",
     "photos": [
+      {
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/001.png"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/010.png"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/050.png"
+      },
       {
         "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/1681517522000.png"
       },
@@ -209,6 +218,9 @@
       },
       {
         "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/17215176600007.jpg"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/20240608_191220.jpg"
       },
       {
         "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/Background-300.png"
