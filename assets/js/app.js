@@ -727,6 +727,7 @@
           '</div>'
       }
       grid.insertAdjacentHTML('beforeend', html)
+      var items = grid.querySelectorAll('.photo-item')
       for (var i = _albumLoaded; i < end; i++) {
         (function (img) {
           img.addEventListener('click', function () {
@@ -734,7 +735,7 @@
             lightboxImg.alt = ''
             lightbox.classList.add('show')
           })
-        })(grid.lastElementChild.querySelector('img'))
+        })(items[i].querySelector('img'))
       }
       _albumLoaded = end
       var sentinel = grid.querySelector('.album-sentinel')

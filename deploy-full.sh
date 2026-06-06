@@ -8,19 +8,25 @@ echo "==> 转换 WebP..."
 cd "$IMAGES_DIR"
 CONVERTED=0
 while IFS= read -r -d '' f; do
-  base="${f%.*}"
-  webp="$base.webp"
-  if [ -f "$webp" ]; then
-    echo "    跳过（已有 webp）: ${f#blog/}"
-    continue
+  webp="${f%.*}.webp"
+  [ -f "$webp" ] && continue
+  before=$(stat -c%s "$f" 2>/dev/null || echo 0)
+  echo "    转换: ${f#blog/} (${before} bytes)"
+  if ffmpeg -y -i "$f" -compression_level 6 -q:v 82 "$webp" 2>/dev/null; then
+    after=$(stat -c%s "$webp" 2>/dev/null || echo 0)
+    saved=$(( (before - after) * 100 / before ))
+    rm -f "$f"
+    echo "    -> ${webp#blog/} (${after} bytes, -${saved}%)"
+    CONVERTED=$((CONVERTED + 1))
+  else
+    echo "    !! 转换失败，跳过: ${f#blog/}"
+    rm -f "$webp"
   fi
-  echo "    转换: ${f#blog/}"
-  ffmpeg -y -i "$f" -compression_level 6 -q:v 82 "$webp" 2>/dev/null
-  rm "$f"
-  CONVERTED=$((CONVERTED + 1))
 done < <(find blog/ -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.bmp' \) -print0)
 if [ "$CONVERTED" -gt 0 ]; then
   echo "    转换完成: $CONVERTED 张"
+else
+  echo "    无需转换"
 fi
 
 echo ""
