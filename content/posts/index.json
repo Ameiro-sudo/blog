@@ -11,7 +11,10 @@
       "前端"
     ],
     "pinned": false,
-    "file": "post-1.md"
+    "file": "post-1.md",
+    "description": "",
+    "image": "",
+    "excerpt": "SnowBlock 的三个子站迎来了一次设计语言的全面统一。 统一了什么 以导航页 snowblock.tophttps://snowblock.top 的设计规范为基准，对博客和 MC 状态页进行了对齐： CSS 设计变量 - 统一了 --radius-card: 3rem、--radius-item: 1.5rem 等圆角标准 - 统一了字体栈（ZCOOL KuaiLe 标题 + Segoe "
   },
   {
     "id": "post-2",
@@ -27,7 +30,10 @@
       "代码"
     ],
     "pinned": false,
-    "file": "post-2.md"
+    "file": "post-2.md",
+    "description": "",
+    "image": "",
+    "excerpt": "这是一篇综合测试文章，用于展示各种 Markdown 渲染效果。 标题层级 三级标题 四级标题 五级标题 六级标题 文本样式 普通文本，加粗，斜体，删除线，行内代码，超链接。 引用 这是一段引用文本。 引用可以换行，也支持 内嵌样式。 嵌套引用也可以。 嵌套引用： 编程语言 Python JavaScript Rust 各有千秋 无序列表 - 第一项 - 第二项 - 嵌套项甲 - 嵌套项乙 - 第"
   },
   {
     "id": "post-3",
@@ -42,7 +48,10 @@
       "模板"
     ],
     "pinned": true,
-    "file": "post-3.md"
+    "file": "post-3.md",
+    "description": "",
+    "image": "",
+    "excerpt": "写一篇新文章 在 content/posts/ 下新建 .md 文件，按以下格式： markdown 文章标题 date: 2026-06-05 tags: 标签1, 标签2 time: 14:20 readTime: 3 分钟 --- 正文从这里开始，支持 Markdown 语法。 - 第一行 标题 用作文章标题 - date / tags / time / readTime 写在标题和 ---"
   },
   {
     "id": "post-4",
@@ -55,7 +64,10 @@
       "日志"
     ],
     "pinned": false,
-    "file": "post-4.md"
+    "file": "post-4.md",
+    "description": "",
+    "image": "",
+    "excerpt": "2026-06-05 三站设计统一 导航页、博客、MC 状态页完成设计语言统一： - 统一毛玻璃参数、圆角标准、字体栈 - SVG 晶体加载器替换各自不同的加载动画 - 加载策略统一：背景图加载 + 最少 1500ms 展示 + 5000ms 超时兜底 - 全站支持 prefers-color-scheme: dark 暗色模式 - 全站支持打印样式和 prefers-reduced-motion"
   },
   {
     "id": "post-5",
@@ -71,6 +83,9 @@
       "教程"
     ],
     "pinned": false,
-    "file": "post-5.md"
+    "file": "post-5.md",
+    "description": "",
+    "image": "",
+    "excerpt": "从截图到生成可访问的图片链接，全程只需要两步，中间没有任何手动上传、等待、复制的冗余操作。 原理 截图 → Ctrl+V → PicGo 自动上传 GitHub → jsDelivr CDN 加速 → 链接已复制到剪贴板 准备工作 1. 创建公开仓库 去 GitHub 新建一个 Public 仓库，用来存放图片。仓库名随意，比如 my-images。 2. 生成 Token GitHub \"Set"
   }
 ]

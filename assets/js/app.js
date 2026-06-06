@@ -40,7 +40,7 @@
     bio: '世界は大きい、君は行かなければならない',
     links: [
       { name: 'GitHub', icon: 'fa7-brands/github', url: 'https://github.com/ninasukiwww-png' },
-      { name: 'Bilibili', icon: 'fa7-brands/bilibili', url: 'https://space.bilibili.com/3493084421687360' },
+      { name: 'Shizukuレモン', icon: 'fa7-brands/bilibili', url: 'https://space.bilibili.com/3493084421687360' },
       { name: '博客', icon: 'material-symbols/article-outline', url: 'https://blog.snowblock.top' }
     ]
   }
@@ -110,6 +110,7 @@
     var navBlog = document.getElementById('navBlog')
     var navArchive = document.getElementById('navArchive')
     var navGallery = document.getElementById('navGallery')
+    var navAbout = document.getElementById('navAbout')
     var backToTop = document.getElementById('backToTop')
     var tocToggle = document.getElementById('tocToggle')
     var tocPanel = document.getElementById('tocPanel')
@@ -339,6 +340,11 @@
       fetch('content/posts/' + meta.file).then(function (r) { return r.text() }).then(function (mdText) {
         var content = stripMeta(mdText)
         articleTitle.textContent = meta.title
+        document.title = meta.title + ' · SnowBlock'
+        setOGTag('og:title', meta.title)
+        setOGTag('og:description', meta.description || (getExcerpt ? getExcerpt(content, 200) : ''))
+        setOGTag('og:image', meta.image || 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/138936740_p0.webp')
+        setOGTag('og:url', 'https://blog.snowblock.top/#' + id)
         var tags = meta.tags.map(function (t) {
           return '<span class="tag ' + (t === 'Bash' ? 'bash' : 'tech') + '">' + t + '</span>'
         }).join(' ')
@@ -388,6 +394,19 @@
       }).catch(function () { showListView() })
     }
 
+    function setOGTag(prop, val) {
+      var el = document.querySelector('meta[property="' + prop + '"]')
+      if (el) el.setAttribute('content', val)
+    }
+
+    function resetOG() {
+      document.title = 'SnowBlock · 雪地博客'
+      setOGTag('og:title', 'SnowBlock · 博客')
+      setOGTag('og:description', '雪地笔记 — 技术、游戏、日常与碎片思考')
+      setOGTag('og:image', 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/138936740_p0.webp')
+      setOGTag('og:url', 'https://blog.snowblock.top')
+    }
+
     function showListView() {
       listView.style.display = 'block'
       articleView.style.display = 'none'
@@ -396,6 +415,7 @@
       pageHeader.style.display = 'block'
       tocToggle.classList.remove('show')
       tocPanel.classList.remove('show')
+      resetOG()
       window.scrollTo({ top: 0 })
     }
 
@@ -489,7 +509,9 @@
           var key = y + '-' + m
           if (!seenMonths[key]) {
             seenMonths[key] = true
-            monthPositions.push({ col: wi, label: (m + 1) + '月' })
+            if (y === year) {
+              monthPositions.push({ col: wi, label: (m + 1) + '月' })
+            }
             break
           }
         }
@@ -752,6 +774,7 @@
       if (!raw) { showListView(); setActiveNav('blog'); return }
       if (raw === 'archive') { showArchive(); setActiveNav('archive'); return }
       if (raw === 'gallery') { showGallery(); setActiveNav('gallery'); return }
+      if (raw === 'about') { showAbout(); setActiveNav('about'); return }
       if (raw.indexOf('gallery/') === 0) {
         var albumId = raw.replace('gallery/', '')
         showGallery()
@@ -767,6 +790,27 @@
       navBlog.className = which === 'blog' ? 'active' : ''
       navArchive.className = which === 'archive' ? 'active' : ''
       navGallery.className = which === 'gallery' ? 'active' : ''
+      navAbout.className = which === 'about' ? 'active' : ''
+    }
+
+    function showAbout() {
+      listView.style.display = 'none'
+      articleView.style.display = 'block'
+      archiveView.style.display = 'none'
+      galleryView.style.display = 'none'
+      pageHeader.style.display = 'none'
+      tocToggle.classList.remove('show')
+      tocPanel.classList.remove('show')
+      document.title = '关于 · SnowBlock'
+      setOGTag('og:title', '关于 · SnowBlock')
+      fetch('content/pages/about.md').then(function (r) { return r.text() }).then(function (mdText) {
+        articleTitle.textContent = '关于'
+        articleMeta.innerHTML = ''
+        articleContent.innerHTML = safeRender(mdText)
+        enhance(articleContent)
+        relatedPosts.innerHTML = ''
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }).catch(function () { showListView() })
     }
 
     backLink.addEventListener('click', function (e) {
@@ -777,6 +821,7 @@
     navBlog.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/' })
     navArchive.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/archive' })
     navGallery.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/gallery' })
+    navAbout.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/about' })
 
     // === 回到顶部 ===
     window.addEventListener('scroll', function () {

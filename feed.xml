@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SnowBlock</title>
+    <link>https://blog.snowblock.top</link>
+    <description>雪地笔记</description>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 06 Jun 2026 03:40:41 GMT</lastBuildDate>
+    <atom:link href="https://blog.snowblock.top/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>三站设计统一 · 雪境设计系统</title>
+      <link>https://blog.snowblock.top/#/post-1</link>
+      <guid>https://blog.snowblock.top/#/post-1</guid>
+      <pubDate>Fri, 05 Jun 2026 00:00:00 GMT</pubDate>
+      <description>SnowBlock 的三个子站迎来了一次设计语言的全面统一。 统一了什么 以导航页 snowblock.tophttps://snowblock.top 的设计规范为基准，对博客和 MC 状态页进行了对齐： CSS 设计变量 - 统一了 --radius-card: 3rem、--radius-item: 1.5rem 等圆角标准 - 统一了字体栈（ZCOOL KuaiLe 标题 + Segoe </description>
+    </item>
+    <item>
+      <title>Markdown 样式与代码排版测试</title>
+      <link>https://blog.snowblock.top/#/post-2</link>
+      <guid>https://blog.snowblock.top/#/post-2</guid>
+      <pubDate>Fri, 05 Jun 2026 00:00:00 GMT</pubDate>
+      <description>这是一篇综合测试文章，用于展示各种 Markdown 渲染效果。 标题层级 三级标题 四级标题 五级标题 六级标题 文本样式 普通文本，加粗，斜体，删除线，行内代码，超链接。 引用 这是一段引用文本。 引用可以换行，也支持 内嵌样式。 嵌套引用也可以。 嵌套引用： 编程语言 Python JavaScript Rust 各有千秋 无序列表 - 第一项 - 第二项 - 嵌套项甲 - 嵌套项乙 - 第</description>
+    </item>
+    <item>
+      <title>博客使用指南</title>
+      <link>https://blog.snowblock.top/#/post-3</link>
+      <guid>https://blog.snowblock.top/#/post-3</guid>
+      <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
+      <description>写一篇新文章 在 content/posts/ 下新建 .md 文件，按以下格式： markdown 文章标题 date: 2026-06-05 tags: 标签1, 标签2 time: 14:20 readTime: 3 分钟 --- 正文从这里开始，支持 Markdown 语法。 - 第一行 标题 用作文章标题 - date / tags / time / readTime 写在标题和 ---</description>
+    </item>
+    <item>
+      <title>更新日志</title>
+      <link>https://blog.snowblock.top/#/post-4</link>
+      <guid>https://blog.snowblock.top/#/post-4</guid>
+      <pubDate>Fri, 05 Jun 2026 00:00:00 GMT</pubDate>
+      <description>2026-06-05 三站设计统一 导航页、博客、MC 状态页完成设计语言统一： - 统一毛玻璃参数、圆角标准、字体栈 - SVG 晶体加载器替换各自不同的加载动画 - 加载策略统一：背景图加载 + 最少 1500ms 展示 + 5000ms 超时兜底 - 全站支持 prefers-color-scheme: dark 暗色模式 - 全站支持打印样式和 prefers-reduced-motion</description>
+    </item>
+    <item>
+      <title>图床配置：PicGo + GitHub + jsDelivr 一步到位</title>
+      <link>https://blog.snowblock.top/#/post-5</link>
+      <guid>https://blog.snowblock.top/#/post-5</guid>
+      <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
+      <description>从截图到生成可访问的图片链接，全程只需要两步，中间没有任何手动上传、等待、复制的冗余操作。 原理 截图 → Ctrl+V → PicGo 自动上传 GitHub → jsDelivr CDN 加速 → 链接已复制到剪贴板 准备工作 1. 创建公开仓库 去 GitHub 新建一个 Public 仓库，用来存放图片。仓库名随意，比如 my-images。 2. 生成 Token GitHub &quot;Set</description>
+    </item>
+  </channel>
+</rss>

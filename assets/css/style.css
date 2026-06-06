@@ -115,6 +115,19 @@
 }
 .search-input::placeholder { color: rgba(200,235,250,0.50); }
 .search-input:focus { border-color: var(--color-accent); background: rgba(255,255,255,0.16); }
+.rss-link {
+  display: inline-flex; align-items: center;
+  margin-left: 8px; padding: 5px 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-item);
+  color: rgba(220,240,255,0.70);
+  font-family: var(--font-mono); font-size: 0.75rem;
+  text-decoration: none;
+  transition: background 0.25s, color 0.25s;
+  flex-shrink: 0;
+}
+.rss-link:hover { background: rgba(255,255,255,0.18); color: var(--color-accent); }
 
 /* ===== 标签筛选 ===== */
 .tag-filters {
