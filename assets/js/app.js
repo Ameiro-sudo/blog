@@ -632,7 +632,12 @@
     fetch('content/posts/index.json').then(function (r) { return r.json() }).then(function (data) {
       postsMeta = data
       // 置顶文章排前面
-      postsMeta.sort(function (a, b) { return (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) })
+      postsMeta.sort(function (a, b) {
+        var pa = a.pinned ? 1 : 0
+        var pb = b.pinned ? 1 : 0
+        if (pa !== pb) return pb - pa
+        return (b.date || '').localeCompare(a.date || '')
+      })
       renderTagFilters()
       var loaded = 0
       var total = postsMeta.length
