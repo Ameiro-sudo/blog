@@ -7,7 +7,7 @@ const ROOT = join(__dirname, '..')
 
 const POSTS_DIR = join(ROOT, 'content', 'posts')
 const ALBUMS_DIR = join(ROOT, 'content', 'albums')
-const CDN_BASE = 'https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images@main/blog'
+const CDN_BASE = 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog'
 
 function parseFrontmatter(text) {
   const lines = text.split('\n')
