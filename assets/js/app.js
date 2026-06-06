@@ -679,23 +679,6 @@
     }
 
     // === 画廊 ===
-    function showGallery() {
-      listView.style.display = 'none'
-      articleView.style.display = 'none'
-      archiveView.style.display = 'none'
-      galleryView.style.display = 'block'
-      pageHeader.style.display = 'none'
-      tocToggle.classList.remove('show')
-      tocPanel.classList.remove('show')
-      albumDetail.style.display = 'none'
-      var wrap = '<div class="gallery-wrap"><div class="gallery-header"><h1>照片墙</h1></div><div class="album-grid"></div></div>'
-      albumGrid.innerHTML = wrap
-      renderAlbums()
-      albumGrid.style.display = ''
-      window.scrollTo({ top: 0 })
-    }
-
-    // === 画廊 ===
     function renderAlbums() {
       var grid = albumGrid.querySelector('.album-grid')
       if (!grid) return

@@ -116,9 +116,14 @@ function buildAlbums() {
 
   const albums = dirs.map(function(dir) {
     const dirPath = join(IMAGES_DIR, dir)
-    const files = readdirSync(dirPath)
-      .filter(f => /\.(jpg|jpeg|png|webp|gif|bmp)$/i.test(f))
-      .sort()
+    const extRe = /\.(jpg|jpeg|png|webp|gif|bmp)$/i
+    const allFiles = readdirSync(dirPath).filter(f => extRe.test(f))
+    const webpBasenames = new Set()
+    allFiles.forEach(function(f) { if (f.toLowerCase().endsWith('.webp')) webpBasenames.add(f.replace(extRe, '')) })
+    const files = allFiles.filter(function(f) {
+      if (f.toLowerCase().endsWith('.webp')) return true
+      return !webpBasenames.has(f.replace(extRe, ''))
+    }).sort()
 
     let meta = {}
     try {
