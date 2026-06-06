@@ -475,6 +475,20 @@
         if (level < 0.75) return 'var(--heatmap-l3)'
         return 'var(--heatmap-l4)'
       }
+      var monthLabels = {}
+      var seenMonths = {}
+      weeks.forEach(function (week, wi) {
+        for (var d = 0; d < 7; d++) {
+          var m = week[d].getMonth()
+          var y = week[d].getFullYear()
+          var key = y + '-' + m
+          if (!seenMonths[key]) {
+            seenMonths[key] = true
+            monthLabels[wi] = (m + 1) + '月'
+            break
+          }
+        }
+      })
       var activeYears = {}
       postsMeta.forEach(function (p) {
         if (p.date) activeYears[p.date.substring(0, 4)] = true
@@ -493,7 +507,12 @@
         html += '<span class="heatmap-label">' + l + '</span>'
       })
       html += '</div><div class="heatmap-cells">'
-      weeks.forEach(function (week) {
+      weeks.forEach(function (week, wi) {
+        if (monthLabels[wi]) {
+          html += '<span class="heatmap-month">' + monthLabels[wi] + '</span>'
+        } else {
+          html += '<span class="heatmap-month"></span>'
+        }
         week.forEach(function (day) {
           var ds = day.getFullYear() + '-' + String(day.getMonth() + 1).padStart(2, '0') + '-' + String(day.getDate()).padStart(2, '0')
           var count = dayCounts[ds] || 0
