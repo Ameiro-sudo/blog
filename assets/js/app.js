@@ -87,6 +87,7 @@
     var currentPage = 1
     var activeTag = null
     var PER_PAGE = 5
+    var currentHeatmapYear = null
 
     var postContainer = document.getElementById('dynamicPostList')
     var paginationEl = document.getElementById('pagination')
@@ -165,6 +166,10 @@
       })
     }
 
+    function escapeRegex(s) {
+      return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    }
+
     // === 过滤 + 搜索 ===
     function applyFilters() {
       var q = (searchInput.value || '').toLowerCase()
@@ -174,6 +179,7 @@
         if (p.title.toLowerCase().indexOf(q) !== -1) return true
         if (p.tags.some(function (t) { return t.toLowerCase().indexOf(q) !== -1 })) return true
         if (p.date.toLowerCase().indexOf(q) !== -1) return true
+        if ((allExcerpts[p.id] || '').toLowerCase().indexOf(q) !== -1) return true
         return false
       })
       renderFiltered(filtered)
@@ -230,11 +236,18 @@
           var active = t === activeTag ? ' active-tag' : ''
           return '<span class="' + cls + active + '" data-tag="' + t + '">' + t + '</span>'
         }).join('')
+        var title = p.title
         var excerpt = allExcerpts[p.id] || ''
+        var sq = (searchInput.value || '').trim()
+        if (sq) {
+          var regex = new RegExp('(' + escapeRegex(sq) + ')', 'gi')
+          title = title.replace(regex, '<mark class="search-highlight">$1</mark>')
+          excerpt = excerpt.replace(regex, '<mark class="search-highlight">$1</mark>')
+        }
         html += '<div class="post-card" data-post-id="' + p.id + '" tabindex="0" role="button">' +
           '<div class="post-body">' +
            '<div class="post-meta"><span>' + p.date + '</span> ' + (p.pinned ? '<span class="pinned-badge">[置顶]</span>' : '') + tags + ' <span>' + p.readTime + '</span></div>' +
-          '<h2 class="post-title">' + p.title + '</h2>' +
+          '<h2 class="post-title">' + title + '</h2>' +
           '<p class="post-excerpt">' + excerpt + '</p>' +
            '<div class="post-footer"><span class="post-date">' + p.date + ' · ' + p.time + '</span></div>' +
           '</div></div>'
@@ -411,6 +424,86 @@
       tocPanel.classList.toggle('show')
     })
 
+    // === 热力图 ===
+    function getHeatmapYear() {
+      if (!currentHeatmapYear) {
+        var years = {}
+        postsMeta.forEach(function (p) {
+          if (p.date) years[p.date.substring(0, 4)] = true
+        })
+        var keys = Object.keys(years).sort()
+        currentHeatmapYear = parseInt(keys[keys.length - 1]) || new Date().getFullYear()
+      }
+      return currentHeatmapYear
+    }
+
+    function renderHeatmap() {
+      var year = getHeatmapYear()
+      var dayCounts = {}
+      postsMeta.forEach(function (p) {
+        if (p.date && p.date.indexOf(year) === 0) {
+          dayCounts[p.date] = (dayCounts[p.date] || 0) + 1
+        }
+      })
+      var startDate = new Date(year, 0, 1)
+      var startDay = startDate.getDay()
+      var firstCell = new Date(startDate)
+      firstCell.setDate(firstCell.getDate() - startDay)
+      var endDate = new Date(year, 11, 31)
+      var endDay = endDate.getDay()
+      var lastCell = new Date(endDate)
+      lastCell.setDate(lastCell.getDate() + (6 - endDay))
+      var weeks = []
+      var cursor = new Date(firstCell)
+      while (cursor <= lastCell) {
+        var week = []
+        for (var d = 0; d < 7; d++) {
+          week.push(new Date(cursor))
+          cursor.setDate(cursor.getDate() + 1)
+        }
+        weeks.push(week)
+      }
+      var maxCount = 0
+      Object.keys(dayCounts).forEach(function (k) {
+        if (dayCounts[k] > maxCount) maxCount = dayCounts[k]
+      })
+      function getColor(count) {
+        if (count === 0) return 'var(--heatmap-empty)'
+        var level = count / (maxCount || 1)
+        if (level < 0.25) return 'var(--heatmap-l1)'
+        if (level < 0.5) return 'var(--heatmap-l2)'
+        if (level < 0.75) return 'var(--heatmap-l3)'
+        return 'var(--heatmap-l4)'
+      }
+      var activeYears = {}
+      postsMeta.forEach(function (p) {
+        if (p.date) activeYears[p.date.substring(0, 4)] = true
+      })
+      var yearList = Object.keys(activeYears).sort()
+      var html = '<div class="heatmap-wrap">'
+      html += '<div class="heatmap-header">'
+      yearList.forEach(function (y) {
+        var cls = parseInt(y) === year ? ' active' : ''
+        html += '<button class="heatmap-year-btn' + cls + '" data-year="' + y + '">' + y + '</button>'
+      })
+      html += '</div>'
+      html += '<div class="heatmap-body"><div class="heatmap-labels">'
+      var dayLabels = ['', '一', '', '三', '', '五', '']
+      dayLabels.forEach(function (l) {
+        html += '<span class="heatmap-label">' + l + '</span>'
+      })
+      html += '</div><div class="heatmap-cells">'
+      weeks.forEach(function (week) {
+        week.forEach(function (day) {
+          var ds = day.getFullYear() + '-' + String(day.getMonth() + 1).padStart(2, '0') + '-' + String(day.getDate()).padStart(2, '0')
+          var count = dayCounts[ds] || 0
+          html += '<span class="heatmap-cell" style="background:' + getColor(count) + '" title="' + ds + ': ' + count + ' 篇"></span>'
+        })
+      })
+      html += '</div></div></div>'
+      return html
+    }
+
     // === 归档 ===
     function renderArchive() {
       var groups = {}
@@ -464,12 +557,18 @@
         })
         html += '</div>'
       })
-      archiveContent.innerHTML = html
+      archiveContent.innerHTML = renderHeatmap() + html
       archiveContent.querySelectorAll('.archive-item[data-id]').forEach(function (el) {
         el.addEventListener('click', function () { navigateTo(el.dataset.id) })
       })
       archiveContent.querySelectorAll('.archive-item[data-album]').forEach(function (el) {
         el.addEventListener('click', function () { location.hash = '#/gallery/' + el.dataset.album })
+      })
+      archiveContent.querySelectorAll('.heatmap-year-btn').forEach(function (el) {
+        el.addEventListener('click', function () {
+          currentHeatmapYear = parseInt(el.dataset.year)
+          renderArchive()
+        })
       })
     }
 
@@ -631,6 +730,13 @@
     searchInput.addEventListener('input', function () {
       clearTimeout(searchTimer)
       searchTimer = setTimeout(function () { currentPage = 1; applyFilters() }, 250)
+    })
+
+    document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault()
+        searchInput.focus()
+      }
     })
 
     // === 初始化 ===

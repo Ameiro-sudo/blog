@@ -452,6 +452,66 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .archive-album .archive-item-date { font-size: 0.8rem; }
 .archive-album .archive-item-title { color: var(--color-accent); }
 
+/* ===== 热力图 ===== */
+.heatmap-wrap {
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+.heatmap-header {
+  display: flex; gap: 0.4rem; justify-content: center;
+  margin-bottom: 0.8rem; flex-wrap: wrap;
+}
+.heatmap-year-btn {
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 0.75rem; font-family: var(--font-mono); cursor: pointer;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(220,240,255,0.70);
+  transition: all 0.2s; outline: none;
+}
+.heatmap-year-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.heatmap-year-btn.active {
+  background: rgba(143,216,239,0.20);
+  border-color: rgba(143,216,239,0.35);
+  color: var(--color-accent);
+}
+.heatmap-body {
+  display: flex; gap: 4px; justify-content: center;
+}
+.heatmap-labels {
+  display: flex; flex-direction: column; gap: 2px;
+  padding-top: 0;
+}
+.heatmap-label {
+  height: 10px; font-size: 0.55rem;
+  color: rgba(200,235,250,0.35);
+  font-family: var(--font-mono);
+  line-height: 10px;
+}
+.heatmap-cells {
+  display: grid;
+  grid-template-rows: repeat(7, 10px);
+  grid-auto-flow: column;
+  gap: 2px;
+}
+.heatmap-cell {
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.heatmap-cell:hover {
+  transform: scale(1.4);
+}
+
+/* ===== 搜索高亮 ===== */
+.search-highlight {
+  background: rgba(255, 213, 79, 0.25);
+  color: #fff;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
 /* ===== 画廊 ===== */
 #galleryView { margin-bottom: 2rem; }
 .gallery-wrap {
