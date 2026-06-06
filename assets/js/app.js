@@ -60,6 +60,16 @@
         return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>'
       }
     })
+    var mdImage = md.renderer.rules.image
+    md.renderer.rules.image = function (tokens, idx, options, env, self) {
+      var token = tokens[idx]
+      var src = token.attrs[token.attrIndex('src')][1]
+      var alt = token.content || ''
+      if (src.match(/^https?:\/\//) && src.indexOf('raw.githubusercontent.com') !== -1) {
+        return '<img src="' + md.utils.escapeHtml(src) + '" alt="' + md.utils.escapeHtml(alt) + '" loading="lazy">'
+      }
+      return mdImage(tokens, idx, options, env, self)
+    }
 
     const purifyConfig = {
       ALLOWED_TAGS: ['h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'ul', 'ol', 'li', 'a', 'strong', 'em', 'code', 'pre', 'img', 'br', 'hr', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'button', 'progress'],
@@ -717,9 +727,57 @@
       })
     }
 
+    var _albumObserver = null
+    var _albumData = null
+    var _albumBatchSize = 12
+    var _albumLoaded = 0
+
+    function renderAlbumBatch() {
+      var grid = albumDetail.querySelector('.photo-grid')
+      if (!grid || !_albumData) return
+      var end = Math.min(_albumLoaded + _albumBatchSize, _albumData.photos.length)
+      var html = ''
+      for (var i = _albumLoaded; i < end; i++) {
+        var p = _albumData.photos[i]
+        html += '<div class="photo-item">' +
+          '<img src="' + p.url + '" alt="" loading="lazy">' +
+          '</div>'
+      }
+      grid.insertAdjacentHTML('beforeend', html)
+      for (var i = _albumLoaded; i < end; i++) {
+        (function (img) {
+          img.addEventListener('click', function () {
+            lightboxImg.src = img.src
+            lightboxImg.alt = ''
+            lightbox.classList.add('show')
+          })
+        })(grid.lastElementChild.querySelector('img'))
+      }
+      _albumLoaded = end
+      var sentinel = grid.querySelector('.album-sentinel')
+      if (end >= _albumData.photos.length) {
+        if (sentinel) sentinel.style.display = 'none'
+        return
+      }
+      if (!sentinel) {
+        sentinel = document.createElement('div')
+        sentinel.className = 'album-sentinel'
+        sentinel.style.cssText = 'height:1px'
+        grid.appendChild(sentinel)
+      }
+      if (_albumObserver) _albumObserver.disconnect()
+      _albumObserver = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) renderAlbumBatch()
+      }, { rootMargin: '200px' })
+      _albumObserver.observe(sentinel)
+    }
+
     function showAlbum(id) {
       var a = albums.find(function (x) { return x.id === id })
       if (!a) return
+      _albumData = a
+      _albumLoaded = 0
+      if (_albumObserver) { _albumObserver.disconnect(); _albumObserver = null }
       albumGrid.style.display = 'none'
       albumDetail.style.display = 'block'
       var html = '<div class="album-detail-wrap">' +
@@ -730,24 +788,12 @@
         '<div class="album-detail-title">' + a.title + '</div>' +
         '<div class="album-detail-meta">' + a.date + ' \u00b7 ' + a.photos.length + ' \u4e2a\u77ac\u95f4</div>' +
         (a.description ? '<div class="album-detail-desc">' + a.description + '</div>' : '') +
-        '</div><div class="photo-grid">'
-      a.photos.forEach(function (p) {
-        html += '<div class="photo-item">' +
-          '<img src="' + p.url + '" alt="" loading="lazy">' +
-          '</div>'
-      })
-      html += '</div></div>'
+        '</div><div class="photo-grid"></div></div>'
       albumDetail.innerHTML = html
       document.getElementById('albumBack').addEventListener('click', function () {
         location.hash = '#/gallery'
       })
-      albumDetail.querySelectorAll('.photo-item img').forEach(function (img) {
-        img.addEventListener('click', function () {
-          lightboxImg.src = img.src
-          lightboxImg.alt = ''
-          lightbox.classList.add('show')
-        })
-      })
+      renderAlbumBatch()
     }
 
     function showGallery() {

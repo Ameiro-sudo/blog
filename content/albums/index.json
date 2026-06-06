@@ -156,6 +156,27 @@
     ]
   },
   {
+    "id": "kayi",
+    "title": "凯怡",
+    "description": "测试",
+    "cover": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/1777596763325.jpg",
+    "date": "2026.06",
+    "photos": [
+      {
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/1777596763325.jpg"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/HE5AMPkbgAA2ZcF.jpeg"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/HE5ARzubAAEWDO0.jpeg"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/kayi/HE5ARzzbcAEwVtA.jpeg"
+      }
+    ]
+  },
+  {
     "id": "pjsk的电影",
     "title": "pjsk的电影",
     "description": "",
