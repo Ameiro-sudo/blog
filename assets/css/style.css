@@ -449,6 +449,8 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   font-family: var(--font-mono); flex-shrink: 0; width: 2.5rem;
 }
 .archive-item-title { font-size: 0.9rem; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+.archive-album .archive-item-date { font-size: 0.8rem; }
+.archive-album .archive-item-title { color: var(--color-accent); }
 
 /* ===== 画廊 ===== */
 #galleryView { margin-bottom: 2rem; }

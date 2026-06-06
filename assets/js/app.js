@@ -418,8 +418,16 @@
         var year = p.date ? p.date.substring(0, 4) : '未知'
         if (!groups[year]) groups[year] = {}
         var month = p.date ? p.date.substring(5, 7) : '??'
-        if (!groups[year][month]) groups[year][month] = []
-        groups[year][month].push(p)
+        if (!groups[year][month]) groups[year][month] = { posts: [], albums: [] }
+        groups[year][month].posts.push(p)
+      })
+      albums.forEach(function (a) {
+        var parts = a.date ? a.date.split('.') : []
+        var year = parts[0] || '未知'
+        var month = parts[1] || '??'
+        if (!groups[year]) groups[year] = {}
+        if (!groups[year][month]) groups[year][month] = { posts: [], albums: [] }
+        groups[year][month].albums.push(a)
       })
       var years = Object.keys(groups).sort().reverse()
       var html = ''
@@ -427,20 +435,30 @@
         html += '<div class="archive-year"><div class="archive-year-header">' + year + '</div>'
         var months = Object.keys(groups[year]).sort().reverse()
         months.forEach(function (month) {
+          var block = groups[year][month]
           html += '<div class="archive-month"><div class="archive-month-header">' + month + '月</div><ul class="archive-list">'
-          groups[year][month].forEach(function (p) {
+          block.posts.sort(function (a, b) { return (b.date || '').localeCompare(a.date || '') })
+          block.posts.forEach(function (p) {
             var day = p.date ? p.date.substring(8, 10) : ''
             html += '<li class="archive-item" data-id="' + p.id + '">' +
               '<span class="archive-item-date">' + day + '</span>' +
               '<span class="archive-item-title">' + p.title + '</span></li>'
+          })
+          block.albums.forEach(function (a) {
+            html += '<li class="archive-item archive-album" data-album="' + a.id + '">' +
+              '<span class="archive-item-date">&#x1F4F8;</span>' +
+              '<span class="archive-item-title">' + a.title + '</span></li>'
           })
           html += '</ul></div>'
         })
         html += '</div>'
       })
       archiveContent.innerHTML = html
-      archiveContent.querySelectorAll('.archive-item').forEach(function (el) {
+      archiveContent.querySelectorAll('.archive-item[data-id]').forEach(function (el) {
         el.addEventListener('click', function () { navigateTo(el.dataset.id) })
+      })
+      archiveContent.querySelectorAll('.archive-item[data-album]').forEach(function (el) {
+        el.addEventListener('click', function () { location.hash = '#/gallery/' + el.dataset.album })
       })
     }
 
