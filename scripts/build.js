@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, writeFileSync, statSync } from 'fs'
+import { readFileSync, readdirSync, writeFileSync } from 'fs'
 import { readFile } from 'fs/promises'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -110,7 +110,6 @@ async function buildAlbums() {
     dirs = readdirSync(IMAGES_DIR, { withFileTypes: true })
       .filter(e => e.isDirectory())
       .map(e => e.name)
-      .sort()
   } catch (e) {
     console.log('  albums: 0 (my-images/blog not found)')
     writeFileSync(join(ALBUMS_DIR, 'index.json'), '[]\n', 'utf-8')
@@ -126,9 +125,7 @@ async function buildAlbums() {
     const files = allFiles.filter(function(f) {
       if (f.toLowerCase().endsWith('.webp')) return true
       return !webpBasenames.has(f.replace(extRe, ''))
-    }).sort(function(a, b) {
-      return statSync(join(dirPath, a)).mtimeMs - statSync(join(dirPath, b)).mtimeMs
-    })
+    }).sort()
 
     let meta = {}
     try {
@@ -157,6 +154,10 @@ async function buildAlbums() {
       photos,
     }
   }))
+
+  albums.sort(function(a, b) {
+    return (b.date || '').localeCompare(a.date || '')
+  })
 
   writeFileSync(join(ALBUMS_DIR, 'index.json'), JSON.stringify(albums, null, 2) + '\n', 'utf-8')
   console.log('  albums: ' + albums.length + ' (auto)')
