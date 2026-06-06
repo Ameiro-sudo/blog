@@ -433,7 +433,7 @@
       })
       var html = ''
       if (pinnedPosts.length) {
-        html += '<div class="archive-year"><div class="archive-year-header">&#x1F4CC; 置顶</div><div class="archive-month"><ul class="archive-list">'
+        html += '<div class="archive-year"><div class="archive-year-header">[置顶]</div><div class="archive-month"><ul class="archive-list">'
         pinnedPosts.forEach(function (p) {
           html += '<li class="archive-item" data-id="' + p.id + '">' +
             '<span class="archive-item-date">' + (p.date ? p.date.substring(8, 10) : '') + '</span>' +
@@ -457,7 +457,7 @@
           })
           block.albums.forEach(function (a) {
             html += '<li class="archive-item archive-album" data-album="' + a.id + '">' +
-              '<span class="archive-item-date">&#x1F4F8;</span>' +
+              '<span class="archive-item-date">[相册]</span>' +
               '<span class="archive-item-title">' + a.title + '</span></li>'
           })
           html += '</ul></div>'
