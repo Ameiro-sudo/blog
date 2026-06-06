@@ -723,7 +723,7 @@
       for (var i = _albumLoaded; i < end; i++) {
         var p = _albumData.photos[i]
         html += '<div class="photo-item">' +
-          '<img src="' + p.url + '" alt="" loading="lazy">' +
+          '<img src="' + p.url + '" alt="" decoding="async">' +
           '</div>'
       }
       grid.insertAdjacentHTML('beforeend', html)
