@@ -184,38 +184,5 @@
         "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/pjsk的电影/1775472519699.webp"
       }
     ]
-  },
-  {
-    "id": "test_diff",
-    "title": "测试图集",
-    "description": "不同格式/比例/大小的测试图片",
-    "cover": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/1698760809134.webp",
-    "date": "2026.06",
-    "photos": [
-      {
-        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/1698760809134.webp"
-      },
-      {
-        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/172151766000010.webp"
-      },
-      {
-        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/17215176600002.webp"
-      },
-      {
-        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/20231028_115350.webp"
-      },
-      {
-        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/枫原万叶.webp"
-      },
-      {
-        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/近期图001.webp"
-      },
-      {
-        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/近期图002.webp"
-      },
-      {
-        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/近期图006.webp"
-      }
-    ]
   }
 ]
