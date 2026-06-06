@@ -1,10 +1,14 @@
 #!/bin/bash
 set -e
 
-# 检查是否有未跟踪的 .md 文件
-NEW_MD=$(git diff --cached --name-only --diff-filter=A "content/posts/*.md" 2>/dev/null || true)
-if [ -z "$NEW_MD" ]; then
-  NEW_MD=$(git ls-files --others --exclude-standard "content/posts/*.md" 2>/dev/null || true)
+NEW_POST=$(git diff --cached --name-only --diff-filter=A "content/posts/*.md" 2>/dev/null || true)
+if [ -z "$NEW_POST" ]; then
+  NEW_POST=$(git ls-files --others --exclude-standard "content/posts/*.md" 2>/dev/null || true)
+fi
+
+NEW_ALBUM=$(git diff --cached --name-only --diff-filter=A "content/albums/*.md" 2>/dev/null || true)
+if [ -z "$NEW_ALBUM" ]; then
+  NEW_ALBUM=$(git ls-files --others --exclude-standard "content/albums/*.md" 2>/dev/null || true)
 fi
 
 # 检查 nvm (如果安装了 nvm)
@@ -22,8 +26,10 @@ git add -A
 # 如果传入了提交信息就用它，否则自动生成
 if [ -n "$1" ]; then
   MSG="$1"
-elif [ -n "$NEW_MD" ]; then
+elif [ -n "$NEW_POST" ]; then
   MSG="add: 新文章"
+elif [ -n "$NEW_ALBUM" ]; then
+  MSG="add: 新相册"
 else
   MSG="update: $(date +'%m-%d %H:%M')"
 fi
