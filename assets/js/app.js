@@ -33,6 +33,75 @@
     if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('show')
   })
 
+  // === 灯箱缩放 ===
+  var zoomLevel = 1
+  var zoomPanX = 0
+  var zoomPanY = 0
+  var zoomPanning = false
+  var zoomStartX, zoomStartY
+
+  lightboxImg.addEventListener('wheel', function (e) {
+    e.preventDefault()
+    var dir = e.deltaY > 0 ? -1 : 1
+    zoomLevel = Math.max(1, Math.min(5, zoomLevel + dir * 0.25))
+    lightboxImg.style.cursor = zoomLevel > 1 ? 'grab' : 'zoom-out'
+    applyZoomTransform()
+  }, { passive: false })
+
+  lightboxImg.addEventListener('mousedown', function (e) {
+    if (zoomLevel <= 1) return
+    zoomPanning = true
+    zoomStartX = e.clientX - zoomPanX
+    zoomStartY = e.clientY - zoomPanY
+    lightboxImg.style.cursor = 'grabbing'
+  })
+
+  document.addEventListener('mousemove', function (e) {
+    if (!zoomPanning) return
+    zoomPanX = e.clientX - zoomStartX
+    zoomPanY = e.clientY - zoomStartY
+    applyZoomTransform()
+  })
+
+  document.addEventListener('mouseup', function () {
+    zoomPanning = false
+    if (zoomLevel > 1) lightboxImg.style.cursor = 'grab'
+  })
+
+  var zoomLastTap = 0
+  lightboxImg.addEventListener('touchend', function (e) {
+    var now = Date.now()
+    if (now - zoomLastTap < 300 && e.changedTouches.length === 1) {
+      if (zoomLevel > 1) { zoomLevel = 1; zoomPanX = 0; zoomPanY = 0 }
+      else zoomLevel = 2.5
+      applyZoomTransform()
+      e.preventDefault()
+    }
+    zoomLastTap = now
+  })
+
+  lightboxImg.addEventListener('dblclick', function (e) {
+    e.stopPropagation()
+    if (zoomLevel > 1) { zoomLevel = 1; zoomPanX = 0; zoomPanY = 0 }
+    else zoomLevel = 2.5
+    applyZoomTransform()
+  })
+
+  function applyZoomTransform() {
+    lightboxImg.style.transform = 'translate(' + zoomPanX + 'px,' + zoomPanY + 'px) scale(' + zoomLevel + ')'
+  }
+
+  ;(function () {
+    var obs = new MutationObserver(function () {
+      if (lightbox.classList.contains('show')) {
+        zoomLevel = 1; zoomPanX = 0; zoomPanY = 0
+        lightboxImg.style.transform = ''
+        lightboxImg.style.cursor = 'zoom-out'
+      }
+    })
+    obs.observe(lightbox, { attributes: true, attributeFilter: ['class'] })
+  })()
+
 
   const profileConfig = {
     avatar: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/avatar.webp',
@@ -128,6 +197,10 @@
     var lightboxImg = document.getElementById('lightboxImg')
     var albums = []
     var pageHeader = document.getElementById('pageHeader')
+    var tocSpy = null
+    var slideTimer = null
+    var slideIndex = 0
+    var slideAlbum = null
 
     // === 简介卡片 ===
     function renderProfile() {
@@ -148,22 +221,33 @@
         '</div>'
     }
 
-    // === 标签筛选 ===
+    // === 标签筛选（关键词云） ===
     function renderTagFilters() {
       var allTags = []
+      var tagCounts = {}
       postsMeta.forEach(function (p) {
         p.tags.forEach(function (t) {
+          tagCounts[t] = (tagCounts[t] || 0) + 1
           if (allTags.indexOf(t) === -1) allTags.push(t)
         })
       })
       allTags.sort()
+      var counts = allTags.map(function (t) { return tagCounts[t] }).sort(function (a, b) { return a - b })
+      var q1 = counts[Math.floor(counts.length * 0.25)] || 1
+      var q3 = counts[Math.floor(counts.length * 0.75)] || 1
+      function getSize(c) {
+        if (c >= q3) return 'size-3'
+        if (c >= q1) return 'size-2'
+        return 'size-1'
+      }
       var html = ''
       allTags.forEach(function (t) {
         var active = t === activeTag ? 'active' : ''
-        html += '<span class="tag-filter ' + active + '" data-tag="' + t + '">' + t + '</span>'
+        var size = getSize(tagCounts[t])
+        html += '<span class="tag-filter ' + size + ' ' + active + '" data-tag="' + t + '">' + t + '</span>'
       })
       if (activeTag) {
-        html += '<span class="tag-filter active" data-tag="">x 清除筛选</span>'
+        html += '<span class="tag-filter size-2 active" data-tag="">x 清除筛选</span>'
       }
       tagFilters.innerHTML = html
       tagFilters.querySelectorAll('.tag-filter').forEach(function (el) {
@@ -427,7 +511,7 @@
       window.scrollTo({ top: 0 })
     }
 
-    // === 文章目录 TOC ===
+    // === 文章目录 TOC（滚动锚点） ===
     function renderTOC() {
       tocPanel.innerHTML = ''
       var headings = articleContent.querySelectorAll('h2, h3')
@@ -447,6 +531,16 @@
           if (target) target.scrollIntoView({ behavior: 'smooth' })
         })
       })
+      if (tocSpy) tocSpy.disconnect()
+      tocSpy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return
+          tocPanel.querySelectorAll('.toc-link').forEach(function (l) { l.classList.remove('active') })
+          var link = tocPanel.querySelector('.toc-link[href="#' + entry.target.id + '"]')
+          if (link) link.classList.add('active')
+        })
+      }, { rootMargin: '-80px 0px -60% 0px' })
+      headings.forEach(function (h) { tocSpy.observe(h) })
     }
 
     tocToggle.addEventListener('click', function () {
@@ -764,6 +858,7 @@
     }
 
     function showAlbum(id) {
+      stopSlideshow()
       var a = albums.find(function (x) { return x.id === id })
       if (!a) return
       _albumData = a
@@ -774,6 +869,7 @@
       var html = '<div class="album-detail-wrap">' +
         '<div class="album-detail-top">' +
         '<button class="album-back" id="albumBack">&larr; 返回</button>' +
+        '<button class="album-slideshow" id="albumSlideshow">\u64AD\u653E</button>' +
         '</div>' +
         '<div class="album-detail-header">' +
         '<div class="album-detail-title">' + a.title + '</div>' +
@@ -782,9 +878,42 @@
         '</div><div class="photo-grid"></div></div>'
       albumDetail.innerHTML = html
       document.getElementById('albumBack').addEventListener('click', function () {
+        stopSlideshow()
         location.hash = '#/gallery'
       })
+      document.getElementById('albumSlideshow').addEventListener('click', function () { toggleSlideshow(a) })
       renderAlbumBatch()
+    }
+
+    function stopSlideshow() {
+      if (slideTimer) { clearInterval(slideTimer); slideTimer = null }
+      var btn = document.getElementById('albumSlideshow')
+      if (btn) btn.textContent = '\u64AD\u653E'
+      slideAlbum = null
+    }
+
+    function showSlidePhoto() {
+      if (!slideAlbum || !slideAlbum.photos[slideIndex]) return
+      zoomLevel = 1; zoomPanX = 0; zoomPanY = 0
+      lightboxImg.style.transform = ''
+      lightboxImg.style.cursor = 'zoom-out'
+      lightboxImg.src = slideAlbum.photos[slideIndex].url
+      lightboxImg.alt = ''
+      lightbox.classList.add('show')
+    }
+
+    function toggleSlideshow(a) {
+      if (slideTimer) { stopSlideshow(); return }
+      slideAlbum = a
+      slideIndex = 0
+      var btn = document.getElementById('albumSlideshow')
+      if (btn) btn.textContent = '\u6682\u505C'
+      showSlidePhoto()
+      slideTimer = setInterval(function () {
+        slideIndex++
+        if (slideIndex >= slideAlbum.photos.length) slideIndex = 0
+        showSlidePhoto()
+      }, 3000)
     }
 
     function showGallery() {
@@ -808,6 +937,10 @@
       if (!raw) { showListView(); setActiveNav('blog'); return }
       if (raw === 'archive') { showArchive(); setActiveNav('archive'); return }
       if (raw === 'gallery') { showGallery(); setActiveNav('gallery'); return }
+      if (raw === 'random') {
+        if (postsMeta.length) navigateTo(postsMeta[Math.floor(Math.random() * postsMeta.length)].id)
+        return
+      }
       if (raw === 'about') { showAbout(); setActiveNav('about'); return }
       if (raw.indexOf('gallery/') === 0) {
         var albumId = decodeURIComponent(raw.replace('gallery/', ''))
