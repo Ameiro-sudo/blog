@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, writeFileSync } from 'fs'
+import { readFileSync, readdirSync, writeFileSync, statSync } from 'fs'
 import { readFile } from 'fs/promises'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -126,7 +126,9 @@ async function buildAlbums() {
     const files = allFiles.filter(function(f) {
       if (f.toLowerCase().endsWith('.webp')) return true
       return !webpBasenames.has(f.replace(extRe, ''))
-    }).sort()
+    }).sort(function(a, b) {
+      return statSync(join(dirPath, a)).mtimeMs - statSync(join(dirPath, b)).mtimeMs
+    })
 
     let meta = {}
     try {
