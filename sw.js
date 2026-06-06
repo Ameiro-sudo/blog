@@ -7,11 +7,14 @@ self.addEventListener('install', function () {
 
 self.addEventListener('activate', function (e) {
   e.waitUntil(
-    caches.keys().then(function (keys) {
-      return Promise.all(keys.map(function (k) {
-        if (k !== CACHE) return caches.delete(k)
-      }))
-    })
+    Promise.all([
+      caches.keys().then(function (keys) {
+        return Promise.all(keys.map(function (k) {
+          if (k !== CACHE) return caches.delete(k)
+        }))
+      }),
+      self.clients.claim()
+    ])
   )
 })
 

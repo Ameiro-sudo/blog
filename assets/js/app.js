@@ -738,6 +738,13 @@
         })(items[i].querySelector('img'))
       }
       _albumLoaded = end
+      // 预加载下一批
+      var nextEnd = Math.min(end + _albumBatchSize, _albumData.photos.length)
+      for (var i = end; i < nextEnd; i++) {
+        var p = _albumData.photos[i]
+        var pre = new Image()
+        pre.src = p.url
+      }
       var sentinel = grid.querySelector('.album-sentinel')
       if (end >= _albumData.photos.length) {
         if (sentinel) sentinel.style.display = 'none'
