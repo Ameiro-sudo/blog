@@ -97,7 +97,7 @@ function parseAlbum(filepath) {
 
 function buildPosts() {
   const files = readdirSync(POSTS_DIR)
-    .filter(f => f.endsWith('.md') && f !== 'index.json')
+    .filter(f => f.endsWith('.md') && f !== 'index.json' && !f.startsWith('_'))
     .sort()
 
   const posts = files.map(f => parsePost(join(POSTS_DIR, f)))
@@ -112,7 +112,7 @@ function buildPosts() {
 
 function buildAlbums() {
   const files = readdirSync(ALBUMS_DIR)
-    .filter(f => f.endsWith('.md') && f !== 'index.json')
+    .filter(f => f.endsWith('.md') && f !== 'index.json' && !f.startsWith('_'))
     .sort()
 
   const albums = files.map(f => parseAlbum(join(ALBUMS_DIR, f)))
