@@ -31,14 +31,35 @@ function parseFrontmatter(text) {
 
 function parsePost(filepath) {
   const text = readFileSync(filepath, 'utf-8')
-  const { meta } = parseFrontmatter(text)
-  const stem = filepath.split('/').pop().replace(/\.md$/, '')
+  const lines = text.split('\n')
+  const meta = {}
+  let title = ''
+  let bodyStart = 0
 
-  let title = meta.title || stem
-  if (!meta.title && text.startsWith('# ')) {
-    title = text.split('\n')[0].slice(2).trim()
+  if (lines[0]?.startsWith('# ')) {
+    title = lines[0].slice(2).trim()
+    bodyStart = 1
   }
 
+  if (lines[0]?.trim() === '---') {
+    bodyStart = 1
+  }
+
+  let i = bodyStart
+  let inMeta = bodyStart === 1
+  while (i < lines.length) {
+    const line = lines[i].trim()
+    if (line === '---' && inMeta) {
+      bodyStart = i + 1
+      break
+    }
+    const m = line.match(/^(\w+)\s*:\s*(.+)$/)
+    if (m && inMeta) meta[m[1]] = m[2].trim()
+    i++
+  }
+
+  const stem = filepath.split('/').pop().replace(/\.md$/, '')
+  if (!title) title = meta.title || stem
   const tags = (meta.tags || '').split(',').map(t => t.trim()).filter(Boolean)
   const pinned = meta.pinned === 'true'
 
