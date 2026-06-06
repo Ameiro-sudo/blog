@@ -736,7 +736,6 @@
       a.photos.forEach(function (p) {
         html += '<div class="photo-item">' +
           '<img src="' + p.url + '" alt="" loading="lazy">' +
-          (p.caption ? '<div class="photo-caption">' + p.caption + '</div>' : '') +
           '</div>'
       })
       html += '</div></div>'

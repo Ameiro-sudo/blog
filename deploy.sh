@@ -1,40 +1,51 @@
 #!/bin/bash
 set -e
 
-NEW_POST=$(git diff --cached --name-only --diff-filter=A "content/posts/*.md" 2>/dev/null || true)
-if [ -z "$NEW_POST" ]; then
-  NEW_POST=$(git ls-files --others --exclude-standard "content/posts/*.md" 2>/dev/null || true)
+BLOG_DIR="$(cd "$(dirname "$0")" && pwd)"
+IMAGES_DIR="$(cd "$BLOG_DIR/../my-images" && pwd)"
+
+echo "==> 处理图床..."
+cd "$IMAGES_DIR"
+
+ADDED=$(git status --short | wc -l)
+if [ "$ADDED" -gt 0 ]; then
+  echo "    变更文件数: $ADDED"
+  git add -A
+  git commit -m "update: $(date +'%m-%d %H:%M')"
+  echo "    -> 推送至 GitHub..."
+  git push
+  echo "    图床推送完成"
+else
+  echo "    图床无变更"
 fi
 
-NEW_ALBUM=$(git diff --cached --name-only --diff-filter=A "content/albums/*.md" 2>/dev/null || true)
-if [ -z "$NEW_ALBUM" ]; then
-  NEW_ALBUM=$(git ls-files --others --exclude-standard "content/albums/*.md" 2>/dev/null || true)
-fi
+cd "$BLOG_DIR"
 
-# 检查 nvm (如果安装了 nvm)
-export NVM_DIR="$HOME/.nvm"
-if [ -s "$NVM_DIR/nvm.sh" ]; then
-  . "$NVM_DIR/nvm.sh"
-fi
+NEW_POST=$(git ls-files --others --exclude-standard "content/posts/*.md" 2>/dev/null || true)
 
-echo "🔨 构建索引..."
+echo ""
+echo "==> 构建博客..."
 node scripts/build.js
 
-echo "📦 提交并推送..."
+echo ""
+echo "==> 提交并推送博客..."
 git add -A
 
-# 如果传入了提交信息就用它，否则自动生成
-if [ -n "$1" ]; then
-  MSG="$1"
-elif [ -n "$NEW_POST" ]; then
-  MSG="add: 新文章"
-elif [ -n "$NEW_ALBUM" ]; then
-  MSG="add: 新相册"
+STAGED=$(git diff --cached --stat | tail -1 | awk '{print $1}')
+if [ -z "$STAGED" ] || [ "$STAGED" -eq 0 ]; then
+  echo "    博客无变更，跳过提交"
 else
-  MSG="update: $(date +'%m-%d %H:%M')"
+  echo "    变更文件数: $STAGED"
+  if [ -n "$1" ]; then
+    MSG="$1"
+  elif [ -n "$NEW_POST" ]; then
+    MSG="add: 新文章"
+  else
+    MSG="update: $(date +'%m-%d %H:%M')"
+  fi
+  git commit -m "$MSG"
+  git push
 fi
 
-git commit -m "$MSG"
-git push
-
-echo "✅ 完成！"
+echo ""
+echo "完成"
