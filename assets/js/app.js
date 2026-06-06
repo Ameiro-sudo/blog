@@ -547,6 +547,18 @@
       tocPanel.classList.toggle('show')
     })
 
+    // === 灯箱导航 ===
+    var lbPrev = document.getElementById('lightboxPrev')
+    var lbNext = document.getElementById('lightboxNext')
+    if (lbPrev) lbPrev.addEventListener('click', function (e) { e.stopPropagation(); slidePrev() })
+    if (lbNext) lbNext.addEventListener('click', function (e) { e.stopPropagation(); slideNext() })
+
+    document.addEventListener('keydown', function (e) {
+      if (!lightbox.classList.contains('show')) return
+      if (e.key === 'ArrowLeft') { e.preventDefault(); slidePrev() }
+      if (e.key === 'ArrowRight') { e.preventDefault(); slideNext() }
+    })
+
     // === 热力图 ===
     function getHeatmapYear() {
       if (!currentHeatmapYear) {
@@ -897,9 +909,36 @@
       zoomLevel = 1; zoomPanX = 0; zoomPanY = 0
       lightboxImg.style.transform = ''
       lightboxImg.style.cursor = 'zoom-out'
-      lightboxImg.src = slideAlbum.photos[slideIndex].url
-      lightboxImg.alt = ''
-      lightbox.classList.add('show')
+      lightboxImg.style.opacity = '0'
+      updateSlideCounter()
+      setTimeout(function () {
+        lightboxImg.src = slideAlbum.photos[slideIndex].url
+        lightboxImg.alt = ''
+        lightbox.classList.add('show')
+        setTimeout(function () { lightboxImg.style.opacity = '1' }, 50)
+      }, 150)
+    }
+
+    function slidePrev() {
+      if (!slideAlbum || !slideAlbum.photos.length) return
+      if (slideTimer) { clearInterval(slideTimer); slideTimer = setInterval(function () { slideIndex++; if (slideIndex >= slideAlbum.photos.length) slideIndex = 0; showSlidePhoto() }, 3000) }
+      slideIndex--
+      if (slideIndex < 0) slideIndex = slideAlbum.photos.length - 1
+      showSlidePhoto()
+    }
+
+    function slideNext() {
+      if (!slideAlbum || !slideAlbum.photos.length) return
+      if (slideTimer) { clearInterval(slideTimer); slideTimer = setInterval(function () { slideIndex++; if (slideIndex >= slideAlbum.photos.length) slideIndex = 0; showSlidePhoto() }, 3000) }
+      slideIndex++
+      if (slideIndex >= slideAlbum.photos.length) slideIndex = 0
+      showSlidePhoto()
+    }
+
+    function updateSlideCounter() {
+      var el = document.getElementById('lightboxCounter')
+      if (!el || !slideAlbum) return
+      el.textContent = (slideIndex + 1) + ' / ' + slideAlbum.photos.length
     }
 
     function toggleSlideshow(a) {
