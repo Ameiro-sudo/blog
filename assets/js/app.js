@@ -35,7 +35,7 @@
 
 
   const profileConfig = {
-    avatar: 'https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/blog/avatar.webp',
+    avatar: 'https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images@main/blog/avatar.webp',
     name: 'ninasukiwww',
     bio: '世界は大きい、君は行かなければならない',
     links: [
