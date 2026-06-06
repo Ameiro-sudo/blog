@@ -776,7 +776,7 @@
       if (raw === 'gallery') { showGallery(); setActiveNav('gallery'); return }
       if (raw === 'about') { showAbout(); setActiveNav('about'); return }
       if (raw.indexOf('gallery/') === 0) {
-        var albumId = raw.replace('gallery/', '')
+        var albumId = decodeURIComponent(raw.replace('gallery/', ''))
         showGallery()
         showAlbum(albumId)
         return
