@@ -3,13 +3,13 @@
     "id": "key",
     "title": "凯怡test",
     "description": "测试",
-    "cover": "https://blog.snowblock.top/1777596763325.jpg",
+    "cover": "https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/1777596763325.jpg",
     "date": "2026.06",
     "photos": [
-      { "url": "https://blog.snowblock.top/1777596763325.jpg" },
-      { "url": "https://blog.snowblock.top/HE5AMPkbgAA2ZcF.jpeg" },
-      { "url": "https://blog.snowblock.top/HE5ARzubAAEWDO0.jpeg" },
-      { "url": "https://blog.snowblock.top/HE5ARzzbcAEwVtA.jpeg" }
+      { "url": "https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/1777596763325.jpg" },
+      { "url": "https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/HE5AMPkbgAA2ZcF.jpeg" },
+      { "url": "https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/HE5ARzubAAEWDO0.jpeg" },
+      { "url": "https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/HE5ARzzbcAEwVtA.jpeg" }
     ]
   }
 ]
