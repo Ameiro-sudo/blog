@@ -184,5 +184,23 @@
         "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/pjsk的电影/1775472519699.webp"
       }
     ]
+  },
+  {
+    "id": "test_diff",
+    "title": "测试",
+    "description": "格式测试",
+    "cover": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/1681517522000.png",
+    "date": "2026.06",
+    "photos": [
+      {
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/1681517522000.png"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/1721517660000.png"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/test_diff/Background-300.png"
+      }
+    ]
   }
 ]
