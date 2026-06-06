@@ -85,26 +85,6 @@ function parsePost(filepath) {
   }
 }
 
-function parseAlbum(filepath) {
-  const text = readFileSync(filepath, 'utf-8')
-  const { meta, body } = parseFrontmatter(text)
-  const stem = filepath.split('/').pop().replace(/\.md$/, '')
-
-  const photos = body.split('\n')
-    .map(l => l.trim())
-    .filter(Boolean)
-    .map(f => ({ url: `${CDN_BASE}/${f}` }))
-
-  return {
-    id: stem,
-    title: meta.title || stem,
-    description: meta.description || '',
-    cover: meta.cover ? `${CDN_BASE}/${meta.cover}` : photos[0]?.url || '',
-    date: meta.date || '',
-    photos,
-  }
-}
-
 function buildPosts() {
   const files = readdirSync(POSTS_DIR)
     .filter(f => f.endsWith('.md') && f !== 'index.json' && !f.startsWith('_'))
@@ -121,18 +101,46 @@ function buildPosts() {
 }
 
 function buildAlbums() {
-  const files = readdirSync(ALBUMS_DIR)
-    .filter(f => f.endsWith('.md') && f !== 'index.json' && !f.startsWith('_'))
-    .sort()
+  const IMAGES_DIR = join(ROOT, '..', 'my-images', 'blog')
+  let dirs = []
+  try {
+    dirs = readdirSync(IMAGES_DIR, { withFileTypes: true })
+      .filter(e => e.isDirectory())
+      .map(e => e.name)
+      .sort()
+  } catch (e) {
+    console.log('  albums: 0 (my-images/blog not found)')
+    writeFileSync(join(ALBUMS_DIR, 'index.json'), '[]\n', 'utf-8')
+    return
+  }
 
-  const albums = files.map(f => parseAlbum(join(ALBUMS_DIR, f)))
+  const albums = dirs.map(function(dir) {
+    const dirPath = join(IMAGES_DIR, dir)
+    const files = readdirSync(dirPath)
+      .filter(f => /\.(jpg|jpeg|png|webp|gif|bmp)$/i.test(f))
+      .sort()
 
-  writeFileSync(
-    join(ALBUMS_DIR, 'index.json'),
-    JSON.stringify(albums, null, 2) + '\n',
-    'utf-8'
-  )
-  console.log(`  albums: ${albums.length} albums`)
+    let meta = {}
+    try {
+      meta = JSON.parse(readFileSync(join(dirPath, 'meta.json'), 'utf-8'))
+    } catch (e) {}
+
+    const photos = files.map(function(f) {
+      return { url: CDN_BASE + '/' + dir + '/' + f }
+    })
+
+    return {
+      id: dir,
+      title: meta.title || dir,
+      description: meta.description || '',
+      cover: meta.cover ? CDN_BASE + '/' + dir + '/' + meta.cover : (photos[0]?.url || ''),
+      date: meta.date || '',
+      photos,
+    }
+  })
+
+  writeFileSync(join(ALBUMS_DIR, 'index.json'), JSON.stringify(albums, null, 2) + '\n', 'utf-8')
+  console.log('  albums: ' + albums.length + ' (auto)')
 }
 
 function buildFeed() {
