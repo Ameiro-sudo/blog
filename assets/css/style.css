@@ -650,7 +650,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .album-detail-meta { font-size: 0.75rem; color: rgba(255,255,255,0.85); font-family: var(--font-mono); margin-bottom: 0.4rem; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
 .album-detail-desc { font-size: 0.9rem; color: rgba(255,255,255,0.9); text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
 .photo-grid {
-  column-count: 4;
+  columns: 260px;
   column-gap: 0.8rem;
 }
 .photo-item {
@@ -665,11 +665,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .photo-item:hover img { transform: scale(1.05); }
 
 @media (max-width: 600px) {
-  .photo-grid { column-count: 2; }
   .album-grid { grid-template-columns: 1fr; gap: 2rem; }
-}
-@media (min-width: 1200px) {
-  .photo-grid { column-count: 5; }
 }
 
 /* ===== 响应式 ===== */
