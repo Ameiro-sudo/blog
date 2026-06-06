@@ -91,12 +91,40 @@
     lightboxImg.style.transform = 'translate(' + zoomPanX + 'px,' + zoomPanY + 'px) scale(' + zoomLevel + ')'
   }
 
+  var currentExif = null
+
+  function updateLightboxExif() {
+    var el = document.getElementById('lightboxExif')
+    if (!el) return
+    if (!currentExif) { el.style.display = 'none'; return }
+    el.style.display = 'block'
+    var parts = []
+    if (currentExif.Make || currentExif.Model) {
+      parts.push([currentExif.Make, currentExif.Model].filter(Boolean).join(' '))
+    }
+    if (currentExif.FNumber) parts.push('f/' + parseFloat(currentExif.FNumber).toFixed(2))
+    if (currentExif.ExposureTime) {
+      var t = currentExif.ExposureTime
+      if (t >= 1) parts.push(t + 's')
+      else parts.push('1/' + Math.round(1 / t) + 's')
+    }
+    if (currentExif.ISO) parts.push('ISO' + currentExif.ISO)
+    if (currentExif.FocalLength) parts.push(Math.round(currentExif.FocalLength) + 'mm')
+    if (currentExif.ImageWidth && currentExif.ImageHeight) {
+      parts.push(currentExif.ImageWidth + 'x' + currentExif.ImageHeight)
+    }
+    el.textContent = parts.join('  ·  ')
+  }
+
   ;(function () {
     var obs = new MutationObserver(function () {
       if (lightbox.classList.contains('show')) {
         zoomLevel = 1; zoomPanX = 0; zoomPanY = 0
         lightboxImg.style.transform = ''
         lightboxImg.style.cursor = 'zoom-out'
+      } else {
+        currentExif = null
+        updateLightboxExif()
       }
     })
     obs.observe(lightbox, { attributes: true, attributeFilter: ['class'] })
@@ -468,6 +496,8 @@
           img.addEventListener('click', function () {
             lightboxImg.src = img.src
             lightboxImg.alt = img.alt || ''
+            currentExif = null
+            updateLightboxExif()
             lightbox.classList.add('show')
           })
         })
@@ -820,13 +850,15 @@
       grid.insertAdjacentHTML('beforeend', html)
       var items = grid.querySelectorAll('.photo-item')
       for (var i = _albumLoaded; i < end; i++) {
-        (function (img) {
+        (function (img, exif) {
           img.addEventListener('click', function () {
             lightboxImg.src = img.src
             lightboxImg.alt = ''
+            currentExif = exif || null
+            updateLightboxExif()
             lightbox.classList.add('show')
           })
-        })(items[i].querySelector('img'))
+        })(items[i].querySelector('img'), _albumData.photos[i].exif)
       }
       _albumLoaded = end
       // 预加载下一批

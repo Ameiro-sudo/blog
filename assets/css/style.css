@@ -257,6 +257,14 @@
   cursor: zoom-out;
 }
 #lightbox.show { opacity: 1; pointer-events: auto; }
+#lightboxExif {
+  position: absolute; bottom: 1.5rem; left: 1.5rem;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.75rem; font-family: var(--font-mono);
+  line-height: 1.6; pointer-events: none;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  display: none;
+}
 #lightbox img {
   max-width: 90vw; max-height: 85vh;
   border-radius: 0.8rem; box-shadow: 0 20px 60px rgba(0,0,0,0.5);

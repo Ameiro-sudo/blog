@@ -1,7 +1,9 @@
 import { readFileSync, readdirSync, writeFileSync } from 'fs'
+import { readFile } from 'fs/promises'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { createHash } from 'crypto'
+import exifr from 'exifr'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -101,7 +103,7 @@ function buildPosts() {
   console.log(`  posts: ${posts.length} articles`)
 }
 
-function buildAlbums() {
+async function buildAlbums() {
   const IMAGES_DIR = join(ROOT, '..', 'my-images', 'blog')
   let dirs = []
   try {
@@ -115,7 +117,7 @@ function buildAlbums() {
     return
   }
 
-  const albums = dirs.map(function(dir) {
+  const albums = await Promise.all(dirs.map(async function(dir) {
     const dirPath = join(IMAGES_DIR, dir)
     const extRe = /\.(jpg|jpeg|png|webp|gif|bmp)$/i
     const allFiles = readdirSync(dirPath).filter(f => extRe.test(f))
@@ -131,9 +133,18 @@ function buildAlbums() {
       meta = JSON.parse(readFileSync(join(dirPath, 'meta.json'), 'utf-8'))
     } catch (e) {}
 
-    const photos = files.map(function(f) {
-      return { url: CDN_BASE + '/' + dir + '/' + f + '?t=' + BUILD_TS }
-    })
+    const photos = await Promise.all(files.map(async function(f) {
+      let exif = null
+      try {
+        const buf = await readFile(join(dirPath, f))
+        const raw = await exifr.parse(buf, { pick: ['Make','Model','ISO','FNumber','FocalLength','ExposureTime','ImageWidth','ImageHeight'] })
+        if (raw && Object.keys(raw).length) exif = raw
+      } catch (e) {}
+      return {
+        url: CDN_BASE + '/' + dir + '/' + f + '?t=' + BUILD_TS,
+        exif: exif || undefined,
+      }
+    }))
 
     return {
       id: dir,
@@ -143,7 +154,7 @@ function buildAlbums() {
       date: meta.date || '',
       photos,
     }
-  })
+  }))
 
   writeFileSync(join(ALBUMS_DIR, 'index.json'), JSON.stringify(albums, null, 2) + '\n', 'utf-8')
   console.log('  albums: ' + albums.length + ' (auto)')
@@ -213,7 +224,7 @@ function versionAssets() {
 
 console.log('Building indexes...')
 buildPosts()
-buildAlbums()
+await buildAlbums()
 buildFeed()
 buildSitemap()
 versionAssets()
