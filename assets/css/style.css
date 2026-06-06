@@ -257,39 +257,12 @@
   cursor: zoom-out;
 }
 #lightbox.show { opacity: 1; pointer-events: auto; }
-.lightbox-img-wrap { position: relative; display: flex; }
 #lightbox img {
   max-width: 90vw; max-height: 85vh;
   border-radius: 0.8rem; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   cursor: zoom-out; object-fit: contain;
   transition: opacity 0.3s, transform 0.2s;
 }
-#lightboxImgOverlay {
-  position: absolute; inset: 0;
-  pointer-events: none;
-  box-shadow: none;
-}
-.lightbox-nav {
-  position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
-  width: 3rem; height: 3rem; border-radius: 50%; border: none;
-  background: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.6); font-size: 1.5rem;
-  cursor: pointer; transition: background 0.25s, color 0.25s, opacity 0.3s;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none;
-}
-#lightbox.show .lightbox-nav { opacity: 1; pointer-events: auto; }
-.lightbox-nav:hover { background: rgba(255,255,255,0.15); color: #fff; }
-#lightboxPrev { left: 1.5rem; }
-#lightboxNext { right: 1.5rem; }
-.lightbox-counter {
-  position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 10;
-  background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
-  padding: 0.3rem 0.8rem; border-radius: 1rem;
-  color: rgba(255,255,255,0.7); font-family: var(--font-mono); font-size: 0.75rem;
-  opacity: 0; pointer-events: none; transition: opacity 0.3s;
-}
-#lightbox.show .lightbox-counter { opacity: 1; }
 #lightbox-close {
   position: absolute; top: 1.5rem; right: 1.5rem; z-index: 10;
   width: 2.5rem; height: 2.5rem; border-radius: 50%;
@@ -671,13 +644,6 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   transition: background 0.25s;
 }
 .album-back:hover { background: var(--glass-hover-bg); color: #fff; }
-.album-slideshow {
-  background: rgba(143,216,239,0.15); border: 1px solid rgba(143,216,239,0.3);
-  border-radius: 2rem; padding: 0.4rem 1rem;
-  color: var(--color-accent); cursor: pointer; font-family: var(--font-mono); font-size: 0.8rem;
-  transition: background 0.25s;
-}
-.album-slideshow:hover { background: rgba(143,216,239,0.30); color: #fff; }
 .album-detail-header {
   text-align: center;
   margin: 1rem 0 1.5rem;

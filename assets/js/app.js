@@ -88,9 +88,7 @@
   })
 
   function applyZoomTransform() {
-    var t = 'translate(' + zoomPanX + 'px,' + zoomPanY + 'px) scale(' + zoomLevel + ')'
-    lightboxImg.style.transform = t
-    lightboxImgOverlay.style.transform = t
+    lightboxImg.style.transform = 'translate(' + zoomPanX + 'px,' + zoomPanY + 'px) scale(' + zoomLevel + ')'
   }
 
   ;(function () {
@@ -99,9 +97,6 @@
         zoomLevel = 1; zoomPanX = 0; zoomPanY = 0
         lightboxImg.style.transform = ''
         lightboxImg.style.cursor = 'zoom-out'
-        lightboxImgOverlay.style.transform = ''
-        lightboxImgOverlay.style.opacity = '0'
-        lightboxImgOverlay.src = ''
       }
     })
     obs.observe(lightbox, { attributes: true, attributeFilter: ['class'] })
@@ -200,13 +195,9 @@
     var tocPanel = document.getElementById('tocPanel')
     var lightbox = document.getElementById('lightbox')
     var lightboxImg = document.getElementById('lightboxImg')
-    var lightboxImgOverlay = document.getElementById('lightboxImgOverlay')
     var albums = []
     var pageHeader = document.getElementById('pageHeader')
     var tocSpy = null
-    var slideTimer = null
-    var slideIndex = 0
-    var slideAlbum = null
 
     // === 简介卡片 ===
     function renderProfile() {
@@ -553,18 +544,6 @@
       tocPanel.classList.toggle('show')
     })
 
-    // === 灯箱导航 ===
-    var lbPrev = document.getElementById('lightboxPrev')
-    var lbNext = document.getElementById('lightboxNext')
-    if (lbPrev) lbPrev.addEventListener('click', function (e) { e.stopPropagation(); slidePrev() })
-    if (lbNext) lbNext.addEventListener('click', function (e) { e.stopPropagation(); slideNext() })
-
-    document.addEventListener('keydown', function (e) {
-      if (!lightbox.classList.contains('show')) return
-      if (e.key === 'ArrowLeft') { e.preventDefault(); slidePrev() }
-      if (e.key === 'ArrowRight') { e.preventDefault(); slideNext() }
-    })
-
     // === 热力图 ===
     function getHeatmapYear() {
       if (!currentHeatmapYear) {
@@ -876,7 +855,6 @@
     }
 
     function showAlbum(id) {
-      stopSlideshow()
       var a = albums.find(function (x) { return x.id === id })
       if (!a) return
       _albumData = a
@@ -887,7 +865,6 @@
       var html = '<div class="album-detail-wrap">' +
         '<div class="album-detail-top">' +
         '<button class="album-back" id="albumBack">&larr; 返回</button>' +
-        '<button class="album-slideshow" id="albumSlideshow">\u64AD\u653E</button>' +
         '</div>' +
         '<div class="album-detail-header">' +
         '<div class="album-detail-title">' + a.title + '</div>' +
@@ -896,85 +873,9 @@
         '</div><div class="photo-grid"></div></div>'
       albumDetail.innerHTML = html
       document.getElementById('albumBack').addEventListener('click', function () {
-        stopSlideshow()
         location.hash = '#/gallery'
       })
-      document.getElementById('albumSlideshow').addEventListener('click', function () { toggleSlideshow(a) })
       renderAlbumBatch()
-    }
-
-    function stopSlideshow() {
-      if (slideTimer) { clearInterval(slideTimer); slideTimer = null }
-      var btn = document.getElementById('albumSlideshow')
-      if (btn) btn.textContent = '\u64AD\u653E'
-      slideAlbum = null
-    }
-
-    var slideReqId = 0
-
-    function showSlidePhoto() {
-      if (!slideAlbum || !slideAlbum.photos[slideIndex]) return
-      zoomLevel = 1; zoomPanX = 0; zoomPanY = 0
-      var t = ''
-      lightboxImg.style.transform = t
-      lightboxImgOverlay.style.transform = t
-      lightboxImg.style.cursor = 'zoom-out'
-      updateSlideCounter()
-      lightbox.classList.add('show')
-      slideReqId++
-      var myId = slideReqId
-      var pre = new Image()
-      pre.onload = function () {
-        if (myId !== slideReqId) return
-        lightboxImgOverlay.src = pre.src
-        lightboxImgOverlay.style.opacity = '1'
-        lightboxImg.style.opacity = '0'
-        setTimeout(function () {
-          if (myId !== slideReqId) return
-          lightboxImg.src = pre.src
-          lightboxImg.alt = ''
-          lightboxImg.style.opacity = '1'
-          lightboxImgOverlay.style.opacity = '0'
-          lightboxImgOverlay.src = ''
-        }, 300)
-      }
-      pre.src = slideAlbum.photos[slideIndex].url
-    }
-
-    function slidePrev() {
-      if (!slideAlbum || !slideAlbum.photos.length) return
-      if (slideTimer) { clearInterval(slideTimer); slideTimer = setInterval(function () { slideIndex++; if (slideIndex >= slideAlbum.photos.length) slideIndex = 0; showSlidePhoto() }, 3000) }
-      slideIndex--
-      if (slideIndex < 0) slideIndex = slideAlbum.photos.length - 1
-      showSlidePhoto()
-    }
-
-    function slideNext() {
-      if (!slideAlbum || !slideAlbum.photos.length) return
-      if (slideTimer) { clearInterval(slideTimer); slideTimer = setInterval(function () { slideIndex++; if (slideIndex >= slideAlbum.photos.length) slideIndex = 0; showSlidePhoto() }, 3000) }
-      slideIndex++
-      if (slideIndex >= slideAlbum.photos.length) slideIndex = 0
-      showSlidePhoto()
-    }
-
-    function updateSlideCounter() {
-      var el = document.getElementById('lightboxCounter')
-      if (!el || !slideAlbum) return
-      el.textContent = (slideIndex + 1) + ' / ' + slideAlbum.photos.length
-    }
-
-    function toggleSlideshow(a) {
-      if (slideTimer) { stopSlideshow(); return }
-      slideAlbum = a
-      slideIndex = 0
-      var btn = document.getElementById('albumSlideshow')
-      if (btn) btn.textContent = '\u6682\u505C'
-      showSlidePhoto()
-      slideTimer = setInterval(function () {
-        slideIndex++
-        if (slideIndex >= slideAlbum.photos.length) slideIndex = 0
-        showSlidePhoto()
-      }, 3000)
     }
 
     function showGallery() {
