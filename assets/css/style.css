@@ -650,12 +650,11 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .album-detail-meta { font-size: 0.75rem; color: rgba(255,255,255,0.85); font-family: var(--font-mono); margin-bottom: 0.4rem; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
 .album-detail-desc { font-size: 0.9rem; color: rgba(255,255,255,0.9); text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
 .photo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 0.8rem;
+  column-count: 4;
+  column-gap: 0.8rem;
 }
 .photo-item {
-  break-inside: unset; margin-bottom: 0;
+  break-inside: avoid; margin-bottom: 0.8rem;
   border-radius: 0.8rem; overflow: hidden; cursor: zoom-in;
   transition: transform 0.3s, box-shadow 0.3s;
   position: relative;
@@ -666,8 +665,11 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .photo-item:hover img { transform: scale(1.05); }
 
 @media (max-width: 600px) {
-  .photo-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .photo-grid { column-count: 2; }
   .album-grid { grid-template-columns: 1fr; gap: 2rem; }
+}
+@media (min-width: 1200px) {
+  .photo-grid { column-count: 5; }
 }
 
 /* ===== 响应式 ===== */
