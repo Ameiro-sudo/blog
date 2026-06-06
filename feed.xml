@@ -5,8 +5,15 @@
     <link>https://blog.snowblock.top</link>
     <description>雪地笔记</description>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 06 Jun 2026 03:43:29 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 06 Jun 2026 03:44:41 GMT</lastBuildDate>
     <atom:link href="https://blog.snowblock.top/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>博客更新日志 · 2026-06-06</title>
+      <link>https://blog.snowblock.top/#/changelog</link>
+      <guid>https://blog.snowblock.top/#/changelog</guid>
+      <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
+      <description>新增功能 热力图 归档页顶部增加 GitHub 风格的年度贡献图，直观显示每日发文量。支持切换年份，点击方块查看当日文章列表。 全文搜索 搜索框现在同时搜索标题、标签、日期和文章正文摘要，搜索结果更全面。 搜索结果高亮 匹配的关键词在标题和摘要中以黄色高亮显示。 RSS 订阅 站点提供 feed.xml，支持 RSS 阅读器订阅。 Sitemap 自动生成 sitemap.xml，帮助搜索引擎抓取</description>
+    </item>
     <item>
       <title>三站设计统一 · 雪境设计系统</title>
       <link>https://blog.snowblock.top/#/post-1</link>
@@ -41,6 +48,13 @@
       <guid>https://blog.snowblock.top/#/post-5</guid>
       <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
       <description>从截图到生成可访问的图片链接，全程只需要两步，中间没有任何手动上传、等待、复制的冗余操作。 原理 截图 → Ctrl+V → PicGo 自动上传 GitHub → jsDelivr CDN 加速 → 链接已复制到剪贴板 准备工作 1. 创建公开仓库 去 GitHub 新建一个 Public 仓库，用来存放图片。仓库名随意，比如 my-images。 2. 生成 Token GitHub &quot;Set</description>
+    </item>
+    <item>
+      <title>博客使用指南</title>
+      <link>https://blog.snowblock.top/#/usage</link>
+      <guid>https://blog.snowblock.top/#/usage</guid>
+      <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
+      <description>浏览文章 首页按时间倒序列出所有文章，置顶文章排在最前。 搜索 顶部搜索框支持实时筛选，匹配标题、标签、日期和文章正文摘要。 标签筛选 点击文章标签或搜索栏下方的标签按钮筛选特定分类。 分页 每页 5 篇，底部翻页栏支持跳转。 键盘快捷键 - Ctrl+K / Cmd+K：聚焦搜索框 - Esc：关闭图片灯箱 归档 导航栏「归档」查看所有文章时间轴，顶部热力图显示发文频率。 画廊 导航栏「画廊」展</description>
     </item>
   </channel>
 </rss>
