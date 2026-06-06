@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const albumsDir = join(__dirname, 'albums')
 const baseUrl = 'https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images/blog'
+// 如果后续变更 PicGo 路径或 CDN 域名，只改上面这行即可
 
 function parseAlbumMD(filepath) {
   const text = readFileSync(filepath, 'utf-8')
