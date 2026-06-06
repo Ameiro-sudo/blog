@@ -88,6 +88,7 @@
     var activeTag = null
     var PER_PAGE = 5
     var currentHeatmapYear = null
+    var heatmapDayPosts = {}
 
     var postContainer = document.getElementById('dynamicPostList')
     var paginationEl = document.getElementById('pagination')
@@ -440,11 +441,15 @@
     function renderHeatmap() {
       var year = getHeatmapYear()
       var dayCounts = {}
+      var dayPosts = {}
       postsMeta.forEach(function (p) {
         if (p.date && p.date.indexOf(year) === 0) {
           dayCounts[p.date] = (dayCounts[p.date] || 0) + 1
+          if (!dayPosts[p.date]) dayPosts[p.date] = []
+          dayPosts[p.date].push(p)
         }
       })
+      heatmapDayPosts = dayPosts
       var startDate = new Date(year, 0, 1)
       var startDay = startDate.getDay()
       var firstCell = new Date(startDate)
@@ -475,7 +480,7 @@
         if (level < 0.75) return 'var(--heatmap-l3)'
         return 'var(--heatmap-l4)'
       }
-      var monthLabels = {}
+      var monthPositions = []
       var seenMonths = {}
       weeks.forEach(function (week, wi) {
         for (var d = 0; d < 7; d++) {
@@ -484,7 +489,7 @@
           var key = y + '-' + m
           if (!seenMonths[key]) {
             seenMonths[key] = true
-            monthLabels[wi] = (m + 1) + '月'
+            monthPositions.push({ col: wi, label: (m + 1) + '月' })
             break
           }
         }
@@ -494,6 +499,7 @@
         if (p.date) activeYears[p.date.substring(0, 4)] = true
       })
       var yearList = Object.keys(activeYears).sort()
+      var cellsWidth = weeks.length * 12 - 2
       var html = '<div class="heatmap-wrap">'
       html += '<div class="heatmap-header">'
       yearList.forEach(function (y) {
@@ -501,25 +507,34 @@
         html += '<button class="heatmap-year-btn' + cls + '" data-year="' + y + '">' + y + '</button>'
       })
       html += '</div>'
+      html += '<div class="heatmap-months" style="width:' + cellsWidth + 'px;position:relative;height:16px;margin:0 auto;overflow:visible">'
+      monthPositions.forEach(function (mp) {
+        html += '<span class="heatmap-month" style="left:' + (mp.col * 12) + 'px">' + mp.label + '</span>'
+      })
+      html += '</div>'
       html += '<div class="heatmap-body"><div class="heatmap-labels">'
       var dayLabels = ['', '一', '', '三', '', '五', '']
       dayLabels.forEach(function (l) {
         html += '<span class="heatmap-label">' + l + '</span>'
       })
-      html += '</div><div class="heatmap-cells">'
-      weeks.forEach(function (week, wi) {
-        if (monthLabels[wi]) {
-          html += '<span class="heatmap-month">' + monthLabels[wi] + '</span>'
-        } else {
-          html += '<span class="heatmap-month"></span>'
-        }
+      html += '</div><div class="heatmap-cells" style="width:' + cellsWidth + 'px">'
+      weeks.forEach(function (week) {
+        html += '<div class="hm-week">'
         week.forEach(function (day) {
           var ds = day.getFullYear() + '-' + String(day.getMonth() + 1).padStart(2, '0') + '-' + String(day.getDate()).padStart(2, '0')
           var count = dayCounts[ds] || 0
-          html += '<span class="heatmap-cell" style="background:' + getColor(count) + '" title="' + ds + ': ' + count + ' 篇"></span>'
+          html += '<span class="heatmap-cell" style="background:' + getColor(count) + '" data-date="' + ds + '"></span>'
         })
+        html += '</div>'
       })
-      html += '</div></div></div>'
+      html += '</div></div>'
+      html += '<div class="heatmap-detail" id="heatmapDetail" style="display:none">'
+      html += '<div class="heatmap-detail-header">'
+      html += '<span class="heatmap-detail-date" id="heatmapDetailDate"></span>'
+      html += '<span class="heatmap-detail-close" id="heatmapDetailClose">x</span>'
+      html += '</div>'
+      html += '<div class="heatmap-detail-list" id="heatmapDetailList"></div>'
+      html += '</div></div>'
       return html
     }
 
@@ -589,6 +604,36 @@
           renderArchive()
         })
       })
+      archiveContent.querySelectorAll('.heatmap-cell').forEach(function (el) {
+        el.addEventListener('click', function () {
+          var date = el.dataset.date
+          var posts = (heatmapDayPosts[date] || [])
+          var detail = document.getElementById('heatmapDetail')
+          var detailDate = document.getElementById('heatmapDetailDate')
+          var detailList = document.getElementById('heatmapDetailList')
+          if (!detail) return
+          detailDate.textContent = date + (posts.length ? ' \u00b7 ' + posts.length + ' \u7bc7' : ' \u00b7 \u65e0\u6587\u7ae0')
+          if (posts.length) {
+            var listHtml = ''
+            posts.forEach(function (p) {
+              listHtml += '<div class="heatmap-detail-item" data-id="' + p.id + '">' + p.title + '</div>'
+            })
+            detailList.innerHTML = listHtml
+            detailList.querySelectorAll('.heatmap-detail-item').forEach(function (item) {
+              item.addEventListener('click', function () { navigateTo(item.dataset.id) })
+            })
+          } else {
+            detailList.innerHTML = ''
+          }
+          detail.style.display = 'block'
+        })
+      })
+      var closeBtn = document.getElementById('heatmapDetailClose')
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function () {
+          document.getElementById('heatmapDetail').style.display = 'none'
+        })
+      }
     }
 
     function showArchive() {
