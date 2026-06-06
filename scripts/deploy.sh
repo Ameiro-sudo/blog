@@ -2,9 +2,9 @@
 set -e
 
 # 检查是否有未跟踪的 .md 文件
-NEW_MD=$(git diff --cached --name-only --diff-filter=A "posts/*.md" 2>/dev/null || true)
+NEW_MD=$(git diff --cached --name-only --diff-filter=A "content/posts/*.md" 2>/dev/null || true)
 if [ -z "$NEW_MD" ]; then
-  NEW_MD=$(git ls-files --others --exclude-standard "posts/*.md" 2>/dev/null || true)
+  NEW_MD=$(git ls-files --others --exclude-standard "content/posts/*.md" 2>/dev/null || true)
 fi
 
 # 检查 nvm (如果安装了 nvm)
@@ -14,7 +14,7 @@ if [ -s "$NVM_DIR/nvm.sh" ]; then
 fi
 
 echo "🔨 构建索引..."
-node build.js
+node scripts/build.js && node scripts/build-albums.js
 
 echo "📦 提交并推送..."
 git add -A

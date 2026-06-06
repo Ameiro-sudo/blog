@@ -3,7 +3,7 @@ import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const postsDir = join(__dirname, 'posts')
+const postsDir = join(__dirname, '..', 'content', 'posts')
 
 function parseMD(filepath) {
   const text = readFileSync(filepath, 'utf-8')

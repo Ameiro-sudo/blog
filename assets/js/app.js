@@ -322,7 +322,7 @@
     function loadArticle(id) {
       var meta = postsMeta.find(function (p) { return p.id === id })
       if (!meta) { showListView(); return }
-      fetch('posts/' + meta.file).then(function (r) { return r.text() }).then(function (mdText) {
+      fetch('content/posts/' + meta.file).then(function (r) { return r.text() }).then(function (mdText) {
         var content = stripMeta(mdText)
         articleTitle.textContent = meta.title
         var tags = meta.tags.map(function (t) {
@@ -607,11 +607,11 @@
     // === 初始化 ===
     renderProfile()
 
-    fetch('albums/index.json').then(function (r) { return r.json() }).then(function (data) {
+    fetch('content/albums/index.json').then(function (r) { return r.json() }).then(function (data) {
       albums = data
     }).catch(function () {})
 
-    fetch('posts/index.json').then(function (r) { return r.json() }).then(function (data) {
+    fetch('content/posts/index.json').then(function (r) { return r.json() }).then(function (data) {
       postsMeta = data
       // 置顶文章排前面
       postsMeta.sort(function (a, b) { return (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) })
@@ -619,7 +619,7 @@
       var loaded = 0
       var total = postsMeta.length
       postsMeta.forEach(function (p) {
-        fetch('posts/' + p.file).then(function (r) { return r.text() }).then(function (mdText) {
+        fetch('content/posts/' + p.file).then(function (r) { return r.text() }).then(function (mdText) {
           allExcerpts[p.id] = getExcerpt(stripMeta(mdText))
           loaded++
           if (loaded === total) { applyFilters(); handleHash() }
