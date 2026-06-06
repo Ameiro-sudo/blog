@@ -9,6 +9,7 @@ const ROOT = join(__dirname, '..')
 const POSTS_DIR = join(ROOT, 'content', 'posts')
 const ALBUMS_DIR = join(ROOT, 'content', 'albums')
 const CDN_BASE = 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog'
+const BUILD_TS = Date.now()
 const SITE_URL = 'https://blog.snowblock.top'
 
 function parseFrontmatter(text) {
@@ -131,14 +132,14 @@ function buildAlbums() {
     } catch (e) {}
 
     const photos = files.map(function(f) {
-      return { url: CDN_BASE + '/' + dir + '/' + f }
+      return { url: CDN_BASE + '/' + dir + '/' + f + '?t=' + BUILD_TS }
     })
 
     return {
       id: dir,
       title: meta.title || dir,
       description: meta.description || '',
-      cover: meta.cover ? CDN_BASE + '/' + dir + '/' + meta.cover : (photos[0]?.url || ''),
+      cover: meta.cover ? CDN_BASE + '/' + dir + '/' + meta.cover + '?t=' + BUILD_TS : (photos[0]?.url || ''),
       date: meta.date || '',
       photos,
     }
