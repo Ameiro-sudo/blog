@@ -52,4 +52,4 @@ SnowBlock 的三个子站迎来了一次设计语言的全面统一。
 
 ## 技术栈
 
-全部为纯静态页面，零依赖服务器，通过 GitHub Pages 托管。博客内容以 Markdown 文件存储在 `posts/` 目录，通过 `build.js` 自动生成文章索引。
+全部为纯静态页面，零依赖服务器，通过 GitHub Pages 托管。博客内容以 Markdown 文件存储在 `content/posts/` 目录，通过 `scripts/build.js` 自动生成文章索引。

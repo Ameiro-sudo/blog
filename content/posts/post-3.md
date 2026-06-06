@@ -7,7 +7,7 @@ pinned: true
 ---
 ## 写一篇新文章
 
-在 `posts/` 目录下新建 `.md` 文件，按以下格式写：
+在 `content/posts/` 目录下新建 `.md` 文件，按以下格式写：
 
 ```markdown
 # 文章标题
@@ -49,7 +49,7 @@ pinned: true
 ## 手动推送
 
 ```bash
-node build.js          # 构建索引
+node scripts/build.js  # 构建索引
 git add -A
 git commit -m "add: 标题"
 git push               # 推送上线
