@@ -878,6 +878,10 @@
     // === 初始化 ===
     renderProfile()
 
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+    }
+
     fetch('content/albums/index.json').then(function (r) { return r.json() }).then(function (data) {
       albums = data
     }).catch(function () {})
