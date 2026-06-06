@@ -1,12 +1,34 @@
-# 文章与相册维护指南
+# SnowBlock 博客项目总览
 date: 2026-06-06
-tags: 博客, 指南, 教程
+tags: 博客, 项目, 指南
 time: 20:00
 readTime: 6 分钟
 pinned: true
 ---
 
-## 写一篇新文章
+一个零后端静态单页博客。基于 Markdown 写作，构建时生成索引，GitHub Pages 托管，全站无数据库无服务器。
+
+## 架构
+
+```
+blog/
+├── index.html            # SPA 入口
+├── assets/
+│   ├── css/style.css     # 全局样式（毛玻璃暗色设计）
+│   └── js/app.js         # 前端路由/搜索/画廊/灯箱等
+├── content/
+│   ├── posts/            # 文章 .md 文件
+│   ├── albums/           # 相册索引（构建生成）
+│   └── pages/            # 独立页面（about.md）
+├── scripts/build.js      # 构建脚本
+├── sw.js                 # Service Worker
+├── deploy.sh             # 博客一键部署
+└── deploy-full.sh        # 完整部署（含 WebP 转换）
+```
+
+图片存储在独立的 [my-images](https://github.com/ninasukiwww-png/my-images) 仓库。
+
+## 写文章
 
 在 `content/posts/` 下新建 `.md` 文件：
 
@@ -24,63 +46,58 @@ readTime: 3 分钟
 - `date` / `tags` / `time` / `readTime` 写在标题和 `---` 之间
 - 多个标签用英文逗号分隔
 - 置顶加 `pinned: true`
-- 可选 `description` 自定义摘要（否则自动截取正文前 200 字）
-- 可选 `image` 自定义分享卡片图
+- 可选 `description` 自定义摘要，可选 `image` 自定义分享图
 
----
+## 添加相册
 
-## 添加画廊相册
-
-图片存放在 [my-images](https://github.com/ninasukiwww-png/my-images) 仓库的 `blog/` 目录下，每个相册一个子目录。
-
-相册目录内放 `meta.json`：
+图片放在 `my-images/blog/相册名/` 目录下。每个相册目录放 `meta.json`：
 
 ```json
-{"title":"相册名","date":"2026.06","description":"简介","cover":"文件名.jpg"}
+{"title":"相册名称","date":"2026.06","description":"简介","cover":"封面文件名"}
 ```
 
-照片列在 `albums/index.json` 中，由构建脚本自动生成。
+构建时自动扫描目录，提取 EXIF 信息（相机型号、ISO、光圈等），生成相册索引。
 
----
-
-## 构建索引
+## 构建
 
 ```bash
 node scripts/build.js
 ```
 
 自动生成：
-- `content/posts/index.json` — 文章索引
-- `content/albums/index.json` — 相册索引（含 EXIF 信息）
-- `feed.xml` — RSS
-- `sitemap.xml` — 站点地图
-- 给 `style.css` / `app.js` 打版本哈希
-- 给 `index.html` 写入构建时间戳（缓存控制）
+- 文章索引 `content/posts/index.json`
+- 相册索引 `content/albums/index.json`（含 EXIF）
+- RSS 订阅 `feed.xml`
+- 站点地图 `sitemap.xml`
+- 资源版本号 + 构建时间戳（浏览器缓存控制）
 
----
-
-## 一键部署
+## 部署
 
 ```bash
+# 博客单独部署
 ./deploy.sh "提交说明"
+
+# 完整部署（WebP 转换 + 推 my-images + 推博客）
+./deploy-full.sh
+./deploy-full.sh -n    # 跳过 WebP 转换
 ```
 
-流程：构建 → 提交 → 推送博客仓库 → GitHub Pages 自动部署。
+推到 GitHub 后由 GitHub Pages 自动部署。
 
-附带 `deploy-full.sh`：先 WebP 转换 → 推 my-images → 再推博客。加 `-n` 跳过转换。
+## 图片 CDN
 
----
+图片通过 `raw.githubusercontent.com/ninasukiwww-png/my-images` 引用，构建时加时间戳 `?t=BUILD_TS` 刷新 CDN 缓存。
 
-## 图片处理
+Service Worker 自动缓存已加载的 CDN 图片，提升重复访问速度。
 
-所有图片通过 `raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/` 引用（jsDelivr 已弃用）。
+## 功能列表
 
-构建时加上 `?t=构建时间戳` 刷新 CDN 缓存。
-
-EXIF 信息（相机型号、ISO、光圈等）由 `exifr` 包在构建时自动提取，存入相册索引。
-
----
-
-## Service Worker
-
-博客注册了 Service Worker，自动缓存 CDN 图片，提升重复访问速度。
+- Markdown 文章系统（置顶/分页/搜索/标签筛选/标签云）
+- 归档热力图（年度发文分布，点击查看当日文章）
+- 画廊瀑布流（分批加载/灯箱缩放拖拽/EXIF 展示）
+- 文章目录（自动提取标题，滚动高亮）
+- 阅读进度条
+- 随机文章 `#/random`
+- 全文搜索 + 高亮
+- RSS 订阅 / Sitemap / OG 社交卡片
+- 暗色模式 / 打印样式 / 移动端适配

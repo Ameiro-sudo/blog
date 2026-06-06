@@ -5,7 +5,7 @@
     <link>https://blog.snowblock.top</link>
     <description>雪地笔记</description>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 06 Jun 2026 08:08:25 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 06 Jun 2026 08:09:46 GMT</lastBuildDate>
     <atom:link href="https://blog.snowblock.top/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
       <title>博客更新日志</title>
@@ -15,18 +15,18 @@
       <description>当前功能 - 文章系统：Markdown 写作，置顶 / 分页 / 搜索 / 标签筛选 - 归档热力图：年度发文分布，点击方块查看当日文章 - 画廊：瀑布流相册，分批加载，灯箱缩放，EXIF 展示 - 文章目录：自动提取标题，滚动高亮当前章节 - 阅读进度条：顶部渐变色进度指示 - 随机文章：/random 路由 - 全文搜索：标题 / 标签 / 日期 / 正文，搜索高亮 - RSS / Site</description>
     </item>
     <item>
-      <title>文章与相册维护指南</title>
+      <title>SnowBlock 博客项目总览</title>
       <link>https://blog.snowblock.top/#/post-3</link>
       <guid>https://blog.snowblock.top/#/post-3</guid>
       <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
-      <description>写一篇新文章 在 content/posts/ 下新建 .md 文件： markdown 文章标题 date: 2026-06-05 tags: 标签1, 标签2 time: 14:20 readTime: 3 分钟 --- 正文从这里开始，支持 Markdown 语法。 - 第一行 标题 用作文章标题 - date / tags / time / readTime 写在标题和 --- 之间 - </description>
+      <description>一个零后端静态单页博客。基于 Markdown 写作，构建时生成索引，GitHub Pages 托管，全站无数据库无服务器。 架构 blog/ ├── index.html SPA 入口 ├── assets/ │ ├── css/style.css 全局样式（毛玻璃暗色设计） │ └── js/app.js 前端路由/搜索/画廊/灯箱等 ├── content/ │ ├── posts/ 文章 </description>
     </item>
     <item>
-      <title>博客使用指南</title>
+      <title>博客功能一览</title>
       <link>https://blog.snowblock.top/#/usage</link>
       <guid>https://blog.snowblock.top/#/usage</guid>
       <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
-      <description>浏览文章 首页默认按时间倒序列出文章，置顶文章在最前。每页 5 篇，底部可翻页跳转。 点击文章卡片进入阅读，点击标题下方标签可快速筛选同类文章。 搜索 顶部搜索框支持实时筛选，匹配标题、标签、日期和正文，输入即搜。Ctrl+K / Cmd+K 快速聚焦搜索框。 标签筛选 搜索栏下方展示所有标签，字号大小反映使用频率。点击标签筛选，再次点击清除筛选。 归档 导航栏「归档」按年月分组展示所有文章和相册</description>
+      <description>浏览 首页按时间倒序列出文章，置顶文章在最前。每页 5 篇，底部翻页。 搜索 顶部搜索框实时筛选，匹配标题、标签、日期和正文。Ctrl+K / Cmd+K 快速聚焦。 标签 搜索栏下方标签云，字号反映使用频率。点击筛选，再次点击清除。 归档 「归档」按年月展示文章和相册，顶部热力图显示发文频率。 画廊 「画廊」瀑布流展示相册，点开分批加载照片。相机直出的照片在灯箱底部显示 EXIF 参数。 文章阅</description>
     </item>
   </channel>
 </rss>
