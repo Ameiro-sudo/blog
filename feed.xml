@@ -5,42 +5,35 @@
     <link>https://blog.snowblock.top</link>
     <description>雪地笔记</description>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 07 Jun 2026 03:52:02 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 07 Jun 2026 09:16:30 GMT</lastBuildDate>
     <atom:link href="https://blog.snowblock.top/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
-      <title>博客更新日志</title>
-      <link>https://blog.snowblock.top/#/changelog</link>
-      <guid>https://blog.snowblock.top/#/changelog</guid>
-      <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
-      <description>2026-06-06 更新 文章系统 - Markdown 写作，支持置顶 / 分页 / 搜索 / 标签筛选 / 标签云 - 全文搜索匹配标题 + 标签 + 日期 + 正文摘要 - 搜索关键词黄色高亮显示 - 每页 5 篇，底部分页栏支持跳转 归档与热力图 - 按年月分组展示所有文章和相册 - 年度贡献热力图（GitHub 风格），4 级颜色浓度 - 支持切换年份 - 点击方块查看当日文章列表 画</description>
-    </item>
-    <item>
       <title>SnowBlock 博客项目总览</title>
-      <link>https://blog.snowblock.top/#/post-3</link>
-      <guid>https://blog.snowblock.top/#/post-3</guid>
+      <link>https://blog.snowblock.top/#/post1</link>
+      <guid>https://blog.snowblock.top/#/post1</guid>
       <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
       <description>一个零后端静态单页博客。基于 Markdown 写作，构建时生成索引，GitHub Pages 托管，全站无数据库无服务器。所有源码在 github.com/ninasukiwww-png/bloghttps://github.com/ninasukiwww-png/blog。 --- 架构总览 blog/ ├── index.html SPA 入口（加载器 + 毛玻璃 + 雪花粒子） ├── a</description>
     </item>
     <item>
-      <title>博客功能一览</title>
-      <link>https://blog.snowblock.top/#/usage</link>
-      <guid>https://blog.snowblock.top/#/usage</guid>
+      <title>博客更新日志</title>
+      <link>https://blog.snowblock.top/#/post2</link>
+      <guid>https://blog.snowblock.top/#/post2</guid>
       <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
-      <description>文章列表 首页按时间倒序列出所有文章，置顶文章（带 置顶 标记）排在最前。 每页显示 5 篇，底部分页栏支持： - 上一页 / 下一页 - 直接点击数字跳转 - 首尾页快速跳转 - 省略号表示中间折叠的页码 每张文章卡片包含：标题、日期、标签、置顶标记、摘要、阅读时间。 --- 搜索 顶部搜索框输入即搜，250ms 防抖延迟，不打扰打字节奏。 搜索范围：标题、标签、日期、正文摘要。匹配的关键词在标</description>
-    </item>
-    <item>
-      <title>悲报 本人 VPS 被爆破了😭</title>
-      <link>https://blog.snowblock.top/#/vps-hacked</link>
-      <guid>https://blog.snowblock.top/#/vps-hacked</guid>
-      <pubDate>Sun, 07 Jun 2026 00:00:00 GMT</pubDate>
-      <description>悲报，本人 VPS 被爆破了😭 SSH发现服务器 CPU 飙到 98.7%，一看服务器被挖了 /tmp/agent.sh 以下是出生名单： | IP | 归属 | |----|------| | 80.94.92.166 | 新加坡（挖矿主谋） | | 47.96.60.0/24 | 阿里云 botnet C 段 | | 8.139.112.0/24 | 阿里云 botnet C 段 | | 8</description>
+      <description>2026-06-06 更新 文章系统 - Markdown 写作，支持置顶 / 分页 / 搜索 / 标签筛选 / 标签云 - 全文搜索匹配标题 + 标签 + 日期 + 正文摘要 - 搜索关键词黄色高亮显示 - 每页 5 篇，底部分页栏支持跳转 归档与热力图 - 按年月分组展示所有文章和相册 - 年度贡献热力图（GitHub 风格），4 级颜色浓度 - 支持切换年份 - 点击方块查看当日文章列表 画</description>
     </item>
     <item>
       <title>喜报！咱终于有 VPS 了</title>
-      <link>https://blog.snowblock.top/#/vps-setup</link>
-      <guid>https://blog.snowblock.top/#/vps-setup</guid>
+      <link>https://blog.snowblock.top/#/post3</link>
+      <guid>https://blog.snowblock.top/#/post3</guid>
       <pubDate>Sun, 07 Jun 2026 00:00:00 GMT</pubDate>
       <description>喜报！咱终于有 VPS 了。 把图片域名反代到香港 VPS，充当 CDN，极大提升了国内网络的载图速度。 然后呢，将处于私网物理机的端口映射至了 VPS，绑定至了 vps.snowblock.top，终于不仅限于私网使用。</description>
+    </item>
+    <item>
+      <title>悲报 本人 VPS 被爆破了😭</title>
+      <link>https://blog.snowblock.top/#/post4</link>
+      <guid>https://blog.snowblock.top/#/post4</guid>
+      <pubDate>Sun, 07 Jun 2026 00:00:00 GMT</pubDate>
+      <description>悲报，本人 VPS 被爆破了😭 SSH发现服务器 CPU 飙到 90%，一看服务器被挖了 以下是IP名单： | IP | 归属 | |----|------| | 80.94.92.166 | 新加坡（挖矿主谋） | | 47.96.60.0/24 | 阿里云 botnet C 段 | | 8.139.112.0/24 | 阿里云 botnet C 段 | | 8.139.112.13 | 阿里</description>
     </item>
   </channel>
 </rss>

@@ -1,6 +1,6 @@
 # SnowBlock 博客项目总览
 date: 2026-06-06
-tags: 博客, 项目, 架构, 指南
+tags: 指南
 time: 20:00
 readTime: 10 分钟
 pinned: true

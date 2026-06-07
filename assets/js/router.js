@@ -1,60 +1,67 @@
-function handleHash() {
-  var raw = location.hash.replace(/^#\/?/, '')
-  if (!raw) { showListView(); setActiveNav('blog'); return }
-  if (raw === 'archive') { showArchive(); setActiveNav('archive'); return }
-  if (raw === 'gallery') { showGallery(); setActiveNav('gallery'); return }
-  if (raw === 'random') {
-    if (postsMeta.length) navigateTo(postsMeta[Math.floor(Math.random() * postsMeta.length)].id)
-    return
+app.router = {
+  searchTimer: null,
+
+  navigateTo: function(id) {
+    location.hash = '#/' + id
+  },
+
+  handleHash: function() {
+    var raw = location.hash.replace(/^#\/?/, '')
+    if (!raw) { app.views.switchTo('list'); this.setActiveNav('blog'); app.utils.resetOG(); window.scrollTo({ top: 0 }); return }
+    if (raw === 'archive') { app.archive.show(); this.setActiveNav('archive'); return }
+    if (raw === 'gallery') { app.gallery.show(); this.setActiveNav('gallery'); return }
+    if (raw === 'random') {
+      if (app.state.postsMeta.length) this.navigateTo(app.state.postsMeta[Math.floor(Math.random() * app.state.postsMeta.length)].id)
+      return
+    }
+    if (raw === 'about') { app.article.showAbout(); this.setActiveNav('about'); return }
+    if (raw.indexOf('gallery/') === 0) {
+      var albumId = decodeURIComponent(raw.replace('gallery/', ''))
+      app.gallery.show()
+      app.gallery.showAlbum(albumId)
+      return
+    }
+    var found = app.state.postsMeta.some(function (p) { return p.id === raw })
+    if (found) { app.article.load(raw); this.setActiveNav(null); return }
+    app.views.switchTo('list'); this.setActiveNav('blog'); app.utils.resetOG(); window.scrollTo({ top: 0 })
+  },
+
+  setActiveNav: function(which) {
+    app.dom.navBlog.className = which === 'blog' ? 'active' : ''
+    app.dom.navArchive.className = which === 'archive' ? 'active' : ''
+    app.dom.navGallery.className = which === 'gallery' ? 'active' : ''
+    app.dom.navAbout.className = which === 'about' ? 'active' : ''
   }
-  if (raw === 'about') { showAbout(); setActiveNav('about'); return }
-  if (raw.indexOf('gallery/') === 0) {
-    var albumId = decodeURIComponent(raw.replace('gallery/', ''))
-    showGallery()
-    showAlbum(albumId)
-    return
-  }
-  var found = postsMeta.some(function (p) { return p.id === raw })
-  if (found) { loadArticle(raw); setActiveNav(null); return }
-  showListView(); setActiveNav('blog')
 }
 
-function setActiveNav(which) {
-  navBlog.className = which === 'blog' ? 'active' : ''
-  navArchive.className = which === 'archive' ? 'active' : ''
-  navGallery.className = which === 'gallery' ? 'active' : ''
-  navAbout.className = which === 'about' ? 'active' : ''
-}
-
-backLink.addEventListener('click', function (e) {
+app.dom.backLink.addEventListener('click', function (e) {
   e.preventDefault()
   location.hash = '#/'
 })
 
-navBlog.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/' })
-navArchive.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/archive' })
-navGallery.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/gallery' })
-navAbout.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/about' })
+app.dom.navBlog.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/' })
+app.dom.navArchive.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/archive' })
+app.dom.navGallery.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/gallery' })
+app.dom.navAbout.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/about' })
 
 window.addEventListener('scroll', function () {
-  if (window.scrollY > 300) backToTop.classList.add('show')
-  else backToTop.classList.remove('show')
+  if (window.scrollY > 300) app.dom.backToTop.classList.add('show')
+  else app.dom.backToTop.classList.remove('show')
 })
-backToTop.addEventListener('click', function () {
+app.dom.backToTop.addEventListener('click', function () {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 })
 
-window.addEventListener('hashchange', handleHash)
+window.addEventListener('hashchange', function () { app.router.handleHash() })
 
-var searchTimer = null
-searchInput.addEventListener('input', function () {
-  clearTimeout(searchTimer)
-  searchTimer = setTimeout(function () { currentPage = 1; applyFilters() }, 250)
+app.dom.searchInput.addEventListener('input', function () {
+  clearTimeout(app.router.searchTimer)
+  app.router.searchTimer = setTimeout(function () { app.state.currentPage = 1; app.posts.applyFilters() }, 250)
 })
 
 document.addEventListener('keydown', function (e) {
   if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
     e.preventDefault()
-    searchInput.focus()
+    app.dom.searchInput.focus()
   }
 })

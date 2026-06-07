@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, writeFileSync } from 'fs'
-import { readFile } from 'fs/promises'
+import { readFile, stat } from 'fs/promises'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { createHash } from 'crypto'
@@ -13,7 +13,6 @@ const ROOT = join(__dirname, '..')
 const POSTS_DIR = join(ROOT, 'content', 'posts')
 const ALBUMS_DIR = join(ROOT, 'content', 'albums')
 const CDN_BASE = 'https://vps.snowblock.top:9443/raw/ninasukiwww-png/my-images/main/blog'
-const BUILD_TS = Date.now()
 const SITE_URL = 'https://blog.snowblock.top'
 
 // ============================
@@ -130,17 +129,28 @@ async function buildAlbums() {
         const raw = await exifr.parse(buf, { pick: ['Make','Model','ISO','FNumber','FocalLength','ExposureTime','ImageWidth','ImageHeight'] })
         if (raw && Object.keys(raw).length) exif = raw
       } catch (e) {}
+      const st = await stat(join(dirPath, f))
       return {
-        url: CDN_BASE + '/' + dir + '/' + f + '?t=' + BUILD_TS,
+        url: CDN_BASE + '/' + dir + '/' + f + '?t=' + st.mtimeMs,
         exif: exif || undefined,
       }
     }))
+
+    let coverUrl = photos[0]?.url || ''
+    if (meta.cover) {
+      try {
+        const st = await stat(join(dirPath, meta.cover))
+        coverUrl = CDN_BASE + '/' + dir + '/' + meta.cover + '?t=' + st.mtimeMs
+      } catch (e) {
+        coverUrl = CDN_BASE + '/' + dir + '/' + meta.cover
+      }
+    }
 
     return {
       id: dir,
       title: meta.title || dir,
       description: meta.description || '',
-      cover: meta.cover ? CDN_BASE + '/' + dir + '/' + meta.cover + '?t=' + BUILD_TS : (photos[0]?.url || ''),
+      cover: coverUrl,
       date: meta.date || '',
       photos,
     }
@@ -232,7 +242,7 @@ function versionAssets() {
   let html = readFileSync(join(ROOT, 'index.html'), 'utf-8')
   html = html.replace(/(href="assets\/css\/style\.css)(?:\?v=[^"]*)?(")/, '$1?v=' + cssHash + '"')
   html = html.replace(/(src="assets\/js\/app\.js)(?:\?v=[^"]*)?(")/, '$1?v=' + jsHash + '"')
-  html = html.replace(/(<meta name="build-ts" content=")\d*(")/, '$1' + BUILD_TS + '"')
+  html = html.replace(/(<meta name="build-ts" content=")\d*(")/, '$1' + Date.now() + '"')
   writeFileSync(join(ROOT, 'index.html'), html, 'utf-8')
   console.log('  version: ok (' + cssHash + ', ' + jsHash + ')')
 }

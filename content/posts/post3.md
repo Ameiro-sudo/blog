@@ -1,6 +1,6 @@
 # 喜报！咱终于有 VPS 了
 date: 2026-06-07
-tags: 服务器, VPS, 网络
+tags: VPS
 time: 08:30
 readTime: 3 分钟
 ---
