@@ -9,7 +9,7 @@ function loadArticle(id) {
     document.title = meta.title + ' · SnowBlock'
     setOGTag('og:title', meta.title)
     setOGTag('og:description', meta.description || (getExcerpt ? getExcerpt(content, 200) : ''))
-    setOGTag('og:image', meta.image || 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/bg.webp')
+    setOGTag('og:image', meta.image || 'https://vps.snowblock.top:9443/raw/ninasukiwww-png/my-images/main/blog/bg.webp')
     setOGTag('og:url', 'https://blog.snowblock.top/#' + id)
     var tags = meta.tags.map(function (t) {
       return '<span class="tag ' + (t === 'Bash' ? 'bash' : 'tech') + '">' + t + '</span>'
