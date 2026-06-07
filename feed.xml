@@ -5,7 +5,7 @@
     <link>https://blog.snowblock.top</link>
     <description>雪地笔记</description>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 07 Jun 2026 00:25:57 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 07 Jun 2026 03:21:18 GMT</lastBuildDate>
     <atom:link href="https://blog.snowblock.top/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
       <title>博客更新日志</title>
@@ -27,6 +27,13 @@
       <guid>https://blog.snowblock.top/#/usage</guid>
       <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
       <description>文章列表 首页按时间倒序列出所有文章，置顶文章（带 置顶 标记）排在最前。 每页显示 5 篇，底部分页栏支持： - 上一页 / 下一页 - 直接点击数字跳转 - 首尾页快速跳转 - 省略号表示中间折叠的页码 每张文章卡片包含：标题、日期、标签、置顶标记、摘要、阅读时间。 --- 搜索 顶部搜索框输入即搜，250ms 防抖延迟，不打扰打字节奏。 搜索范围：标题、标签、日期、正文摘要。匹配的关键词在标</description>
+    </item>
+    <item>
+      <title>喜报！咱终于有 VPS 了</title>
+      <link>https://blog.snowblock.top/#/vps-setup</link>
+      <guid>https://blog.snowblock.top/#/vps-setup</guid>
+      <pubDate>Sun, 07 Jun 2026 00:00:00 GMT</pubDate>
+      <description>喜报！咱终于有 VPS 了。 把图片域名反代到香港 VPS，充当 CDN，极大提升了国内网络的载图速度。 然后呢，将处于私网物理机的端口映射至了 VPS，绑定至了 vps.snowblock.top，终于不仅限于私网使用。</description>
     </item>
   </channel>
 </rss>
