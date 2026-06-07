@@ -999,7 +999,7 @@ window.addEventListener('load', function () {
     var token = tokens[idx]
     var src = token.attrs[token.attrIndex('src')][1]
     var alt = token.content || ''
-    if (src.match(/^https?:\/\//) && src.indexOf('raw.githubusercontent.com') !== -1) {
+    if (src.match(/^https?:\/\//) && src.indexOf('vps.snowblock.top:9443/raw/') !== -1) {
       return '<img src="' + md.utils.escapeHtml(src) + '" alt="' + md.utils.escapeHtml(alt) + '" loading="lazy">'
     }
     return mdImage(tokens, idx, options, env, self)
