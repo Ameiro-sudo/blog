@@ -641,6 +641,10 @@ function renderHeatmap() {
   })
   var yearList = Object.keys(activeYears).sort()
   var cellsWidth = weeks.length * 12 - 2
+  var monthLabels = Array(weeks.length).fill('')
+  monthPositions.forEach(function (mp) {
+    monthLabels[mp.col] = mp.label
+  })
   var html = '<div class="heatmap-wrap">'
   html += '<div class="heatmap-header">'
   yearList.forEach(function (y) {
@@ -648,17 +652,17 @@ function renderHeatmap() {
     html += '<button class="heatmap-year-btn' + cls + '" data-year="' + y + '">' + y + '</button>'
   })
   html += '</div>'
-  html += '<div class="heatmap-months" style="width:' + cellsWidth + 'px;position:relative;height:16px;margin:0 auto;overflow:visible">'
-  monthPositions.forEach(function (mp) {
-    html += '<span class="heatmap-month" style="left:' + (mp.col * 12) + 'px">' + mp.label + '</span>'
-  })
-  html += '</div>'
-  html += '<div class="heatmap-body"><div class="heatmap-labels">'
+  html += '<div class="heatmap-body"><div class="heatmap-body-inner">'
+  html += '<div class="heatmap-labels">'
   var dayLabels = ['', '一', '', '三', '', '五', '']
   dayLabels.forEach(function (l) {
     html += '<span class="heatmap-label">' + l + '</span>'
   })
-  html += '</div><div class="heatmap-cells" style="width:' + cellsWidth + 'px">'
+  html += '</div><div class="heatmap-grid"><div class="heatmap-months">'
+  monthLabels.forEach(function (label) {
+    html += '<span class="heatmap-month">' + (label || '') + '</span>'
+  })
+  html += '</div><div class="heatmap-cells">'
   weeks.forEach(function (week) {
     html += '<div class="hm-week">'
     week.forEach(function (day) {
@@ -668,7 +672,7 @@ function renderHeatmap() {
     })
     html += '</div>'
   })
-  html += '</div></div>'
+  html += '</div></div></div></div>'
   html += '<div class="heatmap-detail" id="heatmapDetail" style="display:none">'
   html += '<div class="heatmap-detail-header">'
   html += '<span class="heatmap-detail-date" id="heatmapDetailDate"></span>'
