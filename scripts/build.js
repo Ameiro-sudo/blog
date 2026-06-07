@@ -12,7 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const POSTS_DIR = join(ROOT, 'content', 'posts')
 const ALBUMS_DIR = join(ROOT, 'content', 'albums')
-const CDN_BASE = 'https://vps.snowblock.top/raw/ninasukiwww-png/my-images/main/blog'
+const CDN_BASE = 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog'
 const BUILD_TS = Date.now()
 const SITE_URL = 'https://blog.snowblock.top'
 

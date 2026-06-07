@@ -6,7 +6,7 @@ if (location.search.includes('_gl=')) {
 // CONFIG
 // ============================================
 var profileConfig = {
-  avatar: 'https://vps.snowblock.top/raw/ninasukiwww-png/my-images/main/blog/profile.webp',
+  avatar: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/profile.webp',
   name: 'ninasukiwww',
   bio: '世界は大きい、君は行かなければならない',
   links: [
@@ -221,6 +221,6 @@ function resetOG() {
   document.title = 'SnowBlock · 雪地笔记'
   setOGTag('og:title', 'SnowBlock · 博客')
   setOGTag('og:description', '雪地笔记 — 技术、游戏、日常与碎片思考')
-  setOGTag('og:image', 'https://vps.snowblock.top/raw/ninasukiwww-png/my-images/main/blog/bg.webp')
+  setOGTag('og:image', 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/bg.webp')
   setOGTag('og:url', 'https://blog.snowblock.top')
 }
