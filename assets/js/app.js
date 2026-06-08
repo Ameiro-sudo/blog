@@ -740,7 +740,11 @@ app.archive = {
       months.forEach(function (month) {
         var block = groups[year][month]
         html += '<div class="archive-month"><div class="archive-month-header">' + month + '月</div><ul class="archive-list">'
-        block.posts.sort(function (a, b) { return (b.date || '').localeCompare(a.date || '') })
+        block.posts.sort(function (a, b) {
+          var dc = (b.date || '').localeCompare(a.date || '')
+          if (dc !== 0) return dc
+          return (b.time || '').localeCompare(a.time || '')
+        })
         block.posts.forEach(function (p) {
           var day = p.date ? p.date.substring(8, 10) : ''
           html += '<li class="archive-item" data-id="' + p.id + '">' +
@@ -1046,7 +1050,9 @@ app.init = function () {
       var pa = a.pinned ? 1 : 0
       var pb = b.pinned ? 1 : 0
       if (pa !== pb) return pb - pa
-      return (b.date || '').localeCompare(a.date || '')
+      var dc = (b.date || '').localeCompare(a.date || '')
+      if (dc !== 0) return dc
+      return (b.time || '').localeCompare(a.time || '')
     })
     app.posts.renderTagFilters()
     var loaded = 0

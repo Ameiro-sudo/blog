@@ -45,7 +45,9 @@ app.init = function () {
       var pa = a.pinned ? 1 : 0
       var pb = b.pinned ? 1 : 0
       if (pa !== pb) return pb - pa
-      return (b.date || '').localeCompare(a.date || '')
+      var dc = (b.date || '').localeCompare(a.date || '')
+      if (dc !== 0) return dc
+      return (b.time || '').localeCompare(a.time || '')
     })
     app.posts.renderTagFilters()
     var loaded = 0

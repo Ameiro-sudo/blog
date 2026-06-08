@@ -82,6 +82,15 @@ function buildPosts() {
 
   const posts = files.map(f => parsePost(join(POSTS_DIR, f)))
 
+  posts.sort(function (a, b) {
+    var pa = a.pinned ? 1 : 0
+    var pb = b.pinned ? 1 : 0
+    if (pa !== pb) return pb - pa
+    var dc = (b.date || '').localeCompare(a.date || '')
+    if (dc !== 0) return dc
+    return (b.time || '').localeCompare(a.time || '')
+  })
+
   writeFileSync(
     join(POSTS_DIR, 'index.json'),
     JSON.stringify(posts, null, 2) + '\n',

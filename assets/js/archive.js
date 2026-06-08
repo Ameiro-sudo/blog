@@ -152,7 +152,11 @@ app.archive = {
       months.forEach(function (month) {
         var block = groups[year][month]
         html += '<div class="archive-month"><div class="archive-month-header">' + month + '月</div><ul class="archive-list">'
-        block.posts.sort(function (a, b) { return (b.date || '').localeCompare(a.date || '') })
+        block.posts.sort(function (a, b) {
+          var dc = (b.date || '').localeCompare(a.date || '')
+          if (dc !== 0) return dc
+          return (b.time || '').localeCompare(a.time || '')
+        })
         block.posts.forEach(function (p) {
           var day = p.date ? p.date.substring(8, 10) : ''
           html += '<li class="archive-item" data-id="' + p.id + '">' +
