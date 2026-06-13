@@ -7,7 +7,6 @@
 ## 联系
 
 - GitHub: [ninasukiwww-png](https://github.com/ninasukiwww-png)
-- Bilibili: [Shizukuレモン](https://space.bilibili.com/3493084421687360)
 
 ## 关于本站
 
