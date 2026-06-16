@@ -1,5 +1,5 @@
 var CACHE = 'v1'
-var CDN = 'vps.snowblock.top:9443/raw/ninasukiwww-png/my-images'
+var CDN = 'raw.githubusercontent.com/ninasukiwww-png/my-images'
 
 self.addEventListener('install', function () {
   self.skipWaiting()

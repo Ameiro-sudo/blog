@@ -15,6 +15,21 @@
     "excerpt": "一个零后端静态单页博客。基于 Markdown 写作，构建时生成索引，GitHub Pages 托管，全站无数据库无服务器。所有源码在 github.com/ninasukiwww-png/bloghttps://github.com/ninasukiwww-png/blog。 --- 架构总览 blog/ ├── index.html SPA 入口（加载器 + 毛玻璃 + 雪花粒子） ├── a"
   },
   {
+    "id": "post5",
+    "title": "我再也不买VPS了",
+    "date": "2026-06-16",
+    "time": "13：00",
+    "readTime": "3 分钟",
+    "tags": [
+      "安全"
+    ],
+    "pinned": false,
+    "file": "post5.md",
+    "description": "",
+    "image": "",
+    "excerpt": "你知道一个刚考完试回家一看阿里云，余额-80的感受吗 登后台一看，220GIB免费流量全没了 再查阿里云流量目录价，香港1r/1GIB 也就是说byd玩意刷了我300GIB流量 要我说世界上还是初生多啊 要这么说的话运营商不给公网IP是对的 要是给了不到俩小时互联网全沦陷了（绷 还是NAT内网物理机好（望 阿里云用用LLM模型就好了 国内云服务器我真这辈子都不买了"
+  },
+  {
     "id": "post4",
     "title": "悲报 本人 VPS 被爆破了😭",
     "date": "2026-06-07",

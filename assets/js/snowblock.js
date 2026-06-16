@@ -4,10 +4,10 @@ const app = {}
 // CONFIG
 // ============================================
 app.config = {
-  CDN_BASE: 'https://vps.snowblock.top:9443/raw/ninasukiwww-png/my-images/main/',
+  CDN_BASE: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/',
   SITE_URL: 'https://blog.snowblock.top',
   profile: {
-    avatar: 'https://vps.snowblock.top:9443/raw/ninasukiwww-png/my-images/main/profile.webp',
+    avatar: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/profile.webp',
     name: 'ninasukiwww',
     bio: '世界は大きい、君は行かなければならない',
     links: [
@@ -19,7 +19,7 @@ app.config = {
   ogDefaults: {
     title: 'SnowBlock · 博客',
     description: '雪地笔记 — 技术、游戏、日常与碎片思考',
-    image: 'https://vps.snowblock.top:9443/raw/ninasukiwww-png/my-images/main/bg.webp',
+    image: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/bg.webp',
     url: 'https://blog.snowblock.top'
   }
 }
