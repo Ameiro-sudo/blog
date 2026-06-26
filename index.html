@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="assets/css/tokens.css?v=1a48b2b2">
     <link rel="stylesheet" href="assets/css/style.css?v=1a48b2b2">
+    <link rel="stylesheet" href="assets/css/toast.css?v=1a48b2b2">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -43,6 +44,7 @@
             padding: var(--body-pad);
             font-family: var(--font-sans);
             -webkit-font-smoothing: antialiased;
+            display: flex; flex-direction: column; align-items: center;
             background:
                 url('https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/bg.webp') center / cover no-repeat fixed,
                 linear-gradient(160deg, #f8f6f0, #eef2f5);
@@ -222,6 +224,11 @@
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
             #snowCanvas { display: none; }
+        }
+        @media print {
+            body::before { display:none; }
+            body { background:#fff!important; padding:1rem; color:#000; }
+            #loader, #snowCanvas { display:none; }
         }
     </style>
 
