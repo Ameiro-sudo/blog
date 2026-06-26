@@ -88,6 +88,8 @@ app.docs = {
     app.dom.docsContent.innerHTML = titleHtml + contentHtml
 
     app.article.enhance(app.dom.docsContent)
+    app.article.renderTOC(app.dom.docsContent)
+    app.dom.tocToggle.classList.add('show')
     this.renderNav()
 
     document.title = section.title + ' · 文档 · SnowBlock'

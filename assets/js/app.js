@@ -556,9 +556,10 @@ app.article = {
     })
   },
 
-  renderTOC: function() {
+  renderTOC: function(container) {
     app.dom.tocPanel.innerHTML = ''
-    var headings = app.dom.articleContent.querySelectorAll('h2, h3')
+    if (container === undefined) container = app.dom.articleContent
+    var headings = container.querySelectorAll('h2, h3')
     if (headings.length < 2) { app.dom.tocPanel.classList.remove('show'); return }
     var html = ''
     headings.forEach(function (h) {
@@ -682,6 +683,8 @@ app.docs = {
     app.dom.docsContent.innerHTML = titleHtml + contentHtml
 
     app.article.enhance(app.dom.docsContent)
+    app.article.renderTOC(app.dom.docsContent)
+    app.dom.tocToggle.classList.add('show')
     this.renderNav()
 
     document.title = section.title + ' · 文档 · SnowBlock'
