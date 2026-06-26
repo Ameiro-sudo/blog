@@ -1,6 +1,6 @@
 # 悲报 本人 VPS 被爆破了😭
 date: 2026-06-07
-tags:安全
+tags: 安全
 time: 11:30
 readTime: 3 分钟
 ---

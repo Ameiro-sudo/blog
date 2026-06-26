@@ -1,13 +1,11 @@
-import { readFileSync, readdirSync, writeFileSync } from 'fs'
+import { readFileSync, readdirSync, writeFileSync, existsSync, statSync, cpSync } from 'fs'
 import { readFile, stat } from 'fs/promises'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { createHash } from 'crypto'
 import exifr from 'exifr'
+import * as yaml from 'js-yaml'
 
-// ============================
-// PATHS & CONSTANTS
-// ============================
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 const POSTS_DIR = join(ROOT, 'content', 'posts')
@@ -16,12 +14,59 @@ const CDN_BASE = 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/ma
 const SITE_URL = 'https://blog.snowblock.top'
 
 // ============================
-// PARSE POST
+// BUILD CACHE (mtime tracking)
+// ============================
+const CACHE_FILE = join(ROOT, '.build-cache.json')
+let buildCache = {}
+try {
+  buildCache = JSON.parse(readFileSync(CACHE_FILE, 'utf-8'))
+} catch (e) {}
+
+function saveCache() {
+  writeFileSync(CACHE_FILE, JSON.stringify(buildCache, null, 2) + '\n', 'utf-8')
+}
+
+function isStale(key, filePath) {
+  try {
+    const mtime = statSync(filePath).mtimeMs
+    const cached = buildCache[key]
+    if (cached === mtime) return false
+    buildCache[key] = mtime
+    return true
+  } catch (e) {
+    return true
+  }
+}
+
+// ============================
+// DESIGN TOKENS
+// ============================
+const DESIGN_TOKENS_DIR = join(__dirname, '..', '..', 'design-tokens')
+const CSS_OUT_DIR = join(ROOT, 'assets', 'css')
+
+function copyDesignTokens() {
+  const files = ['tokens.css', 'loader.css', 'snow.css', 'toast.css']
+  const outDir = CSS_OUT_DIR
+  let copied = 0
+  for (const f of files) {
+    const src = join(DESIGN_TOKENS_DIR, f)
+    const dst = join(outDir, f)
+    if (!existsSync(src)) continue
+    if (isStale('tokens:' + f, src)) {
+      cpSync(src, dst)
+      copied++
+    }
+  }
+  if (copied) console.log(`  design tokens: ${copied} copied`)
+}
+
+// ============================
+// PARSE POST (js-yaml)
 // ============================
 function parsePost(filepath) {
   const text = readFileSync(filepath, 'utf-8')
   const lines = text.split('\n')
-  const meta = {}
+  let meta = {}
   let title = ''
   let bodyStart = 0
 
@@ -36,21 +81,30 @@ function parsePost(filepath) {
 
   let i = bodyStart
   let inMeta = bodyStart === 1
+  const metaLines = []
+
   while (i < lines.length) {
-    const line = lines[i].trim()
-    if (line === '---' && inMeta) {
+    const line = lines[i]
+    if (line.trim() === '---' && inMeta) {
       bodyStart = i + 1
       break
     }
-    const m = line.match(/^(\w+)\s*:\s*(.+)$/)
-    if (m && inMeta) meta[m[1]] = m[2].trim()
+    if (inMeta) metaLines.push(line)
     i++
+  }
+
+  if (metaLines.length) {
+    try {
+      meta = yaml.load(metaLines.join('\n')) || {}
+    } catch (e) {
+      console.log(`  yaml parse warning (${filepath}): ${e.message}`)
+    }
   }
 
   const stem = filepath.split('/').pop().replace(/\.md$/, '')
   if (!title) title = meta.title || stem
-  const tags = (meta.tags || '').split(',').map(t => t.trim()).filter(Boolean)
-  const pinned = meta.pinned === 'true'
+  const tags = (meta.tags || '').toString().split(',').map(t => t.trim()).filter(Boolean)
+  const pinned = meta.pinned === true || meta.pinned === 'true'
 
   const bodyLines = lines.slice(bodyStart)
   const rawBody = bodyLines.join('\n').trim()
@@ -80,13 +134,19 @@ function buildPosts() {
     .filter(f => f.endsWith('.md') && f !== 'index.json' && !f.startsWith('_'))
     .sort()
 
+  if (!files.length) {
+    writeFileSync(join(POSTS_DIR, 'index.json'), '[]\n', 'utf-8')
+    console.log('  posts: 0')
+    return
+  }
+
   const posts = files.map(f => parsePost(join(POSTS_DIR, f)))
 
   posts.sort(function (a, b) {
-    var pa = a.pinned ? 1 : 0
-    var pb = b.pinned ? 1 : 0
+    const pa = a.pinned ? 1 : 0
+    const pb = b.pinned ? 1 : 0
     if (pa !== pb) return pb - pa
-    var dc = (b.date || '').localeCompare(a.date || '')
+    const dc = (b.date || '').localeCompare(a.date || '')
     if (dc !== 0) return dc
     return (b.time || '').localeCompare(a.time || '')
   })
@@ -100,7 +160,7 @@ function buildPosts() {
 }
 
 // ============================
-// BUILD: ALBUMS INDEX (async, EXIF extraction)
+// BUILD: ALBUMS INDEX
 // ============================
 async function buildAlbums() {
   const IMAGES_DIR = join(ROOT, '..', 'my-images', 'blog')
@@ -237,32 +297,41 @@ function escXml(s) {
 // ============================
 function versionAssets() {
   const css = readFileSync(join(ROOT, 'assets', 'css', 'style.css'), 'utf-8')
-  const cssHash = createHash('md5').update(css).digest('hex').slice(0, 8)
+  const tokensCss = readFileSync(join(ROOT, 'assets', 'css', 'tokens.css'), 'utf-8')
+  const cssHash = createHash('md5').update(css + tokensCss).digest('hex').slice(0, 8)
 
-  // concatenate split JS sources into app.js
   const JS_SRC = ['snowblock.js', 'profile.js', 'posts.js', 'article.js', 'archive.js', 'gallery.js', 'router.js', 'init.js']
   const jsDir = join(ROOT, 'assets', 'js')
   const jsContent = JS_SRC.map(function(f) {
     return readFileSync(join(jsDir, f), 'utf-8')
   }).join('\n')
-  writeFileSync(join(jsDir, 'app.js'), jsContent, 'utf-8')
-  const jsHash = createHash('md5').update(jsContent).digest('hex').slice(0, 8)
+
+  const sourceMap = JS_SRC.map(function(f) {
+    return f + ':' + f.replace('.js', '.js:1')
+  }).join('\n')
+
+  const appJs = jsContent + '\n//# sourceURL=app.js\n//# sourceMappingURL=data:application/json;base64,\n'
+  writeFileSync(join(jsDir, 'app.js'), appJs, 'utf-8')
+  const jsHash = createHash('md5').update(appJs).digest('hex').slice(0, 8)
 
   let html = readFileSync(join(ROOT, 'index.html'), 'utf-8')
+  html = html.replace(/(href="assets\/css\/tokens\.css)(?:\?v=[^"]*)?(")/, '$1?v=' + cssHash + '"')
   html = html.replace(/(href="assets\/css\/style\.css)(?:\?v=[^"]*)?(")/, '$1?v=' + cssHash + '"')
   html = html.replace(/(src="assets\/js\/app\.js)(?:\?v=[^"]*)?(")/, '$1?v=' + jsHash + '"')
   html = html.replace(/(<meta name="build-ts" content=")\d*(")/, '$1' + Date.now() + '"')
   writeFileSync(join(ROOT, 'index.html'), html, 'utf-8')
-  console.log('  version: ok (' + cssHash + ', ' + jsHash + ')')
+  console.log('  version: ok (t=' + cssHash + ', s=' + cssHash + ', j=' + jsHash + ')')
 }
 
 // ============================
 // MAIN
 // ============================
 console.log('Building indexes...')
+copyDesignTokens()
 buildPosts()
 await buildAlbums()
 buildFeed()
 buildSitemap()
 versionAssets()
+saveCache()
 console.log('Done.')

@@ -1074,3 +1074,6 @@ app.init = function () {
 }
 
 window.addEventListener('load', app.init)
+
+//# sourceURL=app.js
+//# sourceMappingURL=data:application/json;base64,

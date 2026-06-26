@@ -1,7 +1,7 @@
 # 我再也不买VPS了
 date: 2026-06-16
-tags:安全
-time: 13：00
+tags: 安全
+time: 13:00
 readTime: 3 分钟
 ---
 
