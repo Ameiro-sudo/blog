@@ -67,13 +67,18 @@ app.dom = {
   navArchive: document.getElementById('navArchive'),
   navGallery: document.getElementById('navGallery'),
   navAbout: document.getElementById('navAbout'),
+  navDocs: document.getElementById('navDocs'),
   backToTop: document.getElementById('backToTop'),
   tocToggle: document.getElementById('tocToggle'),
   tocPanel: document.getElementById('tocPanel'),
   pageHeader: document.getElementById('pageHeader'),
   lightbox: document.getElementById('lightbox'),
   lightboxImg: document.getElementById('lightboxImg'),
-  lightboxExif: document.getElementById('lightboxExif')
+  lightboxExif: document.getElementById('lightboxExif'),
+  docsView: document.getElementById('docsView'),
+  docsSidebar: document.getElementById('docsSidebar'),
+  docsContent: document.getElementById('docsContent'),
+  docsContainer: document.getElementById('docsContainer')
 }
 
 app.toastTimer = null
@@ -220,6 +225,7 @@ app.views = {
     app.dom.articleViewEl.style.display = (name === 'article' || name === 'about') ? 'block' : 'none'
     app.dom.archiveViewEl.style.display = name === 'archive' ? 'block' : 'none'
     app.dom.galleryView.style.display = name === 'gallery' ? 'block' : 'none'
+    app.dom.docsView.style.display = name === 'docs' ? 'block' : 'none'
     app.dom.pageHeader.style.display = name === 'list' ? 'block' : 'none'
     app.dom.tocToggle.classList.remove('show')
     app.dom.tocPanel.classList.remove('show')

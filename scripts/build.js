@@ -300,7 +300,7 @@ function versionAssets() {
   const tokensCss = readFileSync(join(ROOT, 'assets', 'css', 'tokens.css'), 'utf-8')
   const cssHash = createHash('md5').update(css + tokensCss).digest('hex').slice(0, 8)
 
-  const JS_SRC = ['snowblock.js', 'profile.js', 'posts.js', 'article.js', 'archive.js', 'gallery.js', 'router.js', 'init.js']
+  const JS_SRC = ['snowblock.js', 'profile.js', 'posts.js', 'article.js', 'docs.js', 'archive.js', 'gallery.js', 'router.js', 'init.js']
   const jsDir = join(ROOT, 'assets', 'js')
   const jsContent = JS_SRC.map(function(f) {
     return readFileSync(join(jsDir, f), 'utf-8')
