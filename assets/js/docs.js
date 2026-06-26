@@ -13,7 +13,7 @@ app.docs = {
     } else {
       this.renderSidebar()
       if (index !== undefined && !isNaN(index)) {
-        this.navigateTo(index, true)
+        this.navigateTo(index)
       } else {
         this.renderSection(this.currentIndex)
       }
@@ -66,9 +66,7 @@ app.docs = {
     app.dom.docsSidebar.querySelectorAll('a').forEach(function(a) {
       a.addEventListener('click', function(e) {
         e.preventDefault()
-        var idx = parseInt(this.dataset.docsIndex)
-        app.docs.navigateTo(idx)
-        location.hash = '#/docs/' + idx
+        location.hash = '#/docs/' + this.dataset.docsIndex
       })
     })
   },
@@ -120,14 +118,12 @@ app.docs = {
     app.dom.docsContainer.querySelectorAll('.docs-nav-link').forEach(function(a) {
       a.addEventListener('click', function(e) {
         e.preventDefault()
-        var idx = parseInt(this.dataset.docsIndex)
-        app.docs.navigateTo(idx)
-        location.hash = '#/docs/' + idx
+        location.hash = '#/docs/' + this.dataset.docsIndex
       })
     })
   },
 
-  navigateTo: function(index, silent) {
+  navigateTo: function(index) {
     if (index < 0) index = 0
     if (index >= this.sections.length) index = this.sections.length - 1
     this.currentIndex = index

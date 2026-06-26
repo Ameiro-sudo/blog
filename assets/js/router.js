@@ -26,6 +26,7 @@ app.router = {
       var albumId = decodeURIComponent(raw.replace('gallery/', ''))
       app.gallery.show()
       app.gallery.showAlbum(albumId)
+      this.setActiveNav('gallery')
       return
     }
     var found = app.state.postsMeta.some(function (p) { return p.id === raw })

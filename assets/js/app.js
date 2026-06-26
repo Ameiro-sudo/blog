@@ -608,7 +608,7 @@ app.docs = {
     } else {
       this.renderSidebar()
       if (index !== undefined && !isNaN(index)) {
-        this.navigateTo(index, true)
+        this.navigateTo(index)
       } else {
         this.renderSection(this.currentIndex)
       }
@@ -661,9 +661,7 @@ app.docs = {
     app.dom.docsSidebar.querySelectorAll('a').forEach(function(a) {
       a.addEventListener('click', function(e) {
         e.preventDefault()
-        var idx = parseInt(this.dataset.docsIndex)
-        app.docs.navigateTo(idx)
-        location.hash = '#/docs/' + idx
+        location.hash = '#/docs/' + this.dataset.docsIndex
       })
     })
   },
@@ -715,14 +713,12 @@ app.docs = {
     app.dom.docsContainer.querySelectorAll('.docs-nav-link').forEach(function(a) {
       a.addEventListener('click', function(e) {
         e.preventDefault()
-        var idx = parseInt(this.dataset.docsIndex)
-        app.docs.navigateTo(idx)
-        location.hash = '#/docs/' + idx
+        location.hash = '#/docs/' + this.dataset.docsIndex
       })
     })
   },
 
-  navigateTo: function(index, silent) {
+  navigateTo: function(index) {
     if (index < 0) index = 0
     if (index >= this.sections.length) index = this.sections.length - 1
     this.currentIndex = index
@@ -1108,6 +1104,7 @@ app.router = {
       var albumId = decodeURIComponent(raw.replace('gallery/', ''))
       app.gallery.show()
       app.gallery.showAlbum(albumId)
+      this.setActiveNav('gallery')
       return
     }
     var found = app.state.postsMeta.some(function (p) { return p.id === raw })
@@ -1184,8 +1181,8 @@ app.init = function () {
   }
 
   app.state.purifyConfig = {
-    ALLOWED_TAGS: ['h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'ul', 'ol', 'li', 'a', 'strong', 'em', 'code', 'pre', 'img', 'br', 'hr', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'button', 'progress'],
-    ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'id', 'loading', 'style', 'type', 'value', 'max', 'onclick']
+    ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'ul', 'ol', 'li', 'a', 'strong', 'em', 'code', 'pre', 'img', 'br', 'hr', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'button', 'progress'],
+    ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'id', 'loading', 'style', 'type', 'value', 'max']
   }
 
   app.profile.render()
