@@ -20,14 +20,12 @@
   color: transparent; text-decoration: none; letter-spacing: 1px;
 }
 .nav-links { display: flex; gap: 1.5rem; align-items: center; }
-.nav-links a, .nav-links a:visited {
-  color: var(--text-secondary); text-decoration: none;
+.nav-links a { color: var(--text-secondary); text-decoration: none;
   font-size: 0.85rem; font-family: var(--font-mono);
   transition: color 0.25s; padding: 0.2rem 0; cursor: pointer;
   border-bottom: 1px solid transparent;
 }
-.nav-links a:hover, .nav-links a:visited:hover,
-.nav-links a.active, .nav-links a:visited.active { color: var(--text-primary); border-bottom-color: var(--color-accent); }
+.nav-links a:hover, .nav-links a.active { color: var(--text-primary); border-bottom-color: var(--color-accent); }
 
 /* ===== 简介卡片 ===== */
 #profileCard { margin-bottom: 2rem; display: none; }
