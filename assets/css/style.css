@@ -1,5 +1,5 @@
 /* ===== 容器与顶栏 ===== */
-.container { max-width: 1000px; margin: 0 auto; scrollbar-gutter: stable; overflow-x: hidden; }
+.container { width: 100%; max-width: 1000px; margin: 0 auto; scrollbar-gutter: stable; overflow-x: hidden; }
 
 .top-bar {
   display: flex; justify-content: space-between; align-items: center;
@@ -555,8 +555,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 }
 
 /* ===== 画廊 ===== */
-#postList, #archiveView, #galleryView { width: 100%; }
-#galleryView { margin-bottom: 2rem; }
+#galleryView { margin-bottom: 2rem; width: 100%; }
 #albumGrid { width: 100%; }
 .gallery-wrap {
   border-radius: var(--radius-card);
