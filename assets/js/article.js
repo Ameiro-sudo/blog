@@ -9,7 +9,7 @@ app.article = {
       app.utils.setOGTag('og:title', meta.title)
       app.utils.setOGTag('og:description', meta.description || (app.utils.getExcerpt ? app.utils.getExcerpt(content, 200) : ''))
       app.utils.setOGTag('og:image', meta.image || app.config.ogDefaults.image)
-      app.utils.setOGTag('og:url', app.config.SITE_URL + '/#' + id)
+      app.utils.setOGTag('og:url', app.config.SITE_URL + '/#/' + id)
       var tags = meta.tags.map(function (t) {
         return '<span class="tag ' + (t === 'Bash' ? 'bash' : 'tech') + '">' + t + '</span>'
       }).join(' ')
@@ -129,8 +129,13 @@ app.article = {
     var headings = container.querySelectorAll('h2, h3')
     if (headings.length < 2) { app.dom.tocPanel.classList.remove('show'); return }
     var html = ''
+    var seenIds = {}
     headings.forEach(function (h) {
-      var id = h.textContent.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fff-]/g, '')
+      var baseId = h.textContent.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fff-]/g, '')
+      var id = baseId
+      var n = 2
+      while (seenIds[id]) { id = baseId + '-' + n++ }
+      seenIds[id] = true
       h.id = id
       var tag = h.tagName.toLowerCase()
       html += '<a class="toc-link ' + tag + '" href="#' + id + '">' + h.textContent + '</a>'

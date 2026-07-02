@@ -15,13 +15,6 @@ app.router = {
       return
     }
     if (raw === 'about') { app.article.showAbout(); this.setActiveNav('about'); return }
-    if (raw === 'docs') { app.docs.show(); this.setActiveNav('docs'); return }
-    if (/^docs\//.test(raw)) {
-      var idx = parseInt(raw.replace('docs/', ''))
-      app.docs.show(idx)
-      this.setActiveNav('docs')
-      return
-    }
     if (raw.indexOf('gallery/') === 0) {
       var albumId = decodeURIComponent(raw.replace('gallery/', ''))
       app.gallery.show()
@@ -39,7 +32,6 @@ app.router = {
     app.dom.navArchive.className = which === 'archive' ? 'active' : ''
     app.dom.navGallery.className = which === 'gallery' ? 'active' : ''
     app.dom.navAbout.className = which === 'about' ? 'active' : ''
-    app.dom.navDocs.className = which === 'docs' ? 'active' : ''
   }
 }
 
@@ -52,7 +44,6 @@ app.dom.navBlog.addEventListener('click', function (e) { e.preventDefault(); loc
 app.dom.navArchive.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/archive' })
 app.dom.navGallery.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/gallery' })
 app.dom.navAbout.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/about' })
-app.dom.navDocs.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/docs' })
 
 window.addEventListener('scroll', function () {
   if (window.scrollY > 300) app.dom.backToTop.classList.add('show')

@@ -39,7 +39,7 @@ app.init = function () {
     app.state.albums = data
   }).catch(function () {})
 
-  fetch('content/posts/index.json').then(function (r) { return r.json() }).then(function (data) {
+  fetch('content/posts/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
     app.state.postsMeta = data
     app.state.postsMeta.sort(function (a, b) {
       var pa = a.pinned ? 1 : 0

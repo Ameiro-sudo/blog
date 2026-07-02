@@ -45,7 +45,7 @@ const DESIGN_TOKENS_DIR = join(__dirname, '..', '..', 'design-tokens')
 const CSS_OUT_DIR = join(ROOT, 'assets', 'css')
 
 function copyDesignTokens() {
-  const files = ['tokens.css', 'loader.css', 'snow.css', 'toast.css']
+  const files = ['tokens.css', 'toast.css']
   const outDir = CSS_OUT_DIR
   let copied = 0
   for (const f of files) {
@@ -296,31 +296,31 @@ function escXml(s) {
 // BUILD: VERSION HASHING
 // ============================
 function versionAssets() {
-  const css = readFileSync(join(ROOT, 'assets', 'css', 'style.css'), 'utf-8')
-  const tokensCss = readFileSync(join(ROOT, 'assets', 'css', 'tokens.css'), 'utf-8')
-  const cssHash = createHash('md5').update(css + tokensCss).digest('hex').slice(0, 8)
+  const CSS_SRC = ['style.css', 'tokens.css', 'toast.css']
+  const cssDir = join(ROOT, 'assets', 'css')
+  const cssContent = CSS_SRC.map(function(f) {
+    return readFileSync(join(cssDir, f), 'utf-8')
+  }).join('\n')
+  const cssHash = createHash('md5').update(cssContent).digest('hex').slice(0, 8)
 
-  const JS_SRC = ['snowblock.js', 'profile.js', 'posts.js', 'article.js', 'docs.js', 'archive.js', 'gallery.js', 'router.js', 'init.js']
+  const JS_SRC = ['snowblock.js', 'profile.js', 'posts.js', 'article.js', 'archive.js', 'gallery.js', 'router.js', 'init.js']
   const jsDir = join(ROOT, 'assets', 'js')
   const jsContent = JS_SRC.map(function(f) {
     return readFileSync(join(jsDir, f), 'utf-8')
   }).join('\n')
 
-  const sourceMap = JS_SRC.map(function(f) {
-    return f + ':' + f.replace('.js', '.js:1')
-  }).join('\n')
-
-  const appJs = jsContent + '\n//# sourceURL=app.js\n//# sourceMappingURL=data:application/json;base64,\n'
+  const appJs = jsContent
   writeFileSync(join(jsDir, 'app.js'), appJs, 'utf-8')
   const jsHash = createHash('md5').update(appJs).digest('hex').slice(0, 8)
 
   let html = readFileSync(join(ROOT, 'index.html'), 'utf-8')
   html = html.replace(/(href="assets\/css\/tokens\.css)(?:\?v=[^"]*)?(")/, '$1?v=' + cssHash + '"')
   html = html.replace(/(href="assets\/css\/style\.css)(?:\?v=[^"]*)?(")/, '$1?v=' + cssHash + '"')
+  html = html.replace(/(href="assets\/css\/toast\.css)(?:\?v=[^"]*)?(")/, '$1?v=' + cssHash + '"')
   html = html.replace(/(src="assets\/js\/app\.js)(?:\?v=[^"]*)?(")/, '$1?v=' + jsHash + '"')
   html = html.replace(/(<meta name="build-ts" content=")\d*(")/, '$1' + Date.now() + '"')
   writeFileSync(join(ROOT, 'index.html'), html, 'utf-8')
-  console.log('  version: ok (t=' + cssHash + ', s=' + cssHash + ', j=' + jsHash + ')')
+  console.log('  version: ok (css=' + cssHash + ', js=' + jsHash + ')')
 }
 
 // ============================

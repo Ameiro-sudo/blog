@@ -67,7 +67,6 @@ app.dom = {
   navArchive: document.getElementById('navArchive'),
   navGallery: document.getElementById('navGallery'),
   navAbout: document.getElementById('navAbout'),
-  navDocs: document.getElementById('navDocs'),
   backToTop: document.getElementById('backToTop'),
   tocToggle: document.getElementById('tocToggle'),
   tocPanel: document.getElementById('tocPanel'),
@@ -75,10 +74,6 @@ app.dom = {
   lightbox: document.getElementById('lightbox'),
   lightboxImg: document.getElementById('lightboxImg'),
   lightboxExif: document.getElementById('lightboxExif'),
-  docsView: document.getElementById('docsView'),
-  docsSidebar: document.getElementById('docsSidebar'),
-  docsContent: document.getElementById('docsContent'),
-  docsContainer: document.getElementById('docsContainer')
 }
 
 app.toastTimer = null
@@ -225,7 +220,6 @@ app.views = {
     app.dom.articleViewEl.style.display = (name === 'article' || name === 'about') ? 'block' : 'none'
     app.dom.archiveViewEl.style.display = name === 'archive' ? 'block' : 'none'
     app.dom.galleryView.style.display = name === 'gallery' ? 'block' : 'none'
-    app.dom.docsView.style.display = name === 'docs' ? 'block' : 'none'
     app.dom.pageHeader.style.display = name === 'list' ? 'block' : 'none'
     app.dom.tocToggle.classList.remove('show')
     app.dom.tocPanel.classList.remove('show')
@@ -442,7 +436,7 @@ app.article = {
       app.utils.setOGTag('og:title', meta.title)
       app.utils.setOGTag('og:description', meta.description || (app.utils.getExcerpt ? app.utils.getExcerpt(content, 200) : ''))
       app.utils.setOGTag('og:image', meta.image || app.config.ogDefaults.image)
-      app.utils.setOGTag('og:url', app.config.SITE_URL + '/#' + id)
+      app.utils.setOGTag('og:url', app.config.SITE_URL + '/#/' + id)
       var tags = meta.tags.map(function (t) {
         return '<span class="tag ' + (t === 'Bash' ? 'bash' : 'tech') + '">' + t + '</span>'
       }).join(' ')
@@ -562,8 +556,13 @@ app.article = {
     var headings = container.querySelectorAll('h2, h3')
     if (headings.length < 2) { app.dom.tocPanel.classList.remove('show'); return }
     var html = ''
+    var seenIds = {}
     headings.forEach(function (h) {
-      var id = h.textContent.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fff-]/g, '')
+      var baseId = h.textContent.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fff-]/g, '')
+      var id = baseId
+      var n = 2
+      while (seenIds[id]) { id = baseId + '-' + n++ }
+      seenIds[id] = true
       h.id = id
       var tag = h.tagName.toLowerCase()
       html += '<a class="toc-link ' + tag + '" href="#' + id + '">' + h.textContent + '</a>'
@@ -592,140 +591,6 @@ app.article = {
 app.dom.tocToggle.addEventListener('click', function () {
   app.dom.tocPanel.classList.toggle('show')
 })
-
-app.docs = {
-  sections: [],
-  currentIndex: 0,
-
-  show: function(index) {
-    app.views.switchTo('docs')
-    app.utils.resetOG()
-    document.title = '文档 · SnowBlock'
-    app.utils.setOGTag('og:title', '文档 · SnowBlock')
-
-    if (!this.sections.length) {
-      this.load(index)
-    } else {
-      this.renderSidebar()
-      if (index !== undefined && !isNaN(index)) {
-        this.navigateTo(index)
-      } else {
-        this.renderSection(this.currentIndex)
-      }
-    }
-  },
-
-  load: function(targetIndex) {
-    var self = this
-    fetch('content/pages/docs.md').then(function(r) { return r.text() }).then(function(mdText) {
-      self.parseSections(mdText)
-      self.renderSidebar()
-      var idx = (targetIndex !== undefined && !isNaN(targetIndex)) ? targetIndex : 0
-      self.currentIndex = Math.max(0, Math.min(idx, self.sections.length - 1))
-      self.renderSection(self.currentIndex)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }).catch(function() {
-      app.dom.docsContent.innerHTML = '<p>文档加载失败</p>'
-    })
-  },
-
-  parseSections: function(text) {
-    this.sections = []
-    var lines = text.split('\n')
-    var current = null
-
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i]
-      if (/^# /.test(line)) {
-        if (current) this.sections.push(current)
-        var title = line.replace(/^# /, '').trim()
-        var id = title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fff-]/g, '')
-        current = { id: id, title: title, lines: [], raw: [] }
-      } else if (current) {
-        current.lines.push(line)
-        current.raw.push(line)
-      }
-    }
-    if (current) this.sections.push(current)
-  },
-
-  renderSidebar: function() {
-    var html = ''
-    for (var i = 0; i < this.sections.length; i++) {
-      var s = this.sections[i]
-      var active = i === this.currentIndex ? ' class="active"' : ''
-      html += '<a href="#/docs/' + i + '"' + active + ' data-docs-index="' + i + '">' + s.title + '</a>'
-    }
-    app.dom.docsSidebar.innerHTML = html
-
-    app.dom.docsSidebar.querySelectorAll('a').forEach(function(a) {
-      a.addEventListener('click', function(e) {
-        e.preventDefault()
-        location.hash = '#/docs/' + this.dataset.docsIndex
-      })
-    })
-  },
-
-  updateSidebarActive: function() {
-    app.dom.docsSidebar.querySelectorAll('a').forEach(function(a, i) {
-      a.className = i === app.docs.currentIndex ? 'active' : ''
-    })
-  },
-
-  renderSection: function(index) {
-    if (index < 0 || index >= this.sections.length) return
-    var section = this.sections[index]
-
-    var titleHtml = '<h1 class="docs-section-title">' + section.title + '</h1>'
-    var contentHtml = app.utils.safeRender(section.lines.join('\n'))
-    app.dom.docsContent.innerHTML = titleHtml + contentHtml
-
-    app.article.enhance(app.dom.docsContent)
-    app.article.renderTOC(app.dom.docsContent)
-    app.dom.tocToggle.classList.add('show')
-    this.renderNav()
-
-    document.title = section.title + ' · 文档 · SnowBlock'
-    app.utils.setOGTag('og:title', section.title + ' · 文档')
-    this.updateSidebarActive()
-  },
-
-  renderNav: function() {
-    var html = '<div class="docs-nav">'
-    if (this.currentIndex > 0) {
-      html += '<a href="#/docs/' + (this.currentIndex - 1) + '" class="docs-nav-link prev" data-docs-index="' + (this.currentIndex - 1) + '">← ' + this.sections[this.currentIndex - 1].title + '</a>'
-    } else {
-      html += '<span></span>'
-    }
-    if (this.currentIndex < this.sections.length - 1) {
-      html += '<a href="#/docs/' + (this.currentIndex + 1) + '" class="docs-nav-link next" data-docs-index="' + (this.currentIndex + 1) + '">' + this.sections[this.currentIndex + 1].title + ' →</a>'
-    } else {
-      html += '<span></span>'
-    }
-    html += '</div>'
-    var existingNav = app.dom.docsContainer.querySelector('.docs-nav')
-    if (existingNav) {
-      existingNav.outerHTML = html
-    } else {
-      app.dom.docsContent.insertAdjacentHTML('afterend', html)
-    }
-
-    app.dom.docsContainer.querySelectorAll('.docs-nav-link').forEach(function(a) {
-      a.addEventListener('click', function(e) {
-        e.preventDefault()
-        location.hash = '#/docs/' + this.dataset.docsIndex
-      })
-    })
-  },
-
-  navigateTo: function(index) {
-    if (index < 0) index = 0
-    if (index >= this.sections.length) index = this.sections.length - 1
-    this.currentIndex = index
-    this.renderSection(index)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-}
 
 app.archive = {
   getHeatmapYear: function() {
@@ -1093,13 +958,6 @@ app.router = {
       return
     }
     if (raw === 'about') { app.article.showAbout(); this.setActiveNav('about'); return }
-    if (raw === 'docs') { app.docs.show(); this.setActiveNav('docs'); return }
-    if (/^docs\//.test(raw)) {
-      var idx = parseInt(raw.replace('docs/', ''))
-      app.docs.show(idx)
-      this.setActiveNav('docs')
-      return
-    }
     if (raw.indexOf('gallery/') === 0) {
       var albumId = decodeURIComponent(raw.replace('gallery/', ''))
       app.gallery.show()
@@ -1117,7 +975,6 @@ app.router = {
     app.dom.navArchive.className = which === 'archive' ? 'active' : ''
     app.dom.navGallery.className = which === 'gallery' ? 'active' : ''
     app.dom.navAbout.className = which === 'about' ? 'active' : ''
-    app.dom.navDocs.className = which === 'docs' ? 'active' : ''
   }
 }
 
@@ -1130,7 +987,6 @@ app.dom.navBlog.addEventListener('click', function (e) { e.preventDefault(); loc
 app.dom.navArchive.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/archive' })
 app.dom.navGallery.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/gallery' })
 app.dom.navAbout.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/about' })
-app.dom.navDocs.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/docs' })
 
 window.addEventListener('scroll', function () {
   if (window.scrollY > 300) app.dom.backToTop.classList.add('show')
@@ -1195,7 +1051,7 @@ app.init = function () {
     app.state.albums = data
   }).catch(function () {})
 
-  fetch('content/posts/index.json').then(function (r) { return r.json() }).then(function (data) {
+  fetch('content/posts/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
     app.state.postsMeta = data
     app.state.postsMeta.sort(function (a, b) {
       var pa = a.pinned ? 1 : 0
@@ -1225,6 +1081,3 @@ app.init = function () {
 }
 
 window.addEventListener('load', app.init)
-
-//# sourceURL=app.js
-//# sourceMappingURL=data:application/json;base64,
