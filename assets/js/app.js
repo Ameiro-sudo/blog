@@ -4,10 +4,10 @@ const app = {}
 // CONFIG
 // ============================================
 app.config = {
-  CDN_BASE: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/',
+  CDN_BASE: 'https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images@main/',
   SITE_URL: 'https://blog.snowblock.top',
   profile: {
-    avatar: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/profile.webp',
+    avatar: 'https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images@main/profile.webp',
     name: 'ninasukiwww',
     bio: '世界は大きい、君は行かなければならない',
     links: [
@@ -19,7 +19,7 @@ app.config = {
   ogDefaults: {
     title: 'SnowBlock · 博客',
     description: '雪地笔记 — 技术、游戏、日常与碎片思考',
-    image: 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/bg.webp',
+    image: 'https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images@main/bg.webp',
     url: 'https://blog.snowblock.top'
   }
 }
@@ -1030,7 +1030,7 @@ app.init = function () {
     var token = tokens[idx]
     var src = token.attrs[token.attrIndex('src')][1]
     var alt = token.content || ''
-    if (src.match(/^https?:\/\//) && src.indexOf('raw.githubusercontent.com') !== -1) {
+    if (src.match(/^https?:\/\//) && (src.indexOf('raw.githubusercontent.com') !== -1 || src.indexOf('cdn.jsdelivr.net') !== -1)) {
       return '<img src="' + app.state.md.utils.escapeHtml(src) + '" alt="' + app.state.md.utils.escapeHtml(alt) + '" loading="lazy">'
     }
     return mdImage(tokens, idx, options, env, self)

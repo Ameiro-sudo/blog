@@ -53,7 +53,7 @@ readTime: 4 分钟
 - `-n` 参数跳过 WebP 转换
 
 ### 图片 CDN
-- `raw.githubusercontent.com/ninasukiwww-png/my-images` 引用
+- `cdn.jsdelivr.net/gh/ninasukiwww-png/my-images@main` 引用
 - `?t=BUILD_TS` 时间戳刷新 CDN 缓存
 - Service Worker 缓存 CDN 图片
 - `deploy-full.sh` 自动用 ffmpeg 转换 webp
@@ -74,4 +74,4 @@ readTime: 4 分钟
 - 响应式布局，移动端适配
 
 ### 已知问题
-- jsDelivr CDN 在国内部分地区被屏蔽，已改用 raw.githubusercontent.com
+- raw.githubusercontent.com 在国内访问不稳定，已改用 jsDelivr CDN

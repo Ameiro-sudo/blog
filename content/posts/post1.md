@@ -91,8 +91,8 @@ image: https://...分享封面图URL（可选，默认使用站点背景）
 | `image` | 否 | 分享到社交平台时显示的封面图 |
 
 **图片引用：** 支持两种方式：
-1. 直接粘贴 CDN 链接：`![alt](https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/xxx.jpg)`
-2. CDN 链接自动识别：构建时不做处理，运行时 markdown-it 识别 raw.githubusercontent.com 域名
+1. 直接粘贴 CDN 链接：`![alt](https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images@main/blog/xxx.jpg)`
+2. CDN 链接自动识别：构建时不做处理，运行时 markdown-it 识别 jsDelivr 域名
 
 ---
 
@@ -165,14 +165,14 @@ node scripts/build.js
 
 ## 图片 CDN
 
-所有图片通过 `raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog/` 路径引用。
+所有图片通过 jsDelivr CDN 加载：`https://cdn.jsdelivr.net/gh/ninasukiwww-png/my-images@main/blog/`
 
 **缓存策略：**
 - 构建时在每张图片 URL 后加 `?t=BUILD_TS`（`BUILD_TS = Date.now()`）
 - 每次构建时间戳不同，CDN 和浏览器都视为新资源
 - Service Worker 拦截 CDN 域名请求，缓存到 `v1` 缓存空间，下次访问直接走缓存
 
-**注意：** `raw.githubusercontent.com` 在国内访问不稳定（DNS 污染/限速）。Google Fonts 已被墙，通过 `fonts.loli.net` / `gstatic.loli.net` 镜像加载。
+**注意：** 图片通过 jsDelivr CDN 加载，国内可达性较好。Google Fonts 已被墙，通过 `fonts.loli.net` / `gstatic.loli.net` 镜像加载。
 
 ---
 
@@ -183,7 +183,7 @@ node scripts/build.js
 行为：
 - `install` 阶段：跳过等待，立即激活
 - `activate` 阶段：`clients.claim()` 立即接管所有客户端
-- `fetch` 阶段：仅拦截 `raw.githubusercontent.com/ninasukiwww-png/my-images` 的请求，缓存到 `v1` 缓存
+- `fetch` 阶段：仅拦截 `cdn.jsdelivr.net/gh/ninasukiwww-png/my-images` 的请求，缓存到 `v1` 缓存
 - 不缓存博客自身资源（`style.css`、`app.js`、`content/` 等），这些由版本哈希控制
 
 ---
