@@ -172,7 +172,7 @@ node scripts/build.js
 - 每次构建时间戳不同，CDN 和浏览器都视为新资源
 - Service Worker 拦截 CDN 域名请求，缓存到 `v1` 缓存空间，下次访问直接走缓存
 
-**为什么不用 jsDelivr：** jsDelivr 在国内部分地区被屏蔽，raw.githubusercontent.com 更稳定。
+**注意：** `raw.githubusercontent.com` 在国内访问不稳定（DNS 污染/限速）。Google Fonts 已被墙，通过 `fonts.loli.net` / `gstatic.loli.net` 镜像加载。
 
 ---
 
@@ -321,7 +321,7 @@ node scripts/build.js
 
 ### 字体
 
-- **标题：** ZCOOL KuaiLe（Google Fonts）
+- **标题：** ZCOOL KuaiLe（Google Fonts，通过 `fonts.loli.net` 镜像加载）
 - **正文：** Segoe UI / system-ui / sans-serif
 - **代码/标签：** SF Mono / Cascadia Code / Fira Code / monospace
 
