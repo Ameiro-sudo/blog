@@ -5,7 +5,7 @@
     <link>https://blog.snowblock.top</link>
     <description>雪地笔记</description>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 02 Jul 2026 12:53:57 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 02 Jul 2026 13:04:09 GMT</lastBuildDate>
     <atom:link href="https://blog.snowblock.top/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
       <title>SnowBlock 博客项目总览</title>
@@ -13,6 +13,13 @@
       <guid>https://blog.snowblock.top/#/post1</guid>
       <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
       <description>一个零后端静态单页博客。基于 Markdown 写作，构建时生成索引，GitHub Pages 托管，全站无数据库无服务器。所有源码在 github.com/ninasukiwww-png/bloghttps://github.com/ninasukiwww-png/blog。 --- 架构总览 blog/ ├── index.html SPA 入口（加载器 + 毛玻璃 + 雪花粒子） ├── a</description>
+    </item>
+    <item>
+      <title>神奇数字马戏团 观后感</title>
+      <link>https://blog.snowblock.top/#/post6</link>
+      <guid>https://blog.snowblock.top/#/post6</guid>
+      <pubDate>Thu, 02 Jul 2026 00:00:00 GMT</pubDate>
+      <description>作为一部 2023 年首播的剧集，鄙人居然今天才看到。不过这样也挺好的，至少不用半年看一集不是吗（） 继《夏洛特》之后，又一部让我一天看完的剧。 此片讲述了一群人的意识被扫描并复制，数字意识被上传到数字马戏团中。在不断相处的过程中，他们逐渐坦诚相见，奋起反抗假牙/马戏团。最后，他们发现现实中的自己依旧生活得很好，于是决定接受现在作为数字生命的自己，留在马戏团。 本片整体塑造我觉得是真的很好。友情、</description>
     </item>
     <item>
       <title>我再也不买VPS了</title>
