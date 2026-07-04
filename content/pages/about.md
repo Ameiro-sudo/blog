@@ -7,9 +7,11 @@
 ## 联系
 
 - GitHub: [ninasukiwww-png](https://github.com/ninasukiwww-png)
+- email: [info@snowblock.top](info@snowblock@top)
 
 ## 关于本站
 
-- 静态站点，无后端依赖
+- 随便做着玩的所以可能BUG很多
 - 使用 markdown-it 渲染文章
-- 托管于 GitHub Pages
+- 托管于 GitHub Pages 免费但是GFW
+- 我套了层CF的CND 访问速度会更快 但是载图嘛 不太理想 我也没钱再买vps反代做CDN了

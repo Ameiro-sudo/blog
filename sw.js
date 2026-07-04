@@ -1,5 +1,5 @@
 var CACHE = 'v1'
-var CDN = 'cdn.jsdelivr.net/gh/ninasukiwww-png/my-images'
+var CDN = 'raw.githubusercontent.com/ninasukiwww-png/my-images'
 
 self.addEventListener('install', function () {
   self.skipWaiting()

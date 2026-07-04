@@ -14,20 +14,20 @@ pinned: true
 
 ```
 blog/
-├── index.html            # SPA 入口（加载器 + 毛玻璃 + 雪花粒子）
+├── index.html # SPA 入口（加载器 + 毛玻璃 + 雪花粒子）
 ├── assets/
-│   ├── css/style.css     # 全局样式系统
-│   └── js/app.js         # 前端 SPA（路由 / 搜索 / 画廊 / 灯箱 / TOC）
+│ ├── css/style.css # 全局样式系统
+│ └── js/app.js # 前端 SPA（路由 / 搜索 / 画廊 / 灯箱 / TOC）
 ├── content/
-│   ├── posts/            # 文章 .md 源文件 + build 生成的 index.json
-│   ├── albums/           # 相册索引（build 自动生成）
-│   └── pages/            # 独立页面 .md（如 about.md）
+│ ├── posts/ # 文章 .md 源文件 + build 生成的 index.json
+│ ├── albums/ # 相册索引（build 自动生成）
+│ └── pages/ # 独立页面 .md（如 about.md）
 ├── scripts/
-│   └── build.js          # 构建脚本（ESM + exifr 异步 EXIF 提取）
-├── sw.js                 # Service Worker（CDN 图片缓存）
-├── deploy.sh             # 博客一键部署
-├── deploy-full.sh        # 完整部署（WebP 转换 + my-images + 博客）
-└── package.json          # exifr 依赖
+│ └── build.js # 构建脚本（ESM + exifr 异步 EXIF 提取）
+├── sw.js # Service Worker（CDN 图片缓存）
+├── deploy.sh # 博客一键部署
+├── deploy-full.sh # 完整部署（WebP 转换 + my-images + 博客）
+└── package.json # exifr 依赖
 ```
 
 图片存储在独立仓库 [my-images](https://github.com/ninasukiwww-png/my-images)：
@@ -35,12 +35,12 @@ blog/
 ```
 my-images/
 └── blog/
-    ├── 相册名1/
-    │   ├── meta.json       # 标题 / 日期 / 简介 / 封面
-    │   ├── photo1.webp
-    │   └── photo2.jpg
-    ├── 相册名2/
-    └── ...
+ ├── 相册名1/
+ │ ├── meta.json # 标题 / 日期 / 简介 / 封面
+ │ ├── photo1.webp
+ │ └── photo2.jpg
+ ├── 相册名2/
+ └── ...
 ```
 
 ---
@@ -104,10 +104,10 @@ image: https://...分享封面图URL（可选，默认使用站点背景）
 
 ```json
 {
-  "title": "相册名称",
-  "date": "2026.06",
-  "description": "相册简介",
-  "cover": "封面文件名.jpg"
+ "title": "相册名称",
+ "date": "2026.06",
+ "description": "相册简介",
+ "cover": "封面文件名.jpg"
 }
 ```
 
@@ -145,13 +145,13 @@ node scripts/build.js
 ./deploy.sh "提交说明"
 ```
 
-流程：构建 → git add → git commit → git push → GitHub Pages 自动部署。
+流程：构建 > git add > git commit > git push > GitHub Pages 自动部署。
 
 ### 完整部署（含图片）
 
 ```bash
 ./deploy-full.sh "提交说明"
-./deploy-full.sh -n "提交说明"    # 跳过 WebP 转换
+./deploy-full.sh -n "提交说明" # 跳过 WebP 转换
 ```
 
 额外步骤：
@@ -159,7 +159,7 @@ node scripts/build.js
 2. 提交并推送 my-images 仓库
 3. 再执行博客的构建部署
 
-⚠️ `-n` 参数只在图片已经是 webp 或不需要重新转换时使用，可节省大量时间。
+`-n` 参数只在图片已经是 webp 或不需要重新转换时使用，可节省大量时间。
 
 ---
 
@@ -230,7 +230,7 @@ node scripts/build.js
 
 - 从 `content/posts/` 加载 `.md` 源文件
 - 剥离元信息区域，仅渲染正文
-- 渲染流程：markdown-it → DOMPurify → innerHTML
+- 渲染流程：markdown-it > DOMPurify > innerHTML
 - 代码块自动添加：复制按钮、语言标签、包裹容器
 - 表格自动包裹响应式容器
 - 图片自动绑定点击灯箱
@@ -365,8 +365,8 @@ SVG 晶体动画加载器：
 
 ```bash
 cd blog
-npm install                     # 安装 exifr
-node scripts/build.js           # 生成索引
+npm install # 安装 exifr
+node scripts/build.js # 生成索引
 # 浏览器打开 index.html
 ```
 
