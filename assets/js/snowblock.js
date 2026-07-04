@@ -4,10 +4,10 @@ const app = {}
 // CONFIG
 // ============================================
 app.config = {
-  CDN_BASE: '../assets/vendor/images/',
+  CDN_BASE: 'assets/vendor/images/',
   SITE_URL: 'https://blog.snowblock.top',
   profile: {
-    avatar: '../assets/vendor/images/profile.webp',
+    avatar: 'assets/vendor/images/profile.webp',
     name: 'ninasukiwww',
     bio: '世界は大きい、君は行かなければならない',
     links: [
@@ -19,7 +19,7 @@ app.config = {
   ogDefaults: {
     title: 'SnowBlock · 博客',
     description: '雪地笔记 — 技术、游戏、日常与碎片思考',
-    image: '../assets/vendor/images/bg.webp',
+    image: 'assets/vendor/images/bg.webp',
     url: 'https://blog.snowblock.top'
   }
 }

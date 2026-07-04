@@ -18,7 +18,7 @@ app.init = function () {
     var token = tokens[idx]
     var src = token.attrs[token.attrIndex('src')][1]
     var alt = token.content || ''
-    if (src.match(/^https?:\/\//) && (src.indexOf('raw.githubusercontent.com') !== -1 || src.indexOf('cdn.jsdelivr.net') !== -1)) {
+    if (src.indexOf('../my-images/') !== -1 || src.indexOf('assets/vendor/') !== -1) {
       return '<img src="' + app.state.md.utils.escapeHtml(src) + '" alt="' + app.state.md.utils.escapeHtml(alt) + '" loading="lazy">'
     }
     return mdImage(tokens, idx, options, env, self)

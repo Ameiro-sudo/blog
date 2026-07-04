@@ -4,10 +4,10 @@ const app = {}
 // CONFIG
 // ============================================
 app.config = {
-  CDN_BASE: '../assets/vendor/images/',
+  CDN_BASE: 'assets/vendor/images/',
   SITE_URL: 'https://blog.snowblock.top',
   profile: {
-    avatar: '../assets/vendor/images/profile.webp',
+    avatar: 'assets/vendor/images/profile.webp',
     name: 'ninasukiwww',
     bio: '世界は大きい、君は行かなければならない',
     links: [
@@ -19,7 +19,7 @@ app.config = {
   ogDefaults: {
     title: 'SnowBlock · 博客',
     description: '雪地笔记 — 技术、游戏、日常与碎片思考',
-    image: '../assets/vendor/images/bg.webp',
+    image: 'assets/vendor/images/bg.webp',
     url: 'https://blog.snowblock.top'
   }
 }
@@ -271,7 +271,7 @@ app.profile = {
     if (!cfg.name) { app.dom.profileCard.style.display = 'none'; return }
     app.dom.profileCard.style.display = 'block'
     var links = (cfg.links || []).map(function (l) {
-      var iconSrc = l.icon ? '../assets/vendor/iconify/' + l.icon.replace('/', '-') + '.svg' : ''
+      var iconSrc = l.icon ? 'assets/vendor/iconify/' + l.icon.replace('/', '-') + '.svg' : ''
       var icon = iconSrc ? '<img src="' + iconSrc + '" alt="' + l.name + '" style="width:0.9rem;height:0.9rem;filter:brightness(0) invert(0.7);">' : l.name
       return '<a href="' + l.url + '" target="_blank" rel="noopener" title="' + l.name + '">' + icon + '</a>'
     }).join('')
@@ -1030,7 +1030,7 @@ app.init = function () {
     var token = tokens[idx]
     var src = token.attrs[token.attrIndex('src')][1]
     var alt = token.content || ''
-    if (src.match(/^https?:\/\//) && (src.indexOf('raw.githubusercontent.com') !== -1 || src.indexOf('cdn.jsdelivr.net') !== -1)) {
+    if (src.indexOf('../my-images/') !== -1 || src.indexOf('assets/vendor/') !== -1) {
       return '<img src="' + app.state.md.utils.escapeHtml(src) + '" alt="' + app.state.md.utils.escapeHtml(alt) + '" loading="lazy">'
     }
     return mdImage(tokens, idx, options, env, self)
