@@ -46,7 +46,11 @@ app.article = {
       app.views.switchTo('article')
       app.dom.tocToggle.classList.add('show')
       window.scrollTo({ top: 0, behavior: 'smooth' })
-    }).catch(function () { app.views.switchTo('list') })
+    }).catch(function (e) {
+      console.error('Article load failed:', id, e)
+      app.toast.show('文章加载失败', 3000)
+      app.views.switchTo('list')
+    })
   },
 
   showAbout: function() {
@@ -61,7 +65,11 @@ app.article = {
       app.article.enhance(app.dom.articleContent)
       app.dom.relatedPosts.innerHTML = ''
       window.scrollTo({ top: 0, behavior: 'smooth' })
-    }).catch(function () { app.views.switchTo('list') })
+    }).catch(function (e) {
+      console.error('About page load failed:', e)
+      app.toast.show('关于页加载失败', 3000)
+      app.views.switchTo('list')
+    })
   },
 
   enhance: function(container) {
@@ -81,6 +89,9 @@ app.article = {
             btn.textContent = '已复制 V'
             btn.classList.add('copied')
             setTimeout(function () { btn.textContent = '复制'; btn.classList.remove('copied') }, 2000)
+          }).catch(function () {
+            btn.textContent = '失败'
+            setTimeout(function () { btn.textContent = '复制' }, 1500)
           })
         } catch (e) {
           btn.textContent = '失败'

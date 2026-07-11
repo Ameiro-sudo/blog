@@ -37,7 +37,7 @@ app.init = function () {
 
   fetch('content/albums/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
     app.state.albums = data
-  }).catch(function () {})
+  }).catch(function (e) { console.error('Albums load failed:', e) })
 
   fetch('content/posts/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
     app.state.postsMeta = data
@@ -57,13 +57,15 @@ app.init = function () {
         app.state.allExcerpts[p.id] = app.utils.getExcerpt(app.utils.stripFrontMatter(mdText))
         loaded++
         if (loaded === total) { app.posts.applyFilters(); app.router.handleHash() }
-      }).catch(function () {
+      }).catch(function (e) {
+        console.error('Excerpt load failed:', p.id, e)
         loaded++
         if (loaded === total) { app.posts.applyFilters(); app.router.handleHash() }
       })
     })
     if (total === 0) { app.posts.applyFilters(); app.router.handleHash() }
-  }).catch(function () {
+  }).catch(function (e) {
+    console.error('Posts index load failed:', e)
     app.dom.postContainer.innerHTML = '<div style="color:white;text-align:center;padding:2rem;">文章加载失败</div>'
   })
 }

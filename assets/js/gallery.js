@@ -83,7 +83,7 @@ app.gallery = {
 
   showAlbum: function(id) {
     var a = app.state.albums.find(function (x) { return x.id === id })
-    if (!a) return
+    if (!a) { console.error('Album not found:', id); return }
     this.albumData = a
     this.loaded = 0
     if (this.albumObserver) { this.albumObserver.disconnect(); this.albumObserver = null }

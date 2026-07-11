@@ -473,7 +473,11 @@ app.article = {
       app.views.switchTo('article')
       app.dom.tocToggle.classList.add('show')
       window.scrollTo({ top: 0, behavior: 'smooth' })
-    }).catch(function () { app.views.switchTo('list') })
+    }).catch(function (e) {
+      console.error('Article load failed:', id, e)
+      app.toast.show('文章加载失败', 3000)
+      app.views.switchTo('list')
+    })
   },
 
   showAbout: function() {
@@ -488,7 +492,11 @@ app.article = {
       app.article.enhance(app.dom.articleContent)
       app.dom.relatedPosts.innerHTML = ''
       window.scrollTo({ top: 0, behavior: 'smooth' })
-    }).catch(function () { app.views.switchTo('list') })
+    }).catch(function (e) {
+      console.error('About page load failed:', e)
+      app.toast.show('关于页加载失败', 3000)
+      app.views.switchTo('list')
+    })
   },
 
   enhance: function(container) {
@@ -508,6 +516,9 @@ app.article = {
             btn.textContent = '已复制 V'
             btn.classList.add('copied')
             setTimeout(function () { btn.textContent = '复制'; btn.classList.remove('copied') }, 2000)
+          }).catch(function () {
+            btn.textContent = '失败'
+            setTimeout(function () { btn.textContent = '复制' }, 1500)
           })
         } catch (e) {
           btn.textContent = '失败'
@@ -906,7 +917,7 @@ app.gallery = {
 
   showAlbum: function(id) {
     var a = app.state.albums.find(function (x) { return x.id === id })
-    if (!a) return
+    if (!a) { console.error('Album not found:', id); return }
     this.albumData = a
     this.loaded = 0
     if (this.albumObserver) { this.albumObserver.disconnect(); this.albumObserver = null }
@@ -1049,7 +1060,7 @@ app.init = function () {
 
   fetch('content/albums/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
     app.state.albums = data
-  }).catch(function () {})
+  }).catch(function (e) { console.error('Albums load failed:', e) })
 
   fetch('content/posts/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
     app.state.postsMeta = data
@@ -1069,13 +1080,15 @@ app.init = function () {
         app.state.allExcerpts[p.id] = app.utils.getExcerpt(app.utils.stripFrontMatter(mdText))
         loaded++
         if (loaded === total) { app.posts.applyFilters(); app.router.handleHash() }
-      }).catch(function () {
+      }).catch(function (e) {
+        console.error('Excerpt load failed:', p.id, e)
         loaded++
         if (loaded === total) { app.posts.applyFilters(); app.router.handleHash() }
       })
     })
     if (total === 0) { app.posts.applyFilters(); app.router.handleHash() }
-  }).catch(function () {
+  }).catch(function (e) {
+    console.error('Posts index load failed:', e)
     app.dom.postContainer.innerHTML = '<div style="color:white;text-align:center;padding:2rem;">文章加载失败</div>'
   })
 }

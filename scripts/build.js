@@ -20,7 +20,9 @@ const CACHE_FILE = join(ROOT, '.build-cache.json')
 let buildCache = {}
 try {
   buildCache = JSON.parse(readFileSync(CACHE_FILE, 'utf-8'))
-} catch (e) {}
+} catch (e) {
+  if (e.code !== 'ENOENT') console.warn('  build cache load failed:', e.message)
+}
 
 function saveCache() {
   writeFileSync(CACHE_FILE, JSON.stringify(buildCache, null, 2) + '\n', 'utf-8')
@@ -51,7 +53,7 @@ function copyDesignTokens() {
   for (const f of files) {
     const src = join(DESIGN_TOKENS_DIR, f)
     const dst = join(outDir, f)
-    if (!existsSync(src)) continue
+    if (!existsSync(src)) { console.warn('  design token not found:', f); continue }
     if (isStale('tokens:' + f, src)) {
       cpSync(src, dst)
       copied++
@@ -189,7 +191,9 @@ async function buildAlbums() {
     let meta = {}
     try {
       meta = JSON.parse(readFileSync(join(dirPath, 'meta.json'), 'utf-8'))
-    } catch (e) {}
+    } catch (e) {
+      if (e.code !== 'ENOENT') console.warn('  meta.json parse failed (' + dir + '/' + dirPath + '):', e.message)
+    }
 
     const photos = await Promise.all(files.map(async function(f) {
       let exif = null
@@ -197,7 +201,10 @@ async function buildAlbums() {
         const buf = await readFile(join(dirPath, f))
         const raw = await exifr.parse(buf, { pick: ['Make','Model','ISO','FNumber','FocalLength','ExposureTime','ImageWidth','ImageHeight'] })
         if (raw && Object.keys(raw).length) exif = raw
-      } catch (e) {}
+        else if (buf.length > 0) console.warn('  exif parse returned empty for:', f)
+      } catch (e) {
+        console.warn('  exif parse failed for', f, ':', e.message)
+      }
       const st = await stat(join(dirPath, f))
       return {
         url: CDN_BASE + '/' + dir + '/' + f + '?t=' + st.mtimeMs,
