@@ -120,7 +120,7 @@ app.posts = {
          '<div class="post-footer"><span class="post-date">' + p.date + ' . ' + p.time + '</span></div>' +
         '</div></div>'
     })
-    if (!html) html = '<div style="color:rgba(200,235,250,0.6);text-align:center;padding:2rem;">没有匹配的文章</div>'
+    if (!html) html = '<div class="state-empty">没有匹配的文章</div>'
     app.dom.postContainer.innerHTML = html
     self.renderPagination(filtered, page)
 

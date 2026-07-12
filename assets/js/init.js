@@ -1,6 +1,6 @@
 app.init = function () {
   if (!window.markdownit || !window.hljs || !window.DOMPurify) {
-    document.body.innerHTML += '<div style="color:white;text-align:center;padding:2rem;">依赖加载失败，请刷新</div>'
+    document.body.innerHTML += '<div class="state-error">依赖加载失败，请刷新</div>'
     return
   }
 
@@ -66,7 +66,7 @@ app.init = function () {
     if (total === 0) { app.posts.applyFilters(); app.router.handleHash() }
   }).catch(function (e) {
     console.error('Posts index load failed:', e)
-    app.dom.postContainer.innerHTML = '<div style="color:white;text-align:center;padding:2rem;">文章加载失败</div>'
+    app.dom.postContainer.innerHTML = '<div class="state-error">文章加载失败</div>'
   })
 }
 

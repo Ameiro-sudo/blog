@@ -47,7 +47,7 @@ const DESIGN_TOKENS_DIR = join(__dirname, '..', '..', 'design-tokens')
 const CSS_OUT_DIR = join(ROOT, 'assets', 'css')
 
 function copyDesignTokens() {
-  const files = ['tokens.css', 'toast.css']
+  const files = ['tokens.css', 'toast.css', 'loader.css', 'base.css', 'snow.css']
   const outDir = CSS_OUT_DIR
   let copied = 0
   for (const f of files) {
@@ -60,6 +60,22 @@ function copyDesignTokens() {
     }
   }
   if (copied) console.log(`  design tokens: ${copied} copied`)
+
+  // Sync to other subprojects
+  const subprojects = [
+    join(__dirname, '..', '..', 'ninasukiwww-png.github.io', 'assets', 'css'),
+    join(__dirname, '..', '..', 'esp32-server', 'static'),
+  ]
+  for (const dir of subprojects) {
+    if (!existsSync(dir)) continue
+    for (const f of ['tokens.css', 'toast.css']) {
+      const src = join(DESIGN_TOKENS_DIR, f)
+      const dst = join(dir, f)
+      if (isStale('tokens:' + f + ':' + dir, src)) {
+        cpSync(src, dst)
+      }
+    }
+  }
 }
 
 // ============================

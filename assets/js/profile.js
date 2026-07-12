@@ -5,7 +5,7 @@ app.profile = {
     app.dom.profileCard.style.display = 'block'
     var links = (cfg.links || []).map(function (l) {
       var iconSrc = l.icon ? 'assets/vendor/iconify/' + l.icon.replace('/', '-') + '.svg' : ''
-      var icon = iconSrc ? '<img src="' + iconSrc + '" alt="' + l.name + '" style="width:0.9rem;height:0.9rem;filter:brightness(0) invert(0.7);">' : l.name
+      var icon = iconSrc ? '<img src="' + iconSrc + '" alt="' + l.name + '" class="profile-icon">' : l.name
       return '<a href="' + l.url + '" target="_blank" rel="noopener" title="' + l.name + '">' + icon + '</a>'
     }).join('')
     app.dom.profileCard.innerHTML =

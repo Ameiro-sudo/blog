@@ -44,9 +44,9 @@
  font-family: var(--font-sans);
  -webkit-font-smoothing: antialiased;
  display: flex; flex-direction: column; align-items: center;
- background:
- url('assets/vendor/images/bg.webp') center / cover no-repeat fixed,
- linear-gradient(160deg, #f8f6f0, #eef2f5);
+  background:
+  url('assets/vendor/images/bg.webp') center / cover no-repeat fixed,
+  var(--bg-gradient-body-light);
  overflow-x: hidden;
  }
 
@@ -83,7 +83,7 @@
  #loader {
  position: fixed;
  inset: 0;
- background: linear-gradient(135deg, #f8f6f0, #eef2f5);
+  background: var(--bg-gradient-loader-light);
  background-size: 200% 200%;
  animation: loaderBgShift 6s ease infinite;
  backdrop-filter: blur(6px);
@@ -142,12 +142,12 @@
  animation: drawCrystal 3.5s ease-in-out infinite alternate;
  }
 
- .crystal-svg .inner-line {
- stroke: #c0f0ff;
- stroke-dasharray: 240;
- stroke-dashoffset: 240;
- animation: drawCrystal 3.5s ease-in-out 0.6s infinite alternate;
- }
+.crystal-svg .inner-line {
+  stroke: var(--loader-stroke-inner);
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+  animation: drawCrystal 3.5s ease-in-out 0.6s infinite alternate;
+  }
 
  .crystal-svg .core-line {
  stroke: var(--color-accent-warm);
@@ -178,7 +178,7 @@
  .loader-text-frost {
  font-family: var(--font-title);
  font-size: 1.3rem;
- background: linear-gradient(135deg, var(--color-accent), #c0f0ff, var(--color-accent-warm), var(--color-accent));
+  background: linear-gradient(135deg, var(--loader-text-gradient));
  background-size: 300% 300%;
  background-clip: text;
  -webkit-background-clip: text;
@@ -215,9 +215,9 @@
  }
 
  @media (prefers-color-scheme: dark) {
- body { background: url(assets/vendor/images/bg.webp) center/cover fixed, linear-gradient(160deg,#cce7f5,#b3daf2,#9fccee); }
- body::before { background: var(--body-overlay); backdrop-filter: blur(2px); }
- #loader { background: linear-gradient(135deg, #d4eaf7, #b8d8ee, #d4eaf7); background-size: 200% 200%; }
+  body { background: url(assets/vendor/images/bg.webp) center/cover fixed, var(--bg-gradient-body-dark); }
+  body::before { background: var(--body-overlay); backdrop-filter: blur(2px); }
+  #loader { background: var(--bg-gradient-loader-dark); background-size: 200% 200%; }
  }
 
  @media (prefers-reduced-motion: reduce) {
