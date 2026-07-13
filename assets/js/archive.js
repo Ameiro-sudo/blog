@@ -1,5 +1,5 @@
 app.archive = {
-  getHeatmapYear: function() {
+  getHeatmapYear: function () {
     if (!app.state.currentHeatmapYear) {
       var years = {}
       app.state.postsMeta.forEach(function (p) {
@@ -11,7 +11,7 @@ app.archive = {
     return app.state.currentHeatmapYear
   },
 
-  renderHeatmap: function() {
+  renderHeatmap: function () {
     var year = this.getHeatmapYear()
     var dayCounts = {}
     var dayPosts = {}
@@ -116,7 +116,7 @@ app.archive = {
     return html
   },
 
-  render: function() {
+  render: function () {
     var groups = {}
     var pinnedPosts = []
     app.state.postsMeta.forEach(function (p) {
@@ -217,7 +217,7 @@ app.archive = {
     }
   },
 
-  show: function() {
+  show: function () {
     app.views.switchTo('archive')
     app.utils.resetOG()
     document.title = '归档 · SnowBlock'

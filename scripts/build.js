@@ -193,13 +193,13 @@ async function buildAlbums() {
     return
   }
 
-  const albums = await Promise.all(dirs.map(async function(dir) {
+  const albums = await Promise.all(dirs.map(async function (dir) {
     const dirPath = join(IMAGES_DIR, dir)
     const extRe = /\.(jpg|jpeg|png|webp|gif|bmp)$/i
     const allFiles = readdirSync(dirPath).filter(f => extRe.test(f))
     const webpBasenames = new Set()
-    allFiles.forEach(function(f) { if (f.toLowerCase().endsWith('.webp')) webpBasenames.add(f.replace(extRe, '')) })
-    const files = allFiles.filter(function(f) {
+    allFiles.forEach(function (f) { if (f.toLowerCase().endsWith('.webp')) webpBasenames.add(f.replace(extRe, '')) })
+    const files = allFiles.filter(function (f) {
       if (f.toLowerCase().endsWith('.webp')) return true
       return !webpBasenames.has(f.replace(extRe, ''))
     }).sort()
@@ -211,11 +211,11 @@ async function buildAlbums() {
       if (e.code !== 'ENOENT') console.warn('  meta.json parse failed (' + dir + '/' + dirPath + '):', e.message)
     }
 
-    const photos = await Promise.all(files.map(async function(f) {
+    const photos = await Promise.all(files.map(async function (f) {
       let exif = null
       try {
         const buf = await readFile(join(dirPath, f))
-        const raw = await exifr.parse(buf, { pick: ['Make','Model','ISO','FNumber','FocalLength','ExposureTime','ImageWidth','ImageHeight'] })
+        const raw = await exifr.parse(buf, { pick: ['Make', 'Model', 'ISO', 'FNumber', 'FocalLength', 'ExposureTime', 'ImageWidth', 'ImageHeight'] })
         if (raw && Object.keys(raw).length) exif = raw
         else if (buf.length > 0) console.warn('  exif parse returned empty for:', f)
       } catch (e) {
@@ -248,7 +248,7 @@ async function buildAlbums() {
     }
   }))
 
-  albums.sort(function(a, b) {
+  albums.sort(function (a, b) {
     return (b.date || '').localeCompare(a.date || '')
   })
 
@@ -321,14 +321,14 @@ function escXml(s) {
 function versionAssets() {
   const CSS_SRC = ['style.css', 'tokens.css', 'toast.css']
   const cssDir = join(ROOT, 'assets', 'css')
-  const cssContent = CSS_SRC.map(function(f) {
+  const cssContent = CSS_SRC.map(function (f) {
     return readFileSync(join(cssDir, f), 'utf-8')
   }).join('\n')
   const cssHash = createHash('md5').update(cssContent).digest('hex').slice(0, 8)
 
   const JS_SRC = ['snowblock.js', 'profile.js', 'posts.js', 'article.js', 'archive.js', 'gallery.js', 'router.js', 'init.js']
   const jsDir = join(ROOT, 'assets', 'js')
-  const jsContent = JS_SRC.map(function(f) {
+  const jsContent = JS_SRC.map(function (f) {
     return readFileSync(join(jsDir, f), 'utf-8')
   }).join('\n')
 
