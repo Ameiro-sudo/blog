@@ -24,14 +24,19 @@
 .nav-links { display: flex; gap: 1rem; align-items: center; }
 .nav-links a {
   position: relative; color: var(--text-secondary); text-decoration: none;
-  font-size: 0.85rem; font-family: var(--font-sans);
+  font-size: 0.85rem;
   padding: 0.4rem 0.7rem; border-radius: 0.6rem; cursor: pointer;
   display: flex; align-items: center; gap: 0.4rem;
   transition: color 0.25s, background 0.25s;
 }
+.nav-links a > span {
+  font-family: var(--font-sans);
+  position: relative;
+  display: inline-flex;
+}
 .nav-links a i { font-size: 0.8rem; }
-.nav-links a::after {
-  content: ''; position: absolute; left: 50%; bottom: 4px;
+.nav-links a > span::after {
+  content: ''; position: absolute; left: 50%; bottom: -5px;
   width: 5px; height: 5px; border-radius: 50%;
   background: var(--color-accent);
   transform: translateX(-50%) scale(0);
@@ -39,7 +44,7 @@
 }
 .nav-links a:hover { background: var(--glass-hover-bg); color: var(--text-primary); }
 .nav-links a.active { color: var(--color-accent); }
-.nav-links a.active::after { transform: translateX(-50%) scale(1); }
+.nav-links a.active > span::after { transform: translateX(-50%) scale(1); }
 
 .topbar-actions { display: flex; gap: 0.4rem; align-items: center; }
 .topbar-btn {
