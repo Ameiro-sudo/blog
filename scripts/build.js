@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, writeFileSync, existsSync, statSync, cpSync } from 'fs'
+import { readFileSync, readdirSync, writeFileSync } from 'fs'
 import { readFile, stat } from 'fs/promises'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -12,71 +12,6 @@ const POSTS_DIR = join(ROOT, 'content', 'posts')
 const ALBUMS_DIR = join(ROOT, 'content', 'albums')
 const CDN_BASE = 'https://raw.githubusercontent.com/ninasukiwww-png/my-images/main/blog'
 const SITE_URL = 'https://blog.snowblock.top'
-
-// ============================
-// BUILD CACHE (mtime tracking)
-// ============================
-const CACHE_FILE = join(ROOT, '.build-cache.json')
-let buildCache = {}
-try {
-  buildCache = JSON.parse(readFileSync(CACHE_FILE, 'utf-8'))
-} catch (e) {
-  if (e.code !== 'ENOENT') console.warn('  build cache load failed:', e.message)
-}
-
-function saveCache() {
-  writeFileSync(CACHE_FILE, JSON.stringify(buildCache, null, 2) + '\n', 'utf-8')
-}
-
-function isStale(key, filePath) {
-  try {
-    const mtime = statSync(filePath).mtimeMs
-    const cached = buildCache[key]
-    if (cached === mtime) return false
-    buildCache[key] = mtime
-    return true
-  } catch (e) {
-    return true
-  }
-}
-
-// ============================
-// DESIGN TOKENS
-// ============================
-const DESIGN_TOKENS_DIR = join(__dirname, '..', '..', 'design-tokens')
-const CSS_OUT_DIR = join(ROOT, 'assets', 'css')
-
-function copyDesignTokens() {
-  const files = ['tokens.css', 'toast.css', 'loader.css', 'base.css', 'snow.css']
-  const outDir = CSS_OUT_DIR
-  let copied = 0
-  for (const f of files) {
-    const src = join(DESIGN_TOKENS_DIR, f)
-    const dst = join(outDir, f)
-    if (!existsSync(src)) { console.warn('  design token not found:', f); continue }
-    if (isStale('tokens:' + f, src)) {
-      cpSync(src, dst)
-      copied++
-    }
-  }
-  if (copied) console.log(`  design tokens: ${copied} copied`)
-
-  // Sync to other subprojects
-  const subprojects = [
-    join(__dirname, '..', '..', 'ninasukiwww-png.github.io', 'assets', 'css'),
-    join(__dirname, '..', '..', 'esp32-server', 'static'),
-  ]
-  for (const dir of subprojects) {
-    if (!existsSync(dir)) continue
-    for (const f of ['tokens.css', 'toast.css']) {
-      const src = join(DESIGN_TOKENS_DIR, f)
-      const dst = join(dir, f)
-      if (isStale('tokens:' + f + ':' + dir, src)) {
-        cpSync(src, dst)
-      }
-    }
-  }
-}
 
 // ============================
 // PARSE POST (js-yaml)
@@ -350,11 +285,9 @@ function versionAssets() {
 // MAIN
 // ============================
 console.log('Building indexes...')
-copyDesignTokens()
 buildPosts()
 await buildAlbums()
 buildFeed()
 buildSitemap()
 versionAssets()
-saveCache()
 console.log('Done.')
