@@ -85,11 +85,16 @@ app.dom = {
   profileCard: document.getElementById('profileCard'),
   archiveContent: document.getElementById('archiveContent'),
   galleryView: document.getElementById('galleryView'),
+  moduleView: document.getElementById('moduleView'),
   albumGrid: document.getElementById('albumGrid'),
   albumDetail: document.getElementById('albumDetail'),
   navBlog: document.getElementById('navBlog'),
   navArchive: document.getElementById('navArchive'),
   navGallery: document.getElementById('navGallery'),
+  navMoments: document.getElementById('navMoments'),
+  navFriends: document.getElementById('navFriends'),
+  navMessages: document.getElementById('navMessages'),
+  navMusic: document.getElementById('navMusic'),
   navAbout: document.getElementById('navAbout'),
   backToTop: document.getElementById('backToTop'),
   tocToggle: document.getElementById('tocToggle'),
@@ -244,6 +249,7 @@ app.views = {
     app.dom.articleViewEl.style.display = (name === 'article' || name === 'about') ? 'block' : 'none'
     app.dom.archiveViewEl.style.display = name === 'archive' ? 'block' : 'none'
     app.dom.galleryView.style.display = name === 'gallery' ? 'block' : 'none'
+    app.dom.moduleView.style.display = name === 'module' ? 'block' : 'none'
     app.dom.pageHeader.style.display = name === 'list' ? 'block' : 'none'
     app.dom.tocToggle.classList.remove('show')
     app.dom.tocPanel.classList.remove('show')

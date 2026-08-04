@@ -10,7 +10,7 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0b2e">
   <meta name="color-scheme" content="light dark">
   <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
-  <meta name="build-ts" content="1785846539611">
+  <meta name="build-ts" content="1785846794630">
   <meta property="og:title" content="SnowBlock · 博客">
   <meta property="og:description" content="雪地笔记 — 技术、游戏、日常与碎片思考">
   <meta property="og:type" content="website">
@@ -41,9 +41,9 @@
     } catch (e) {}
   </script>
 
-  <link rel="stylesheet" href="assets/css/tokens.css?v=a9a4c834">
-  <link rel="stylesheet" href="assets/css/style.css?v=a9a4c834">
-  <link rel="stylesheet" href="assets/css/toast.css?v=a9a4c834">
+  <link rel="stylesheet" href="assets/css/tokens.css?v=11249793">
+  <link rel="stylesheet" href="assets/css/style.css?v=11249793">
+  <link rel="stylesheet" href="assets/css/toast.css?v=11249793">
 
   <style>
     * {
@@ -426,6 +426,10 @@
           <a id="navBlog" class="active" role="button" tabindex="0"><i class="fa-solid fa-book-open"></i><span>博客</span></a>
           <a id="navArchive" role="button" tabindex="0"><i class="fa-solid fa-clock"></i><span>归档</span></a>
           <a id="navGallery" role="button" tabindex="0"><i class="fa-solid fa-camera"></i><span>相册</span></a>
+          <a id="navMoments" role="button" tabindex="0"><i class="fa-solid fa-message"></i><span>说说</span></a>
+          <a id="navFriends" role="button" tabindex="0"><i class="fa-solid fa-handshake"></i><span>友链</span></a>
+          <a id="navMessages" role="button" tabindex="0"><i class="fa-solid fa-comment"></i><span>留言</span></a>
+          <a id="navMusic" role="button" tabindex="0"><i class="fa-solid fa-music"></i><span>音乐</span></a>
           <a id="navAbout" role="button" tabindex="0"><i class="fa-solid fa-user"></i><span>关于</span></a>
         </nav>
         <div class="topbar-actions">
@@ -478,12 +482,21 @@
       <div class="album-detail" id="albumDetail" style="display:none;"></div>
     </div>
 
+    <div id="moduleView" style="display:none;"></div>
+
+  </div>
+
+  <div id="musicBar" class="music-bar" style="display:none;">
+    <button id="musicPlayBtn" class="music-ctrl" aria-label="播放/暂停"><i class="fa-solid fa-play"></i></button>
+    <div class="music-bar-info"><span id="musicBarTitle">未播放</span></div>
+    <button id="musicCloseBtn" class="music-ctrl" aria-label="关闭"><i class="fa-solid fa-xmark"></i></button>
+    <audio id="musicAudio" preload="none"></audio>
   </div>
 
   <script src="assets/vendor/markdown-it@14.1.0/markdown-it.min.js" defer></script>
   <script src="assets/vendor/highlight.js@11.9.0/highlight.min.js" defer></script>
   <script src="assets/vendor/dompurify@3.1.3/purify.min.js" defer></script>
-  <script src="assets/js/app.js?v=c84cad6c" defer></script>
+  <script src="assets/js/app.js?v=aa18767d" defer></script>
 
   <script>
     if (location.search.includes('_gl=')) history.replaceState(null, '', location.pathname + location.hash)
