@@ -1,8 +1,25 @@
-app.init = function () {
+﻿app.init = function () {
   if (!window.markdownit || !window.hljs || !window.DOMPurify) {
     document.body.innerHTML += '<div class="state-error">依赖加载失败，请刷新</div>'
     return
   }
+
+  app.theme.init()
+
+  var menuBtn = document.getElementById('menuToggle')
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function() {
+      var nav = document.getElementById('navLinks')
+      if (nav) nav.classList.toggle('open')
+    })
+  }
+  document.addEventListener('click', function(e) {
+    var nav = document.getElementById('navLinks')
+    var btn = document.getElementById('menuToggle')
+    if (nav && nav.classList.contains('open') && !nav.contains(e.target) && (!btn || !btn.contains(e.target))) {
+      nav.classList.remove('open')
+    }
+  })
 
   app.state.md = window.markdownit({
     html: true, linkify: true, typographer: true,
@@ -37,6 +54,7 @@ app.init = function () {
 
   fetch('content/albums/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
     app.state.albums = data
+    if (app.profile && app.profile.updateStats) app.profile.updateStats()
   }).catch(function (e) { console.error('Albums load failed:', e) })
 
   fetch('content/posts/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
@@ -50,6 +68,7 @@ app.init = function () {
       return (b.time || '').localeCompare(a.time || '')
     })
     app.posts.renderTagFilters()
+    if (app.profile && app.profile.updateStats) app.profile.updateStats()
     var loaded = 0
     var total = app.state.postsMeta.length
     app.state.postsMeta.forEach(function (p) {

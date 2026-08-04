@@ -7,7 +7,7 @@ app.config = {
   CDN_BASE: 'assets/vendor/images/',
   SITE_URL: 'https://blog.snowblock.top',
   profile: {
-    avatar: 'assets/vendor/images/profile.webp',
+    avatar: 'https://github.com/ninasukiwww-png.png',
     name: 'ninasukiwww',
     bio: '世界は大きい、君は行かなければならない',
     links: [
@@ -27,6 +27,30 @@ app.config = {
 // ============================================
 // SHARED STATE
 // ============================================
+app.theme = {
+  init: function() {
+    this.syncIcon()
+    this.bindToggle()
+  },
+  bindToggle: function() {
+    var btn = document.getElementById('themeToggle')
+    if (btn) btn.addEventListener('click', function() { app.theme.toggle() })
+  },
+  toggle: function() {
+    var dark = document.documentElement.classList.contains('dark')
+    document.documentElement.classList.toggle('dark', !dark)
+    try { localStorage.setItem('theme', dark ? 'light' : 'dark') } catch (e) {}
+    this.syncIcon()
+  },
+  syncIcon: function() {
+    var icon = document.getElementById('themeIcon')
+    if (icon) {
+      var dark = document.documentElement.classList.contains('dark')
+      icon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'
+    }
+  }
+}
+
 app.state = {
   md: null,
   purifyConfig: null,
@@ -61,11 +85,15 @@ app.dom = {
   profileCard: document.getElementById('profileCard'),
   archiveContent: document.getElementById('archiveContent'),
   galleryView: document.getElementById('galleryView'),
+  moduleView: document.getElementById('moduleView'),
   albumGrid: document.getElementById('albumGrid'),
   albumDetail: document.getElementById('albumDetail'),
   navBlog: document.getElementById('navBlog'),
   navArchive: document.getElementById('navArchive'),
   navGallery: document.getElementById('navGallery'),
+  navMoments: document.getElementById('navMoments'),
+  navFriends: document.getElementById('navFriends'),
+  navMusic: document.getElementById('navMusic'),
   navAbout: document.getElementById('navAbout'),
   backToTop: document.getElementById('backToTop'),
   tocToggle: document.getElementById('tocToggle'),
@@ -220,6 +248,7 @@ app.views = {
     app.dom.articleViewEl.style.display = (name === 'article' || name === 'about') ? 'block' : 'none'
     app.dom.archiveViewEl.style.display = name === 'archive' ? 'block' : 'none'
     app.dom.galleryView.style.display = name === 'gallery' ? 'block' : 'none'
+    app.dom.moduleView.style.display = name === 'module' ? 'block' : 'none'
     app.dom.pageHeader.style.display = name === 'list' ? 'block' : 'none'
     app.dom.tocToggle.classList.remove('show')
     app.dom.tocPanel.classList.remove('show')

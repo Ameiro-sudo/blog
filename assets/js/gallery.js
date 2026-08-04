@@ -30,7 +30,8 @@ app.gallery = {
         '</div></div>'
     })
     grid.innerHTML = html
-    grid.querySelectorAll('.album-card').forEach(function (el) {
+    grid.querySelectorAll('.album-card').forEach(function (el, idx) {
+      el.style.animationDelay = Math.min(idx * 0.08, 0.8) + 's'
       el.addEventListener('click', function () { location.hash = '#/gallery/' + el.dataset.album })
     })
   },
