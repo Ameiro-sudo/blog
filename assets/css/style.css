@@ -918,3 +918,104 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   .friends-grid { grid-template-columns: 1fr; }
   .music-bar { max-width: 92vw; }
 }
+
+/* ===== 首页仪表盘（Kirameku 风） ===== */
+#homeDashboard { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem; }
+.home-row { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; align-items: stretch; }
+.home-col-main, .home-col-side { display: flex; flex-direction: column; }
+.home-panel {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2); backdrop-filter: blur(12px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-item);
+  box-shadow: var(--shadow-item);
+  padding: 1.2rem 1.4rem;
+  display: flex; flex-direction: column;
+  animation: fadeSlideUp 0.4s ease both;
+}
+.home-panel-title {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.95rem; font-weight: 700; font-family: var(--font-serif);
+  color: var(--text-primary);
+  margin-bottom: 0.9rem;
+}
+.home-panel-title i { color: var(--color-accent); }
+.home-empty { color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0; text-align: center; }
+.home-more {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.78rem; color: var(--color-accent); text-decoration: none;
+  margin-top: 0.7rem;
+}
+.home-more:hover { text-decoration: underline; }
+
+/* 最新说说 */
+.home-moments { display: flex; flex-direction: column; }
+.home-moment { position: relative; padding: 0 0 0.8rem 1.1rem; }
+.home-moment::before {
+  content: ''; position: absolute; left: 3px; top: 6px; bottom: 0;
+  width: 1px; background: var(--color-accent-glow);
+}
+.home-moment-dot {
+  position: absolute; left: 0; top: 6px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--color-accent);
+}
+.home-moment-text { font-size: 0.85rem; color: var(--text-primary); line-height: 1.4; }
+.home-moment-time { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.2rem; font-family: var(--font-mono); }
+
+/* 最新文章 */
+.home-hero {
+  position: relative; display: block; overflow: hidden;
+  border-radius: 1rem; min-height: 150px;
+  text-decoration: none;
+  transition: transform 0.3s;
+}
+.home-hero:hover { transform: translateY(-2px); }
+.home-hero-mask {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.65), rgba(0,0,0,0.15) 60%, transparent);
+}
+.home-hero-info { position: relative; padding: 1.1rem 1.2rem; display: flex; flex-direction: column; justify-content: flex-end; min-height: 150px; }
+.home-hero-title { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+.home-hero-meta { font-size: 0.72rem; color: rgba(255,255,255,0.7); font-family: var(--font-mono); }
+.home-post-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; margin-top: 0.7rem; }
+.home-post-card {
+  position: relative; display: block; overflow: hidden;
+  border-radius: 0.8rem; min-height: 76px; text-decoration: none;
+  transition: transform 0.3s;
+}
+.home-post-card:hover { transform: translateY(-2px); }
+.home-post-card-mask { position: absolute; inset: 0; background: rgba(0,0,0,0.35); }
+.home-post-card-info { position: relative; padding: 0.7rem; display: flex; flex-direction: column; justify-content: flex-end; min-height: 76px; }
+.home-post-card-title { font-size: 0.78rem; font-weight: 700; color: #fff; }
+.home-post-card-date { font-size: 0.64rem; color: rgba(255,255,255,0.6); margin-top: 0.15rem; font-family: var(--font-mono); }
+
+/* 照片墙轮播 */
+.home-photo-panel { padding: 1.2rem 1.4rem; }
+.home-photo {
+  position: relative; overflow: hidden; border-radius: 0.9rem;
+  flex: 1; min-height: 200px; cursor: pointer;
+  background: var(--glass-bg);
+}
+.home-photo img {
+  width: 100%; height: 100%; min-height: 200px;
+  object-fit: cover; display: block;
+  transition: opacity 0.3s ease;
+}
+.home-photo-dots {
+  position: absolute; bottom: 0.8rem; right: 0.9rem;
+  display: flex; gap: 0.35rem; z-index: 2;
+}
+.home-photo-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.4); cursor: pointer;
+  transition: all 0.3s;
+}
+.home-photo-dot.active { width: 20px; border-radius: 4px; background: var(--color-accent-warm); }
+
+@media (max-width: 760px) {
+  .home-row { grid-template-columns: 1fr; }
+  .home-panel { padding: 1rem 1.1rem; }
+  .home-photo { min-height: 160px; }
+  .home-photo img { min-height: 160px; }
+}

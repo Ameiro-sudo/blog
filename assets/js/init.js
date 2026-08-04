@@ -55,6 +55,7 @@
   fetch('content/albums/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
     app.state.albums = data
     if (app.profile && app.profile.updateStats) app.profile.updateStats()
+    if (app.home) app.home.renderPhotos()
   }).catch(function (e) { console.error('Albums load failed:', e) })
 
   fetch('content/posts/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
@@ -69,6 +70,7 @@
     })
     app.posts.renderTagFilters()
     if (app.profile && app.profile.updateStats) app.profile.updateStats()
+    if (app.home) { app.home.renderPosts(); app.home.renderMoments() }
     var loaded = 0
     var total = app.state.postsMeta.length
     app.state.postsMeta.forEach(function (p) {

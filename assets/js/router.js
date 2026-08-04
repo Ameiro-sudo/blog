@@ -7,7 +7,7 @@ app.router = {
 
   handleHash: function() {
     var raw = location.hash.replace(/^#\/?/, '')
-    if (!raw) { app.views.switchTo('list'); this.setActiveNav('blog'); app.utils.resetOG(); window.scrollTo({ top: 0 }); return }
+    if (!raw) { app.views.switchTo('list'); this.setActiveNav('blog'); app.utils.resetOG(); window.scrollTo({ top: 0 }); if (app.home) app.home.render(); return }
     if (raw === 'archive') { app.archive.show(); this.setActiveNav('archive'); return }
     if (raw === 'gallery') { app.gallery.show(); this.setActiveNav('gallery'); return }
     if (raw === 'moments') { app.modules.show('moments'); this.setActiveNav('moments'); return }

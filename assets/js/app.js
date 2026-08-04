@@ -1169,6 +1169,116 @@ document.addEventListener('click', function(e) {
 document.getElementById('musicAudio').addEventListener('play', function() { app.modules.syncPlayerUI() })
 document.getElementById('musicAudio').addEventListener('pause', function() { app.modules.syncPlayerUI() })
 
+app.home = {
+  render: function() {
+    this.renderMoments()
+    this.renderPosts()
+    this.renderPhotos()
+  },
+
+  renderMoments: function() {
+    var body = document.getElementById('homeMomentsBody')
+    if (!body) return
+    var self = this
+    if (!app.modules.data.moments) {
+      app.modules.show('moments')
+      var check = setInterval(function() {
+        if (app.modules.data.moments) { clearInterval(check); self.renderMoments() }
+      }, 200)
+      setTimeout(function() { clearInterval(check) }, 3000)
+      return
+    }
+    var list = (app.modules.data.moments || []).slice(0, 3)
+    if (!list.length) { body.innerHTML = '<div class="home-empty">暂无说说</div>'; return }
+    var html = '<div class="home-moments">'
+    list.forEach(function(m) {
+      html += '<div class="home-moment"><div class="home-moment-dot"></div><div class="home-moment-text">' + app.modules.esc(m.text) + '</div><div class="home-moment-time">' + app.modules.esc(m.time) + '</div></div>'
+    })
+    html += '</div><a class="home-more" href="#/moments">更多说说 <i class="fa-solid fa-arrow-right"></i></a>'
+    body.innerHTML = html
+  },
+
+  renderPosts: function() {
+    var body = document.getElementById('homePostsBody')
+    if (!body) return
+    var posts = app.state.postsMeta || []
+    if (!posts.length) { body.innerHTML = '<div class="home-empty">暂无文章</div>'; return }
+    var hero = posts[0]
+    var rest = posts.slice(1, 4)
+    var heroStyle = hero.image
+      ? 'background-image:url(' + hero.image + ');background-size:cover;background-position:center;'
+      : 'background:linear-gradient(135deg,var(--color-accent),var(--color-accent-warm));'
+    var html = '<a class="home-hero" href="#/' + hero.id + '" style="' + heroStyle + '">' +
+      '<div class="home-hero-mask"></div>' +
+      '<div class="home-hero-info">' +
+        '<h3 class="home-hero-title">' + app.modules.esc(hero.title) + '</h3>' +
+        '<div class="home-hero-meta">' + hero.date + (hero.readTime ? ' · ' + hero.readTime : '') + '</div>' +
+      '</div></a>'
+    if (rest.length) {
+      html += '<div class="home-post-row">'
+      rest.forEach(function(p) {
+        var style = p.image
+          ? 'background-image:url(' + p.image + ');background-size:cover;background-position:center;'
+          : 'background:linear-gradient(135deg,var(--color-accent-glow),var(--color-accent-warm));'
+        html += '<a class="home-post-card" href="#/' + p.id + '" style="' + style + '">' +
+          '<div class="home-post-card-mask"></div>' +
+          '<div class="home-post-card-info"><div class="home-post-card-title">' + app.modules.esc(p.title) + '</div><div class="home-post-card-date">' + p.date + '</div></div>' +
+        '</a>'
+      })
+      html += '</div>'
+    }
+    html += '<a class="home-more" href="#/">全部文章 <i class="fa-solid fa-arrow-right"></i></a>'
+    body.innerHTML = html
+  },
+
+  renderPhotos: function() {
+    var body = document.getElementById('homePhotosBody')
+    if (!body) return
+    var albums = app.state.albums || []
+    if (!albums.length) { body.innerHTML = '<div class="home-empty">暂无照片</div>'; return }
+    var photos = []
+    albums.forEach(function(a) {
+      if (a.cover) photos.push({ url: a.cover, album: a.id })
+      else if (a.photos && a.photos.length) photos.push({ url: a.photos[0].url, album: a.id })
+    })
+    if (!photos.length) { body.innerHTML = '<div class="home-empty">暂无照片</div>'; return }
+    var html = '<div class="home-photo" id="homePhoto">' +
+      '<img src="" alt="" id="homePhotoImg">' +
+      '<div class="home-photo-dots" id="homePhotoDots"></div>' +
+    '</div>'
+    body.innerHTML = html
+    var idx = 0
+    var timer = null
+    var img = document.getElementById('homePhotoImg')
+    var dotsWrap = document.getElementById('homePhotoDots')
+    var box = document.getElementById('homePhoto')
+    function show(i) {
+      idx = (i + photos.length) % photos.length
+      img.style.opacity = 0
+      setTimeout(function() {
+        img.src = photos[idx].url
+        img.style.opacity = 1
+      }, 200)
+      var dots = ''
+      photos.forEach(function(p, j) {
+        dots += '<span class="home-photo-dot' + (j === idx ? ' active' : '') + '" data-i="' + j + '"></span>'
+      })
+      dotsWrap.innerHTML = dots
+    }
+    function startTimer() { stopTimer(); timer = setInterval(function() { show(idx + 1) }, 4000) }
+    function stopTimer() { if (timer) clearInterval(timer) }
+    show(0)
+    startTimer()
+    dotsWrap.addEventListener('click', function(e) {
+      var dot = e.target.closest('.home-photo-dot')
+      if (dot) show(parseInt(dot.dataset.i, 10))
+    })
+    box.addEventListener('click', function() { location.hash = '#/gallery' })
+    box.addEventListener('mouseenter', stopTimer)
+    box.addEventListener('mouseleave', startTimer)
+  }
+}
+
 app.router = {
   searchTimer: null,
 
@@ -1178,7 +1288,7 @@ app.router = {
 
   handleHash: function() {
     var raw = location.hash.replace(/^#\/?/, '')
-    if (!raw) { app.views.switchTo('list'); this.setActiveNav('blog'); app.utils.resetOG(); window.scrollTo({ top: 0 }); return }
+    if (!raw) { app.views.switchTo('list'); this.setActiveNav('blog'); app.utils.resetOG(); window.scrollTo({ top: 0 }); if (app.home) app.home.render(); return }
     if (raw === 'archive') { app.archive.show(); this.setActiveNav('archive'); return }
     if (raw === 'gallery') { app.gallery.show(); this.setActiveNav('gallery'); return }
     if (raw === 'moments') { app.modules.show('moments'); this.setActiveNav('moments'); return }
@@ -1304,6 +1414,7 @@ document.addEventListener('keydown', function (e) {
   fetch('content/albums/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
     app.state.albums = data
     if (app.profile && app.profile.updateStats) app.profile.updateStats()
+    if (app.home) app.home.renderPhotos()
   }).catch(function (e) { console.error('Albums load failed:', e) })
 
   fetch('content/posts/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
@@ -1318,6 +1429,7 @@ document.addEventListener('keydown', function (e) {
     })
     app.posts.renderTagFilters()
     if (app.profile && app.profile.updateStats) app.profile.updateStats()
+    if (app.home) { app.home.renderPosts(); app.home.renderMoments() }
     var loaded = 0
     var total = app.state.postsMeta.length
     app.state.postsMeta.forEach(function (p) {
