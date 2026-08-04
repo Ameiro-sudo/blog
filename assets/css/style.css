@@ -53,7 +53,6 @@
   transition: background 0.25s, color 0.25s, transform 0.25s;
 }
 .topbar-btn:hover { background: var(--glass-hover-bg); color: var(--color-accent); transform: translateY(-1px); }
-.topbar-btn.active { color: var(--color-accent); background: var(--color-accent-glow); }
 .topbar-menu { display: none; }
 
 /* ===== 简介卡片 ===== */

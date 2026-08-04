@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, writeFileSync } from 'fs'
+﻿import { readFileSync, readdirSync, writeFileSync } from 'fs'
 import { readFile, stat } from 'fs/promises'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -261,7 +261,7 @@ function versionAssets() {
   }).join('\n')
   const cssHash = createHash('md5').update(cssContent).digest('hex').slice(0, 8)
 
-  const JS_SRC = ['snowblock.js', 'effects.js', 'profile.js', 'posts.js', 'article.js', 'archive.js', 'gallery.js', 'router.js', 'init.js']
+  const JS_SRC = ['snowblock.js', 'profile.js', 'posts.js', 'article.js', 'archive.js', 'gallery.js', 'router.js', 'init.js']
   const jsDir = join(ROOT, 'assets', 'js')
   const jsContent = JS_SRC.map(function (f) {
     return readFileSync(join(jsDir, f), 'utf-8')

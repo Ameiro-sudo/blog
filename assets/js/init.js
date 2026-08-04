@@ -1,11 +1,10 @@
-app.init = function () {
+﻿app.init = function () {
   if (!window.markdownit || !window.hljs || !window.DOMPurify) {
     document.body.innerHTML += '<div class="state-error">依赖加载失败，请刷新</div>'
     return
   }
 
-  app.theme.init()
-  app.effects.init()
+  app.theme.init()
 
   var menuBtn = document.getElementById('menuToggle')
   if (menuBtn) {
