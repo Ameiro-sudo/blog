@@ -86,9 +86,11 @@ app.dom = {
   archiveContent: document.getElementById('archiveContent'),
   galleryView: document.getElementById('galleryView'),
   moduleView: document.getElementById('moduleView'),
+  homeDashboard: document.getElementById('homeDashboard'),
   albumGrid: document.getElementById('albumGrid'),
   albumDetail: document.getElementById('albumDetail'),
   navBlog: document.getElementById('navBlog'),
+  navHome: document.getElementById('navHome'),
   navArchive: document.getElementById('navArchive'),
   navGallery: document.getElementById('navGallery'),
   navMoments: document.getElementById('navMoments'),
@@ -244,6 +246,7 @@ app.dom.lightboxImg.addEventListener('dblclick', function (e) {
 // ============================================
 app.views = {
   switchTo: function(name) {
+    app.dom.homeDashboard.style.display = name === 'home' ? 'block' : 'none'
     app.dom.listView.style.display = name === 'list' ? 'block' : 'none'
     app.dom.articleViewEl.style.display = (name === 'article' || name === 'about') ? 'block' : 'none'
     app.dom.archiveViewEl.style.display = name === 'archive' ? 'block' : 'none'

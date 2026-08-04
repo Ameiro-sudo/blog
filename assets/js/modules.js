@@ -1,4 +1,4 @@
-app.modules = {
+﻿app.modules = {
   current: null,
   data: {},
   player: { index: -1, audio: null },
@@ -219,7 +219,7 @@ app.home = {
       })
       html += '</div>'
     }
-    html += '<a class="home-more" href="#/">全部文章 <i class="fa-solid fa-arrow-right"></i></a>'
+    html += '<a class="home-more" href="#/posts">全部文章 <i class="fa-solid fa-arrow-right"></i></a>'
     body.innerHTML = html
   },
 

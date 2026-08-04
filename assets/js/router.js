@@ -7,7 +7,8 @@ app.router = {
 
   handleHash: function() {
     var raw = location.hash.replace(/^#\/?/, '')
-    if (!raw) { app.views.switchTo('list'); this.setActiveNav('blog'); app.utils.resetOG(); window.scrollTo({ top: 0 }); if (app.home) app.home.render(); return }
+    if (!raw) { app.views.switchTo('home'); this.setActiveNav('home'); app.utils.resetOG(); window.scrollTo({ top: 0 }); if (app.home) app.home.render(); return }
+    if (raw === 'posts' || raw === 'list') { app.views.switchTo('list'); this.setActiveNav('blog'); app.utils.resetOG(); window.scrollTo({ top: 0 }); return }
     if (raw === 'archive') { app.archive.show(); this.setActiveNav('archive'); return }
     if (raw === 'gallery') { app.gallery.show(); this.setActiveNav('gallery'); return }
     if (raw === 'moments') { app.modules.show('moments'); this.setActiveNav('moments'); return }
@@ -31,6 +32,7 @@ app.router = {
   },
 
   setActiveNav: function(which) {
+    app.dom.navHome.className = which === 'home' ? 'active' : ''
     app.dom.navBlog.className = which === 'blog' ? 'active' : ''
     app.dom.navArchive.className = which === 'archive' ? 'active' : ''
     app.dom.navGallery.className = which === 'gallery' ? 'active' : ''
@@ -43,10 +45,11 @@ app.router = {
 
 app.dom.backLink.addEventListener('click', function (e) {
   e.preventDefault()
-  location.hash = '#/'
+  location.hash = '#/posts'
 })
 
-app.dom.navBlog.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/' })
+app.dom.navHome.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/' })
+app.dom.navBlog.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/posts' })
 app.dom.navArchive.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/archive' })
 app.dom.navGallery.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/gallery' })
 app.dom.navMoments.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/moments' })

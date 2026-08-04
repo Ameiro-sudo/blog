@@ -86,9 +86,11 @@ app.dom = {
   archiveContent: document.getElementById('archiveContent'),
   galleryView: document.getElementById('galleryView'),
   moduleView: document.getElementById('moduleView'),
+  homeDashboard: document.getElementById('homeDashboard'),
   albumGrid: document.getElementById('albumGrid'),
   albumDetail: document.getElementById('albumDetail'),
   navBlog: document.getElementById('navBlog'),
+  navHome: document.getElementById('navHome'),
   navArchive: document.getElementById('navArchive'),
   navGallery: document.getElementById('navGallery'),
   navMoments: document.getElementById('navMoments'),
@@ -244,6 +246,7 @@ app.dom.lightboxImg.addEventListener('dblclick', function (e) {
 // ============================================
 app.views = {
   switchTo: function(name) {
+    app.dom.homeDashboard.style.display = name === 'home' ? 'block' : 'none'
     app.dom.listView.style.display = name === 'list' ? 'block' : 'none'
     app.dom.articleViewEl.style.display = (name === 'article' || name === 'about') ? 'block' : 'none'
     app.dom.archiveViewEl.style.display = name === 'archive' ? 'block' : 'none'
@@ -1006,7 +1009,7 @@ app.gallery = {
   }
 }
 
-app.modules = {
+﻿app.modules = {
   current: null,
   data: {},
   player: { index: -1, audio: null },
@@ -1227,7 +1230,7 @@ app.home = {
       })
       html += '</div>'
     }
-    html += '<a class="home-more" href="#/">全部文章 <i class="fa-solid fa-arrow-right"></i></a>'
+    html += '<a class="home-more" href="#/posts">全部文章 <i class="fa-solid fa-arrow-right"></i></a>'
     body.innerHTML = html
   },
 
@@ -1288,7 +1291,8 @@ app.router = {
 
   handleHash: function() {
     var raw = location.hash.replace(/^#\/?/, '')
-    if (!raw) { app.views.switchTo('list'); this.setActiveNav('blog'); app.utils.resetOG(); window.scrollTo({ top: 0 }); if (app.home) app.home.render(); return }
+    if (!raw) { app.views.switchTo('home'); this.setActiveNav('home'); app.utils.resetOG(); window.scrollTo({ top: 0 }); if (app.home) app.home.render(); return }
+    if (raw === 'posts' || raw === 'list') { app.views.switchTo('list'); this.setActiveNav('blog'); app.utils.resetOG(); window.scrollTo({ top: 0 }); return }
     if (raw === 'archive') { app.archive.show(); this.setActiveNav('archive'); return }
     if (raw === 'gallery') { app.gallery.show(); this.setActiveNav('gallery'); return }
     if (raw === 'moments') { app.modules.show('moments'); this.setActiveNav('moments'); return }
@@ -1312,6 +1316,7 @@ app.router = {
   },
 
   setActiveNav: function(which) {
+    app.dom.navHome.className = which === 'home' ? 'active' : ''
     app.dom.navBlog.className = which === 'blog' ? 'active' : ''
     app.dom.navArchive.className = which === 'archive' ? 'active' : ''
     app.dom.navGallery.className = which === 'gallery' ? 'active' : ''
@@ -1324,10 +1329,11 @@ app.router = {
 
 app.dom.backLink.addEventListener('click', function (e) {
   e.preventDefault()
-  location.hash = '#/'
+  location.hash = '#/posts'
 })
 
-app.dom.navBlog.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/' })
+app.dom.navHome.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/' })
+app.dom.navBlog.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/posts' })
 app.dom.navArchive.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/archive' })
 app.dom.navGallery.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/gallery' })
 app.dom.navMoments.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/moments' })
