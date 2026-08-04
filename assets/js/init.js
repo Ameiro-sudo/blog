@@ -5,6 +5,7 @@ app.init = function () {
   }
 
   app.theme.init()
+  app.effects.init()
 
   var menuBtn = document.getElementById('menuToggle')
   if (menuBtn) {
