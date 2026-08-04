@@ -55,39 +55,6 @@
 .topbar-btn:hover { background: var(--glass-hover-bg); color: var(--color-accent); transform: translateY(-1px); }
 .topbar-menu { display: none; }
 
-.settings-panel {
-  position: absolute; right: 0; top: calc(100% + 0.5rem);
-  min-width: 12rem;
-  background: var(--glass-header-bg);
-  -webkit-backdrop-filter: blur(12px) saturate(1.4); backdrop-filter: blur(12px) saturate(1.4);
-  border: 1px solid var(--glass-border);
-  border-radius: 0.75rem;
-  box-shadow: var(--shadow-card);
-  padding: 0.7rem;
-  display: none;
-  z-index: 200;
-}
-.settings-panel.open { display: block; }
-.settings-title {
-  font-size: 0.72rem; font-weight: 700; color: var(--text-muted);
-  letter-spacing: 0.08em; text-transform: uppercase;
-  padding: 0 0.3rem 0.4rem; margin-bottom: 0.3rem;
-  border-bottom: 1px solid var(--glass-border);
-}
-.setting-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0.4rem 0.3rem; border-radius: 0.4rem;
-  font-size: 0.82rem; color: var(--text-secondary); cursor: pointer;
-}
-.setting-row:hover { background: var(--glass-hover-bg); }
-.setting-row input { accent-color: var(--color-accent); cursor: pointer; }
-.setting-link {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0.4rem 0.3rem; margin-top: 0.2rem; border-radius: 0.4rem;
-  font-size: 0.82rem; color: var(--color-accent); text-decoration: none;
-}
-.setting-link:hover { background: var(--glass-hover-bg); }
-
 /* ===== 简介卡片 ===== */
 #profileCard { margin-bottom: 2rem; display: none; }
 .profile-wrap {

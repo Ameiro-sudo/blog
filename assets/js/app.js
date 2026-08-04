@@ -27,44 +27,6 @@ app.config = {
 // ============================================
 // SHARED STATE
 // ============================================
-app.settings = {
-  init: function() {
-    this.bindPanel()
-    this.bindSnow()
-  },
-  bindPanel: function() {
-    var btn = document.getElementById('settingsToggle')
-    var panel = document.getElementById('settingsPanel')
-    if (btn && panel) {
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation()
-        panel.classList.toggle('open')
-      })
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('#settingsWrap')) panel.classList.remove('open')
-      })
-    }
-  },
-  bindSnow: function() {
-    var t = document.getElementById('snowToggle')
-    if (!t) return
-    var saved = null
-    try { saved = localStorage.getItem('snowEffect') } catch (e) {}
-    var on = saved !== 'off'
-    t.checked = on
-    this.applySnow(on)
-    var self = this
-    t.addEventListener('change', function() {
-      try { localStorage.setItem('snowEffect', t.checked ? 'on' : 'off') } catch (e) {}
-      self.applySnow(t.checked)
-    })
-  },
-  applySnow: function(on) {
-    var c = document.getElementById('snowCanvas')
-    if (c) c.style.display = on ? '' : 'none'
-  }
-}
-
 app.theme = {
   init: function() {
     this.syncIcon()
@@ -1115,7 +1077,6 @@ app.init = function () {
   }
 
   app.theme.init()
-  app.settings.init()
 
   var menuBtn = document.getElementById('menuToggle')
   if (menuBtn) {
