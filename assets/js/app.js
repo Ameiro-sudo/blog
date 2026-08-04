@@ -7,7 +7,7 @@ app.config = {
   CDN_BASE: 'assets/vendor/images/',
   SITE_URL: 'https://blog.snowblock.top',
   profile: {
-    avatar: 'assets/vendor/images/profile.webp',
+    avatar: 'https://github.com/ninasukiwww-png.png',
     name: 'ninasukiwww',
     bio: '世界は大きい、君は行かなければならない',
     links: [
