@@ -10,7 +10,7 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f0b2e">
   <meta name="color-scheme" content="light dark">
   <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
-  <meta name="build-ts" content="1785846944745">
+  <meta name="build-ts" content="1785847217851">
   <meta property="og:title" content="SnowBlock · 博客">
   <meta property="og:description" content="雪地笔记 — 技术、游戏、日常与碎片思考">
   <meta property="og:type" content="website">
@@ -63,13 +63,27 @@
       flex-direction: column;
       align-items: center;
       background:
-        url('assets/vendor/images/bg.webp') center / cover no-repeat fixed,
+        url('assets/vendor/images/bg-portrait.webp') center / cover no-repeat fixed,
         var(--bg-gradient-body-light);
       overflow-x: hidden;
     }
 
+    @media (orientation: landscape) {
+      body {
+        background:
+          url('assets/vendor/images/bg.webp') center / cover no-repeat fixed,
+          var(--bg-gradient-body-light);
+      }
+    }
+
     body.bg-loaded {
-      background: var(--color-bg-deep) url('assets/vendor/images/bg.webp') center/cover fixed;
+      background: var(--color-bg-deep) url('assets/vendor/images/bg-portrait.webp') center/cover fixed;
+    }
+
+    @media (orientation: landscape) {
+      body.bg-loaded {
+        background: var(--color-bg-deep) url('assets/vendor/images/bg.webp') center/cover fixed;
+      }
     }
 
     body::before {
