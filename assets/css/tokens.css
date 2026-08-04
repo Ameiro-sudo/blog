@@ -86,11 +86,11 @@
   /* ===== 背景渐变 ===== */
   --bg-gradient-body-light: linear-gradient(160deg, #f8f6f0, #eef2f5);
   /* 亮色模式 body 渐变 */
-  --bg-gradient-body-dark: linear-gradient(135deg, #0f0b2e 0%, #1a1145 25%, #0d1b3e 50%, #1e1145 75%, #0f0b2e 100%);
-  /* 暗色模式 body 渐变（紫蓝动画渐变） */
+  --bg-gradient-body-dark: linear-gradient(160deg, #cce7f5, #b3daf2, #9fccee);
+  /* 暗色模式 body 渐变（蓝色调） */
   --bg-gradient-loader-light: linear-gradient(135deg, #f8f6f0, #eef2f5);
   /* 亮色模式加载页渐变 */
-  --bg-gradient-loader-dark: linear-gradient(135deg, #0d0a26, #16103a, #0b1f38);
+  --bg-gradient-loader-dark: linear-gradient(135deg, #d4eaf7, #b8d8ee, #d4eaf7);
   /* 暗色模式加载页渐变 */
 
   /* ===== Toast 通知 ===== */
