@@ -82,13 +82,13 @@ app.toastTimer = null
 // TOAST
 // ============================================
 app.toast = {
-  show: function (msg, dur) {
+  show: function(msg, dur) {
     if (!app.dom.toast) return
     if (dur === undefined) dur = 2000
     app.dom.toast.textContent = msg
     app.dom.toast.classList.add('show')
     clearTimeout(app.toastTimer)
-    app.toastTimer = setTimeout(function () {
+    app.toastTimer = setTimeout(function() {
       app.dom.toast.classList.remove('show')
     }, dur)
   }
@@ -107,7 +107,7 @@ app.lightbox = {
   zoomLastTap: 0,
   exif: null,
 
-  open: function (src, alt, exif) {
+  open: function(src, alt, exif) {
     app.dom.lightboxImg.src = src
     app.dom.lightboxImg.alt = alt || ''
     this.exif = exif || null
@@ -118,17 +118,17 @@ app.lightbox = {
     app.dom.lightbox.classList.add('show')
   },
 
-  close: function () {
+  close: function() {
     this.exif = null
     this.updateExif()
     app.dom.lightbox.classList.remove('show')
   },
 
-  applyZoom: function () {
+  applyZoom: function() {
     app.dom.lightboxImg.style.transform = 'translate(' + this.zoomPanX + 'px,' + this.zoomPanY + 'px) scale(' + this.zoomLevel + ')'
   },
 
-  updateExif: function () {
+  updateExif: function() {
     var el = app.dom.lightboxExif
     if (!el) return
     if (!this.exif) { el.style.display = 'none'; return }
@@ -215,7 +215,7 @@ app.dom.lightboxImg.addEventListener('dblclick', function (e) {
 // VIEW SWITCHING
 // ============================================
 app.views = {
-  switchTo: function (name) {
+  switchTo: function(name) {
     app.dom.listView.style.display = name === 'list' ? 'block' : 'none'
     app.dom.articleViewEl.style.display = (name === 'article' || name === 'about') ? 'block' : 'none'
     app.dom.archiveViewEl.style.display = name === 'archive' ? 'block' : 'none'
@@ -230,11 +230,11 @@ app.views = {
 // UTILITIES
 // ============================================
 app.utils = {
-  safeRender: function (text) {
+  safeRender: function(text) {
     return DOMPurify.sanitize(app.state.md.render(text), app.state.purifyConfig)
   },
 
-  getExcerpt: function (text, max) {
+  getExcerpt: function(text, max) {
     max = max || 110
     var div = document.createElement('div')
     div.innerHTML = this.safeRender(text)
@@ -242,21 +242,21 @@ app.utils = {
     return s.length > max ? s.slice(0, max) + '...' : s
   },
 
-  stripFrontMatter: function (text) {
+  stripFrontMatter: function(text) {
     // remove "# Title\n...yaml metadata...\n---\n" from markdown posts
     return text.replace(/^# .+\n[\s\S]*?\n---\n?/, '')
   },
 
-  escapeRegex: function (s) {
+  escapeRegex: function(s) {
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   },
 
-  setOGTag: function (prop, val) {
+  setOGTag: function(prop, val) {
     var el = document.querySelector('meta[property="' + prop + '"]')
     if (el) el.setAttribute('content', val)
   },
 
-  resetOG: function () {
+  resetOG: function() {
     document.title = 'SnowBlock · 雪地笔记'
     this.setOGTag('og:title', app.config.ogDefaults.title)
     this.setOGTag('og:description', app.config.ogDefaults.description)
@@ -266,7 +266,7 @@ app.utils = {
 }
 
 app.profile = {
-  render: function () {
+  render: function() {
     var cfg = app.config.profile
     if (!cfg.name) { app.dom.profileCard.style.display = 'none'; return }
     app.dom.profileCard.style.display = 'block'
@@ -277,17 +277,41 @@ app.profile = {
     }).join('')
     app.dom.profileCard.innerHTML =
       '<div class="profile-wrap">' +
-      (cfg.avatar ? '<img class="profile-avatar" src="' + cfg.avatar + '" alt="avatar">' : '') +
+      (cfg.avatar ? '<span class="profile-avatar-ring"><img class="profile-avatar" src="' + cfg.avatar + '" alt="avatar"></span>' : '') +
       '<a href="https://snowblock.top" class="profile-name">' + (cfg.name || '') + '</a>' +
       '<div class="profile-divider"></div>' +
       (cfg.bio ? '<div class="profile-bio">' + cfg.bio + '</div>' : '') +
+      '<div class="profile-stats">' +
+        '<div class="stat-item"><div class="stat-num" id="statPosts">-</div><div class="stat-label">文章</div></div>' +
+        '<div class="stat-divider"></div>' +
+        '<div class="stat-item"><div class="stat-num" id="statAlbums">-</div><div class="stat-label">相册</div></div>' +
+        '<div class="stat-divider"></div>' +
+        '<div class="stat-item"><div class="stat-num" id="statTags">-</div><div class="stat-label">标签</div></div>' +
+      '</div>' +
       (links ? '<div class="profile-links">' + links + '</div>' : '') +
       '</div>'
+    this.updateStats()
+  },
+  updateStats: function() {
+    var posts = (app.state.postsMeta || []).length
+    var albums = (app.state.albums || []).length
+    var tagSet = {}
+    ;(app.state.postsMeta || []).forEach(function (p) {
+      ;(p.tags || []).forEach(function (t) { tagSet[t] = true })
+    })
+    var tags = Object.keys(tagSet).length
+    var setNum = function (id, n) {
+      var el = document.getElementById(id)
+      if (el) el.textContent = n
+    }
+    setNum('statPosts', posts)
+    setNum('statAlbums', albums)
+    setNum('statTags', tags)
   }
 }
 
 app.posts = {
-  renderTagFilters: function () {
+  renderTagFilters: function() {
     var allTags = []
     var tagCounts = {}
     app.state.postsMeta.forEach(function (p) {
@@ -326,7 +350,7 @@ app.posts = {
     })
   },
 
-  applyFilters: function () {
+  applyFilters: function() {
     var q = (app.dom.searchInput.value || '').toLowerCase()
     var filtered = app.state.postsMeta.filter(function (p) {
       if (app.state.activeTag && p.tags.indexOf(app.state.activeTag) === -1) return false
@@ -340,14 +364,14 @@ app.posts = {
     this.renderFiltered(filtered)
   },
 
-  getPageCount: function (filtered) { return Math.ceil(filtered.length / app.state.PER_PAGE) || 1 },
+  getPageCount: function(filtered) { return Math.ceil(filtered.length / app.state.PER_PAGE) || 1 },
 
-  getPagePosts: function (filtered, page) {
+  getPagePosts: function(filtered, page) {
     var start = (page - 1) * app.state.PER_PAGE
     return filtered.slice(start, start + app.state.PER_PAGE)
   },
 
-  renderPagination: function (filtered, current) {
+  renderPagination: function(filtered, current) {
     var total = this.getPageCount(filtered)
     if (total <= 1) { app.dom.paginationEl.innerHTML = ''; return }
     var prevDisabled = current <= 1 ? 'disabled' : ''
@@ -377,7 +401,7 @@ app.posts = {
     })
   },
 
-  renderFiltered: function (filtered) {
+  renderFiltered: function(filtered) {
     var page = Math.min(app.state.currentPage, this.getPageCount(filtered))
     app.state.currentPage = page
     var posts = this.getPagePosts(filtered, page)
@@ -402,10 +426,10 @@ app.posts = {
       }
       html += '<div class="post-card" data-post-id="' + p.id + '" tabindex="0" role="button">' +
         '<div class="post-body">' +
-        '<div class="post-meta"><span>' + p.date + '</span> ' + (p.pinned ? '<span class="pinned-badge">[置顶]</span>' : '') + tags + ' <span>' + p.readTime + '</span></div>' +
+         '<div class="post-meta"><span>' + p.date + '</span> ' + (p.pinned ? '<span class="pinned-badge">[置顶]</span>' : '') + tags + ' <span>' + p.readTime + '</span></div>' +
         '<h2 class="post-title">' + title + '</h2>' +
         '<p class="post-excerpt">' + excerpt + '</p>' +
-        '<div class="post-footer"><span class="post-date">' + p.date + ' . ' + p.time + '</span></div>' +
+         '<div class="post-footer"><span class="post-date">' + p.date + ' . ' + p.time + '</span></div>' +
         '</div></div>'
     })
     if (!html) html = '<div class="state-empty">没有匹配的文章</div>'
@@ -426,7 +450,7 @@ app.posts = {
 }
 
 app.article = {
-  load: function (id) {
+  load: function(id) {
     var meta = app.state.postsMeta.find(function (p) { return p.id === id })
     if (!meta) { app.views.switchTo('list'); return }
     fetch('content/posts/' + meta.file).then(function (r) { return r.text() }).then(function (mdText) {
@@ -480,7 +504,7 @@ app.article = {
     })
   },
 
-  showAbout: function () {
+  showAbout: function() {
     app.views.switchTo('about')
     app.utils.resetOG()
     document.title = '关于 · SnowBlock'
@@ -499,7 +523,7 @@ app.article = {
     })
   },
 
-  enhance: function (container) {
+  enhance: function(container) {
     container.querySelectorAll('pre').forEach(function (pre) {
       if (pre.parentElement && pre.parentElement.classList.contains('code-block-wrapper')) return
       var wrapper = document.createElement('div')
@@ -536,7 +560,7 @@ app.article = {
     })
   },
 
-  renderRelated: function (currentId) {
+  renderRelated: function(currentId) {
     var current = app.state.postsMeta.find(function (p) { return p.id === currentId })
     if (!current) { app.dom.relatedPosts.innerHTML = ''; return }
     var scored = app.state.postsMeta.filter(function (p) {
@@ -561,7 +585,7 @@ app.article = {
     })
   },
 
-  renderTOC: function (container) {
+  renderTOC: function(container) {
     app.dom.tocPanel.innerHTML = ''
     if (container === undefined) container = app.dom.articleContent
     var headings = container.querySelectorAll('h2, h3')
@@ -838,7 +862,7 @@ app.gallery = {
   batchSize: 12,
   loaded: 0,
 
-  renderList: function () {
+  renderList: function() {
     var grid = app.dom.albumGrid.querySelector('.album-grid')
     if (!grid) return
     var html = ''
@@ -869,7 +893,7 @@ app.gallery = {
     })
   },
 
-  renderBatch: function () {
+  renderBatch: function() {
     var grid = app.dom.albumDetail.querySelector('.photo-grid')
     if (!grid || !this.albumData) return
     var end = Math.min(this.loaded + this.batchSize, this.albumData.photos.length)
@@ -915,7 +939,7 @@ app.gallery = {
     this.albumObserver.observe(sentinel)
   },
 
-  showAlbum: function (id) {
+  showAlbum: function(id) {
     var a = app.state.albums.find(function (x) { return x.id === id })
     if (!a) { console.error('Album not found:', id); return }
     this.albumData = a
@@ -939,7 +963,7 @@ app.gallery = {
     this.renderBatch()
   },
 
-  show: function () {
+  show: function() {
     app.views.switchTo('gallery')
     app.utils.resetOG()
     document.title = '画廊 · SnowBlock'
@@ -955,11 +979,11 @@ app.gallery = {
 app.router = {
   searchTimer: null,
 
-  navigateTo: function (id) {
+  navigateTo: function(id) {
     location.hash = '#/' + id
   },
 
-  handleHash: function () {
+  handleHash: function() {
     var raw = location.hash.replace(/^#\/?/, '')
     if (!raw) { app.views.switchTo('list'); this.setActiveNav('blog'); app.utils.resetOG(); window.scrollTo({ top: 0 }); return }
     if (raw === 'archive') { app.archive.show(); this.setActiveNav('archive'); return }
@@ -981,7 +1005,7 @@ app.router = {
     app.views.switchTo('list'); this.setActiveNav('blog'); app.utils.resetOG(); window.scrollTo({ top: 0 })
   },
 
-  setActiveNav: function (which) {
+  setActiveNav: function(which) {
     app.dom.navBlog.className = which === 'blog' ? 'active' : ''
     app.dom.navArchive.className = which === 'archive' ? 'active' : ''
     app.dom.navGallery.className = which === 'gallery' ? 'active' : ''
@@ -1060,6 +1084,7 @@ app.init = function () {
 
   fetch('content/albums/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
     app.state.albums = data
+    if (app.profile && app.profile.updateStats) app.profile.updateStats()
   }).catch(function (e) { console.error('Albums load failed:', e) })
 
   fetch('content/posts/index.json?v=' + (document.querySelector('meta[name="build-ts"]')?.getAttribute('content') || Date.now())).then(function (r) { return r.json() }).then(function (data) {
@@ -1073,6 +1098,7 @@ app.init = function () {
       return (b.time || '').localeCompare(a.time || '')
     })
     app.posts.renderTagFilters()
+    if (app.profile && app.profile.updateStats) app.profile.updateStats()
     var loaded = 0
     var total = app.state.postsMeta.length
     app.state.postsMeta.forEach(function (p) {
