@@ -93,7 +93,6 @@ app.dom = {
   navGallery: document.getElementById('navGallery'),
   navMoments: document.getElementById('navMoments'),
   navFriends: document.getElementById('navFriends'),
-  navMessages: document.getElementById('navMessages'),
   navMusic: document.getElementById('navMusic'),
   navAbout: document.getElementById('navAbout'),
   backToTop: document.getElementById('backToTop'),

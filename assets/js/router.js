@@ -12,7 +12,6 @@ app.router = {
     if (raw === 'gallery') { app.gallery.show(); this.setActiveNav('gallery'); return }
     if (raw === 'moments') { app.modules.show('moments'); this.setActiveNav('moments'); return }
     if (raw === 'friends') { app.modules.show('friends'); this.setActiveNav('friends'); return }
-    if (raw === 'messages') { app.modules.show('messages'); this.setActiveNav('messages'); return }
     if (raw === 'music') { app.modules.show('music'); this.setActiveNav('music'); return }
     if (raw === 'random') {
       if (app.state.postsMeta.length) this.navigateTo(app.state.postsMeta[Math.floor(Math.random() * app.state.postsMeta.length)].id)
@@ -37,7 +36,6 @@ app.router = {
     app.dom.navGallery.className = which === 'gallery' ? 'active' : ''
     app.dom.navMoments.className = which === 'moments' ? 'active' : ''
     app.dom.navFriends.className = which === 'friends' ? 'active' : ''
-    app.dom.navMessages.className = which === 'messages' ? 'active' : ''
     app.dom.navMusic.className = which === 'music' ? 'active' : ''
     app.dom.navAbout.className = which === 'about' ? 'active' : ''
   }
@@ -53,7 +51,6 @@ app.dom.navArchive.addEventListener('click', function (e) { e.preventDefault(); 
 app.dom.navGallery.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/gallery' })
 app.dom.navMoments.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/moments' })
 app.dom.navFriends.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/friends' })
-app.dom.navMessages.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/messages' })
 app.dom.navMusic.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/music' })
 app.dom.navAbout.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/about' })
 

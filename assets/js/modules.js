@@ -3,7 +3,7 @@ app.modules = {
   data: {},
   player: { index: -1, audio: null },
 
-  titles: { moments: '说说', friends: '友链', messages: '留言板', music: '音乐' },
+  titles: { moments: '说说', friends: '友链', music: '音乐' },
 
   show: function(name) {
     var self = this
@@ -37,7 +37,6 @@ app.modules = {
     if (!body) return
     if (name === 'moments') this.renderMoments(body)
     else if (name === 'friends') this.renderFriends(body)
-    else if (name === 'messages') this.renderMessages(body)
     else if (name === 'music') this.renderMusic(body)
   },
 
@@ -77,39 +76,6 @@ app.modules = {
     })
     html += '</div>'
     body.innerHTML = html
-  },
-
-  /* ===== 留言板 ===== */
-  renderMessages: function(body) {
-    var self = this
-    var local = []
-    try { local = JSON.parse(localStorage.getItem('localMessages') || '[]') } catch (e) {}
-    var all = (this.data.messages || []).concat(local)
-    var html = '<div class="msg-list">'
-    all.forEach(function(m) {
-      html += '<div class="msg-item">' +
-        '<div class="msg-head"><span class="msg-name">' + self.esc(m.name) + '</span><span class="msg-time">' + self.esc(m.time) + '</span></div>' +
-        '<div class="msg-content">' + self.esc(m.content) + '</div>' +
-      '</div>'
-    })
-    html += '</div>'
-    html += '<div class="msg-form">' +
-      '<input id="msgName" class="msg-input" placeholder="昵称" maxlength="20">' +
-      '<textarea id="msgContent" class="msg-textarea" placeholder="说点什么..." rows="3"></textarea>' +
-      '<button id="msgSend" class="msg-send">发送</button>' +
-      '<p class="msg-note"><i class="fa-solid fa-circle-info"></i> 静态站留言仅保存在本机浏览器，不会同步到服务器</p>' +
-    '</div>'
-    body.innerHTML = html
-    document.getElementById('msgSend').addEventListener('click', function() {
-      var n = document.getElementById('msgName').value.trim() || '匿名'
-      var c = document.getElementById('msgContent').value.trim()
-      if (!c) return
-      var list = []
-      try { list = JSON.parse(localStorage.getItem('localMessages') || '[]') } catch (e) {}
-      list.unshift({ name: n, time: new Date().toLocaleDateString(), content: c })
-      try { localStorage.setItem('localMessages', JSON.stringify(list)) } catch (e) {}
-      self.renderMessages(body)
-    })
   },
 
   /* ===== 音乐 ===== */
