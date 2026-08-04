@@ -56,9 +56,9 @@
   /* 小元素圆角 */
 
   /* ===== 字体系统 ===== */
-  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', 'Consolas', 'Microsoft YaHei', 'PingFang SC', monospace;
   /* 等宽字体栈 */
-  --font-sans: 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, -apple-system, 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif;
   /* 无衬线字体栈 */
   --font-title: 'ZCOOL KuaiLe', cursive, var(--font-sans);
   /* 标题装饰字体 */
