@@ -156,9 +156,8 @@
   /* 蓝色状态 */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg-deep: #0b2b3b;
+html.dark {
+  --color-bg-deep: #0b2b3b;
     --color-accent: #8fd8ef;
     --color-accent-warm: #e8c98a;
     --color-accent-glow: rgba(143, 216, 239, 0.15);
@@ -189,7 +188,6 @@
     --lightbox-close-bg: rgba(255, 255, 255, 0.08);
     --lightbox-close-border: rgba(255, 255, 255, 0.10);
     --lightbox-close-color: rgba(255, 255, 255, 0.6);
-    --lightbox-close-hover-bg: rgba(255, 255, 255, 0.15);
+        --lightbox-close-hover-bg: rgba(255, 255, 255, 0.15);
     --lightbox-close-hover-color: #fff;
-  }
 }

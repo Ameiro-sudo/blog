@@ -27,6 +27,30 @@ app.config = {
 // ============================================
 // SHARED STATE
 // ============================================
+app.theme = {
+  init: function() {
+    this.syncIcon()
+    this.bindToggle()
+  },
+  bindToggle: function() {
+    var btn = document.getElementById('themeToggle')
+    if (btn) btn.addEventListener('click', function() { app.theme.toggle() })
+  },
+  toggle: function() {
+    var dark = document.documentElement.classList.contains('dark')
+    document.documentElement.classList.toggle('dark', !dark)
+    try { localStorage.setItem('theme', dark ? 'light' : 'dark') } catch (e) {}
+    this.syncIcon()
+  },
+  syncIcon: function() {
+    var icon = document.getElementById('themeIcon')
+    if (icon) {
+      var dark = document.documentElement.classList.contains('dark')
+      icon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'
+    }
+  }
+}
+
 app.state = {
   md: null,
   purifyConfig: null,
@@ -888,7 +912,8 @@ app.gallery = {
         '</div></div>'
     })
     grid.innerHTML = html
-    grid.querySelectorAll('.album-card').forEach(function (el) {
+    grid.querySelectorAll('.album-card').forEach(function (el, idx) {
+      el.style.animationDelay = Math.min(idx * 0.08, 0.8) + 's'
       el.addEventListener('click', function () { location.hash = '#/gallery/' + el.dataset.album })
     })
   },
@@ -1050,6 +1075,23 @@ app.init = function () {
     document.body.innerHTML += '<div class="state-error">依赖加载失败，请刷新</div>'
     return
   }
+
+  app.theme.init()
+
+  var menuBtn = document.getElementById('menuToggle')
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function() {
+      var nav = document.getElementById('navLinks')
+      if (nav) nav.classList.toggle('open')
+    })
+  }
+  document.addEventListener('click', function(e) {
+    var nav = document.getElementById('navLinks')
+    var btn = document.getElementById('menuToggle')
+    if (nav && nav.classList.contains('open') && !nav.contains(e.target) && (!btn || !btn.contains(e.target))) {
+      nav.classList.remove('open')
+    }
+  })
 
   app.state.md = window.markdownit({
     html: true, linkify: true, typographer: true,

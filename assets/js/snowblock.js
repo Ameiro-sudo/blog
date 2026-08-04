@@ -27,6 +27,30 @@ app.config = {
 // ============================================
 // SHARED STATE
 // ============================================
+app.theme = {
+  init: function() {
+    this.syncIcon()
+    this.bindToggle()
+  },
+  bindToggle: function() {
+    var btn = document.getElementById('themeToggle')
+    if (btn) btn.addEventListener('click', function() { app.theme.toggle() })
+  },
+  toggle: function() {
+    var dark = document.documentElement.classList.contains('dark')
+    document.documentElement.classList.toggle('dark', !dark)
+    try { localStorage.setItem('theme', dark ? 'light' : 'dark') } catch (e) {}
+    this.syncIcon()
+  },
+  syncIcon: function() {
+    var icon = document.getElementById('themeIcon')
+    if (icon) {
+      var dark = document.documentElement.classList.contains('dark')
+      icon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'
+    }
+  }
+}
+
 app.state = {
   md: null,
   purifyConfig: null,

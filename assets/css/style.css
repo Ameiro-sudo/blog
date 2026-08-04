@@ -39,6 +39,20 @@
 .nav-links a.active { color: var(--color-accent); }
 .nav-links a.active::after { transform: translateX(-50%) scale(1); }
 
+.topbar-actions { display: flex; gap: 0.4rem; align-items: center; }
+.topbar-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 2.2rem; height: 2.2rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.6rem;
+  color: var(--text-secondary);
+  cursor: pointer; font-size: 0.85rem;
+  transition: background 0.25s, color 0.25s, transform 0.25s;
+}
+.topbar-btn:hover { background: var(--glass-hover-bg); color: var(--color-accent); transform: translateY(-1px); }
+.topbar-menu { display: none; }
+
 /* ===== 简介卡片 ===== */
 #profileCard { margin-bottom: 2rem; display: none; }
 .profile-wrap {
@@ -476,7 +490,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .archive-body { padding: 2rem 2.2rem; }
 .archive-year { margin-bottom: 1.8rem; }
 .archive-year-header {
-  font-size: 1.5rem; font-weight: 600; font-family: var(--font-title);
+  font-size: 1.5rem; font-weight: 700; font-family: var(--font-serif);
   color: var(--text-primary); text-shadow: 0 2px 8px var(--shadow-card-color, rgba(0,0,0,0.2));
   margin-bottom: 0.5rem; padding-left: 0.5rem;
 }
@@ -618,7 +632,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 }
 .gallery-header { text-align: center; margin-bottom: 1.5rem; }
 .gallery-header h1 {
-  font-size: clamp(1.6rem,5vw,2.4rem); font-weight: 400; font-family: var(--font-title);
+  font-size: clamp(1.6rem,5vw,2.4rem); font-weight: 700; font-family: var(--font-serif);
   background: linear-gradient(135deg, var(--color-accent-warm), var(--color-accent));
   -webkit-background-clip: text; background-clip: text; color: transparent;
   text-shadow: 0 2px 8px var(--shadow-card-color, rgba(0,0,0,0.5));
@@ -627,7 +641,21 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   columns: 280px;
   column-gap: 1.5rem;
 }
-.album-card { cursor: pointer; display: flex; flex-direction: column; align-items: center; break-inside: avoid; margin-bottom: 1.5rem; }
+.album-card { cursor: pointer; display: flex; flex-direction: column; align-items: center; break-inside: avoid; margin-bottom: 1.5rem; position: relative; animation: photoIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes photoIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.album-card::after {
+  content: ''; position: absolute; top: -10px; left: 22px;
+  width: 3.2rem; height: 0.9rem;
+  background: rgba(253, 230, 138, 0.55);
+  -webkit-backdrop-filter: blur(1px); backdrop-filter: blur(1px);
+  transform: rotate(-8deg);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  pointer-events: none; z-index: 3;
+}
 .album-stack {
   position: relative; width: 85%; margin-bottom: 1.5rem;
 }
@@ -637,7 +665,8 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   transition: all 0.4s;
   box-shadow: var(--shadow-item);
 }
-.album-layer img { width: 100%; display: block; }
+.album-layer img { width: 100%; display: block; transition: transform 0.5s ease; }
+.album-card:hover .album-layer-2 img { transform: scale(1.05); }
 .album-layer-0 {
   position: relative;
   transform: rotate(5deg) translate(8px, 4px);
@@ -692,7 +721,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   text-align: center;
   margin: 1rem 0 1.5rem;
 }
-.album-detail-title { font-size: 1.6rem; font-weight: 600; color: var(--text-primary); font-family: var(--font-title); text-shadow: 0 1px 6px var(--shadow-item-color, rgba(0,0,0,0.4)); margin-bottom: 0.3rem; }
+.album-detail-title { font-size: 1.6rem; font-weight: 600; color: var(--text-primary); font-family: var(--font-serif); text-shadow: 0 1px 6px var(--shadow-item-color, rgba(0,0,0,0.4)); margin-bottom: 0.3rem; }
 .album-detail-meta { font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-mono); margin-bottom: 0.4rem; text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.5)); }
 .album-detail-desc { font-size: 0.9rem; color: var(--text-secondary); text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.5)); }
 .photo-grid {
@@ -712,6 +741,19 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 
 @media (max-width: 600px) {
   .album-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .topbar-menu { display: flex; }
+  .top-bar-inner { flex-wrap: nowrap; }
+  .nav-links {
+    position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 0.2rem;
+    display: none;
+    background: var(--glass-header-bg);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4); backdrop-filter: blur(12px) saturate(1.4);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 0.5rem 1rem 0.8rem;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { justify-content: center; padding: 0.55rem; }
 }
 
 /* ===== 响应式 ===== */
@@ -745,6 +787,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   body::before { display: none; }
   body { background: var(--print-bg, #fff) !important; padding: 1rem; color: var(--print-text, #000); }
   #loader, #snowCanvas, .search-bar, .tag-filters, .back-link, .copy-btn { display: none; }
+  .topbar-btn { display: none; }
   .top-bar { position: static; background: var(--print-surface, #f5f5f5); backdrop-filter: none; border-color: var(--print-border, #ddd); }
   .page-header { background: var(--print-surface, #f5f5f5) !important; backdrop-filter: none; border: 1px solid var(--print-border, #ddd); box-shadow: none; }
   .profile-wrap { background: var(--print-surface2, #fafafa) !important; backdrop-filter: none; border: 1px solid var(--print-border, #ddd); }

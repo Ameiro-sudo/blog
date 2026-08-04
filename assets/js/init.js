@@ -4,6 +4,23 @@ app.init = function () {
     return
   }
 
+  app.theme.init()
+
+  var menuBtn = document.getElementById('menuToggle')
+  if (menuBtn) {
+    menuBtn.addEventListener('click', function() {
+      var nav = document.getElementById('navLinks')
+      if (nav) nav.classList.toggle('open')
+    })
+  }
+  document.addEventListener('click', function(e) {
+    var nav = document.getElementById('navLinks')
+    var btn = document.getElementById('menuToggle')
+    if (nav && nav.classList.contains('open') && !nav.contains(e.target) && (!btn || !btn.contains(e.target))) {
+      nav.classList.remove('open')
+    }
+  })
+
   app.state.md = window.markdownit({
     html: true, linkify: true, typographer: true,
     highlight: function (str, lang) {
