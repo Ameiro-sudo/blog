@@ -1,0 +1,21 @@
+{
+  "SITE_URL": "https://blog.snowblock.top",
+  "CDN_BASE": "assets/vendor/images/",
+  "albumsSource": "",
+  "profile": {
+    "avatar": "https://avatars.githubusercontent.com/u/269375186?v=4",
+    "name": "Ameiro-sudo",
+    "bio": "世界は大きい、君は行かなければならない",
+    "links": [
+      { "name": "GitHub", "icon": "fa7-brands/github", "url": "https://github.com/Ameiro-sudo" },
+      { "name": "Shizukuレモン", "icon": "fa7-brands/bilibili", "url": "https://space.bilibili.com/3493084421687360" },
+      { "name": "博客", "icon": "material-symbols/article-outline", "url": "https://blog.snowblock.top" }
+    ]
+  },
+  "ogDefaults": {
+    "title": "SnowBlock · 博客",
+    "description": "雪地笔记 — 技术、游戏、日常与碎片思考",
+    "image": "https://avatars.githubusercontent.com/u/269375186?v=4",
+    "url": "https://blog.snowblock.top"
+  }
+}

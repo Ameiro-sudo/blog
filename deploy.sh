@@ -1,34 +1,33 @@
 #!/bin/bash
 set -e
 
-# 检查是否有未跟踪的 .md 文件
-NEW_MD=$(git diff --cached --name-only --diff-filter=A "posts/*.md" 2>/dev/null || true)
-if [ -z "$NEW_MD" ]; then
-  NEW_MD=$(git ls-files --others --exclude-standard "posts/*.md" 2>/dev/null || true)
-fi
+BLOG_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$BLOG_DIR"
 
-# 检查 nvm (如果安装了 nvm)
-export NVM_DIR="$HOME/.nvm"
-if [ -s "$NVM_DIR/nvm.sh" ]; then
-  . "$NVM_DIR/nvm.sh"
-fi
+NEW_POST=$(git ls-files --others --exclude-standard "content/posts/*.md" 2>/dev/null || true)
 
-echo "🔨 构建索引..."
-node build.js
+echo "==> 构建博客..."
+node scripts/build.js
 
-echo "📦 提交并推送..."
+echo ""
+echo "==> 提交并推送博客..."
 git add -A
 
-# 如果传入了提交信息就用它，否则自动生成
-if [ -n "$1" ]; then
-  MSG="$1"
-elif [ -n "$NEW_MD" ]; then
-  MSG="add: 新文章"
+STAGED=$(git diff --cached --stat --diff-filter=ACMR | tail -1 | awk '{print $1}')
+if [ -z "$STAGED" ] || [ "$STAGED" -eq 0 ]; then
+  echo "    博客无变更，跳过提交"
 else
-  MSG="update: $(date +'%m-%d %H:%M')"
+  echo "    变更文件数: $STAGED"
+  if [ -n "$1" ]; then
+    MSG="$1"
+  elif [ -n "$NEW_POST" ]; then
+    MSG="add: 新文章"
+  else
+    MSG="update: $(date +'%m-%d %H:%M')"
+  fi
+  git commit -m "$MSG"
+  git push
 fi
 
-git commit -m "$MSG"
-git push
-
-echo "✅ 完成！"
+echo ""
+echo "完成"

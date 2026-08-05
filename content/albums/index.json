@@ -1,0 +1,62 @@
+[
+  {
+    "id": "test",
+    "title": "照片墙",
+    "description": "",
+    "cover": "assets/vendor/images/albums/alb-01.webp",
+    "date": "2026.08",
+    "photos": [
+      {
+        "url": "assets/vendor/images/albums/alb-01.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-02.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-03.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-05.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-06.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-07.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-08.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-09.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-10.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-11.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-12.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-13.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-14.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-15.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-18.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-19.webp"
+      },
+      {
+        "url": "assets/vendor/images/albums/alb-21.webp"
+      }
+    ]
+  }
+]

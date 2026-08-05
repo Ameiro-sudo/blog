@@ -1,0 +1,53 @@
+name: CI Build & Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: blog-deploy-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 构建 (Linux 环境, 规避 Windows 路径问题)
+        run: node scripts/build.js
+
+      - name: 部署到 gh-pages 分支
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          force_orphan: true
+          exclude_assets: '.github/**,node_modules/**,.lighthouseci/**,scripts/**,lighthouserc.cjs,package.json,package-lock.json,deploy.sh,deploy-full.sh,.gitignore,.nvmrc'
+
+      - name: Lighthouse CI (本地静态产物, 仅收集报告)
+        run: npx lhci collect --config=./lighthouserc.cjs
+
+      - name: 上传 Lighthouse 报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: .lighthouseci
+          include-hidden-files: true
+          if-no-files-found: ignore
