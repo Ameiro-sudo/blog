@@ -117,10 +117,86 @@ function buildPosts() {
 }
 
 // ============================
-// BUILD: ALBUMS INDEX
+// SHARED: FRONTMATTER PARSER
+// ============================
+function parseMd(text) {
+  let meta = {}
+  let body = text
+  const lines = text.split('\n')
+  if (lines[0] && lines[0].trim() === '---') {
+    const metaLines = []
+    let i = 1
+    while (i < lines.length && lines[i].trim() !== '---') { metaLines.push(lines[i]); i++ }
+    if (i < lines.length) {
+      try { meta = yaml.load(metaLines.join('\n')) || {} } catch (e) { /* 忽略解析警告 */ }
+      body = lines.slice(i + 1).join('\n')
+    }
+  }
+  return { meta, body: body.trim() }
+}
+
+// ============================
+// BUILD: MOMENTS INDEX
+// content/moments/*.md —— 每条 = 一条说说
+// frontmatter: time(必填) ; 正文 = 说说内容
+// ============================
+function buildMoments() {
+  const dir = join(ROOT, 'content', 'moments')
+  let files = []
+  try {
+    files = readdirSync(dir).filter(f => f.endsWith('.md') && !f.startsWith('_')).sort()
+  } catch (e) { return }
+
+  if (!files.length) return // 无源文件时保留已提交的 index.json
+
+  const moments = files.map(function (f) {
+    const { meta, body } = parseMd(readFileSync(join(dir, f), 'utf-8'))
+    return { time: meta.time || '', text: body || meta.text || '' }
+  }).filter(m => m.text && m.time)
+
+  moments.sort((a, b) => b.time.localeCompare(a.time))
+
+  writeIfChanged(
+    join(dir, 'index.json'),
+    JSON.stringify(moments, null, 2) + '\n'
+  )
+  console.log(`  moments: ${moments.length} items`)
+}
+
+// ============================
+// BUILD: FRIENDS INDEX
+// content/friends/*.md —— 每条 = 一个友链
+// frontmatter: name / url / desc
+// ============================
+function buildFriends() {
+  const dir = join(ROOT, 'content', 'friends')
+  let files = []
+  try {
+    files = readdirSync(dir).filter(f => f.endsWith('.md') && !f.startsWith('_')).sort()
+  } catch (e) { return }
+
+  if (!files.length) return
+
+  const friends = files.map(function (f) {
+    const { meta } = parseMd(readFileSync(join(dir, f), 'utf-8'))
+    return { name: meta.name || '', url: meta.url || '', desc: meta.desc || '' }
+  }).filter(f => f.name && f.url)
+
+  friends.sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN'))
+
+  writeIfChanged(
+    join(dir, 'index.json'),
+    JSON.stringify(friends, null, 2) + '\n'
+  )
+  console.log(`  friends: ${friends.length} items`)
+}
+
 // ============================
 // BUILD: ALBUMS INDEX
-// 自动扫描本地 assets/vendor/images/albums/ 生成索引（平铺目录视为一个相册）
+// ============================
+// 自动扫描 assets/vendor/images/albums/：
+//  - 子目录 = 一个相册（目录内 meta.json 提供 title/description/date）
+//  - 平铺图片 = 视为单个相册（兼容旧结构）
 // 预留 albumsSource 远程接入接口（site.config.json 配置后优先拉取）
 // ============================
 async function buildAlbums() {
@@ -141,60 +217,89 @@ async function buildAlbums() {
     }
   }
 
-  // 本地目录扫描：assets/vendor/images/albums/ 平铺图片 = 单个相册
+  // 本地目录扫描：assets/vendor/images/albums/
+  // 子目录 = 独立相册；无子目录时平铺图片视为单个相册
   const ALBUMS_LOCAL = join(ROOT, 'assets', 'vendor', 'images', 'albums')
   const extRe = /\.(jpg|jpeg|png|webp|gif|bmp)$/i
-  const files = []
+  let entries = []
   try {
-    const names = readdirSync(ALBUMS_LOCAL).filter(f => extRe.test(f)).sort()
-    names.forEach(function (f) { files.push(f) })
+    entries = readdirSync(ALBUMS_LOCAL, { withFileTypes: true })
   } catch (e) {
     console.log('  albums: 本地目录缺失（' + ALBUMS_LOCAL + '），保留已提交数据')
     return
   }
 
-  if (!files.length) {
-    writeIfChanged(idxFile, '[]\n')
+  const subdirs = entries.filter(d => d.isDirectory()).map(d => d.name).sort()
+  const flatFiles = entries.filter(e => !e.isDirectory() && extRe.test(e.name)).map(e => e.name).sort()
+
+  async function scanAlbum(dirName, fallbackTitle) {
+    const albumDir = dirName ? join(ALBUMS_LOCAL, dirName) : ALBUMS_LOCAL
+    let names = []
+    try {
+      names = readdirSync(albumDir).filter(f => extRe.test(f)).sort()
+    } catch (e) { return null }
+    if (!names.length) return null
+
+    const prefix = dirName ? dirName + '/' : ''
+    const cover = 'assets/vendor/images/albums/' + prefix + names[0]
+
+    let meta = {}
+    try {
+      meta = JSON.parse(readFileSync(join(albumDir, 'meta.json'), 'utf-8'))
+    } catch (e) {
+      if (e.code !== 'ENOENT') console.warn('  albums meta.json parse failed:', e.message)
+    }
+
+    const photos = []
+    for (const f of names) {
+      const url = 'assets/vendor/images/albums/' + prefix + f
+      let exif = null
+      try {
+        const buf = await readFile(join(albumDir, f))
+        const raw = await exifr.parse(buf, { pick: ['Make', 'Model', 'ISO', 'FNumber', 'FocalLength', 'ExposureTime', 'ImageWidth', 'ImageHeight'] })
+        if (raw && Object.keys(raw).length) exif = raw
+      } catch (e) {
+        // 无 EXIF 或解析失败则跳过
+      }
+      photos.push({ url, ...(exif ? { exif } : {}) })
+    }
+
+    return {
+      id: dirName || 'test',
+      title: meta.title || fallbackTitle,
+      description: meta.description || '',
+      cover,
+      date: meta.date || '',
+      photos,
+    }
+  }
+
+  const albums = []
+  if (subdirs.length) {
+    for (const dirName of subdirs) {
+      const album = await scanAlbum(dirName, dirName)
+      if (album) albums.push(album)
+    }
+    if (!albums.length) {
+      writeIfChanged(join(ALBUMS_DIR, 'index.json'), '[]\n')
+      console.log('  albums: 0 (子目录相册均为空)')
+      return
+    }
+  } else if (flatFiles.length) {
+    const album = await scanAlbum(null, '照片墙')
+    if (album) albums.push(album)
+  }
+
+  if (!albums.length) {
+    writeIfChanged(join(ALBUMS_DIR, 'index.json'), '[]\n')
     console.log('  albums: 0 (本地目录为空)')
     return
   }
 
-  // 封面取第一张
-  const cover = 'assets/vendor/images/albums/' + files[0]
+  albums.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
 
-  // 可选 meta.json（title/description/date），缺失则用默认
-  let meta = {}
-  try {
-    meta = JSON.parse(readFileSync(join(ALBUMS_LOCAL, 'meta.json'), 'utf-8'))
-  } catch (e) {
-    if (e.code !== 'ENOENT') console.warn('  albums meta.json parse failed:', e.message)
-  }
-
-  const photos = []
-  for (const f of files) {
-    const url = 'assets/vendor/images/albums/' + f
-    let exif = null
-    try {
-      const buf = await readFile(join(ALBUMS_LOCAL, f))
-      const raw = await exifr.parse(buf, { pick: ['Make', 'Model', 'ISO', 'FNumber', 'FocalLength', 'ExposureTime', 'ImageWidth', 'ImageHeight'] })
-      if (raw && Object.keys(raw).length) exif = raw
-    } catch (e) {
-      // 无 EXIF 或解析失败则跳过
-    }
-    photos.push({ url, ...(exif ? { exif } : {}) })
-  }
-
-  const albums = [{
-    id: 'test',
-    title: meta.title || '照片墙',
-    description: meta.description || '',
-    cover,
-    date: meta.date || '',
-    photos,
-  }]
-
-  writeIfChanged(idxFile, JSON.stringify(albums, null, 2) + '\n')
-  console.log('  albums: ' + photos.length + ' (local scan)')
+  writeIfChanged(join(ALBUMS_DIR, 'index.json'), JSON.stringify(albums, null, 2) + '\n')
+  console.log('  albums: ' + albums.length + ' (' + albums.map(a => a.photos.length).join('/') + ' photos)')
 }
 
 // ============================
@@ -317,6 +422,8 @@ function versionAssets() {
 console.log('Building indexes...')
 buildPosts()
 await buildAlbums()
+buildMoments()
+buildFriends()
 buildFeed()
 buildSitemap()
 versionAssets()

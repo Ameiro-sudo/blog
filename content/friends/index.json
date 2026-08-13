@@ -1,4 +1,22 @@
 [
-  { "name": "SnowBlock 导航", "url": "https://snowblock.top", "desc": "个人一站式导航，博客/服务器/监控入口" },
-  { "name": "MC 状态监控", "url": "https://status.snowblock.top", "desc": "Minecraft 服务器实时状态" }
+  {
+    "name": "Ameiro-sudo · GitHub",
+    "url": "https://github.com/Ameiro-sudo",
+    "desc": "Ameiro-sudo 的 GitHub 主页，开源项目都在这"
+  },
+  {
+    "name": "MC 状态监控",
+    "url": "https://status.snowblock.top",
+    "desc": "Minecraft 服务器实时状态"
+  },
+  {
+    "name": "Shizukuレモン",
+    "url": "https://space.bilibili.com/3493084421687360",
+    "desc": "作者的 B 站空间"
+  },
+  {
+    "name": "SnowBlock 导航",
+    "url": "https://snowblock.top",
+    "desc": "个人一站式导航，博客/服务器/监控入口"
+  }
 ]
