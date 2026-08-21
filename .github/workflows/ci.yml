@@ -38,10 +38,10 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
           force_orphan: true
-          exclude_assets: '.github/**,node_modules/**,.lighthouseci/**,scripts/**,lighthouserc.cjs,package.json,package-lock.json,deploy.sh,deploy-full.sh,.gitignore,.nvmrc'
+          exclude_assets: '.github/**,node_modules/**,.lighthouseci/**,scripts/**,package.json,package-lock.json,deploy.sh,deploy-full.sh,.gitignore,.nvmrc,.vscode/**'
 
       - name: Lighthouse CI (本地静态产物, 仅收集报告)
-        run: npx lhci collect --config=./lighthouserc.cjs
+        run: npx lhci collect --config=./scripts/lighthouserc.cjs
 
       - name: 上传 Lighthouse 报告
         if: always()
