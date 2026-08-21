@@ -1,4 +1,4 @@
-﻿/* ===== 全局：隐藏滚动条（保留滚动能力） ===== */
+/* ===== 全局：隐藏滚动条（保留滚动能力） ===== */
 html, body {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -931,6 +931,9 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   display: inline-flex; align-items: center; gap: 0.3rem;
   font-size: 0.78rem; color: #2f6a84; text-decoration: none;
   margin-top: 0.7rem;
+  /* 触控目标 >=44px 高(视觉字号不变,用负 margin 抵消额外内边距) */
+  padding: 0.65rem 0.75rem;
+  margin: 0.25rem -0.75rem 0;
 }
 .home-more:hover { text-decoration: underline; }
 @media (prefers-color-scheme: dark) {
