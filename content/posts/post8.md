@@ -1,7 +1,7 @@
 # 喜报！Bocchi Client 1.0
 date: 2026-08-22
 tags: Mod, 开发记录
-time: 03:00
+time: 03:17
 readTime: 6 分钟
 pinned: false
 ---
@@ -9,8 +9,6 @@ pinned: false
 喜报！Bocchi Client 1.0 正式发布了🎉
 
 上回书说到，这只从模板改出来的客户端才刚出生（[出生记录](https://blog.snowblock.top/#/post7)）。出生第 18 天，直接办成人礼：版本号跳到 1.0.0，双 MC 版本 × 双加载器，四个 jar 整整齐齐上架 GitHub Releases。
-
-> 📷 配图占位（发布前替换）：这里放一张游戏内主菜单截图 —— 波奇酱立绘 + 黑胶唱片 + 右侧按钮面板。手头没有现成的游戏内截图，设计器的预览图不算游戏画面，不硬凑。
 
 ## 半个月从 0.1 干到 1.0，凭什么
 
@@ -55,7 +53,7 @@ Gradle 读 gradle.properties 按 .properties 的老规矩用 ISO-8859-1 解码�
 
 ## 最后
 
-致谢照抄出生那篇：模板 [bocchi-template-1.21.5](https://github.com/baier233/bocchi-template-1.21.5)（CC0），圆角控件和字体位图来自 Fogg05 老师。以及，永远怀念 05 老师。R.I.P.
+致谢照抄出生那篇：模板 [bocchi-template-1.21.5](https://github.com/baier233/bocchi-template-1.21.5)（CC0）。以及，永远怀念 05 老师。R.I.P.
 
 接下来干嘛还没想好。设置面板、让黑胶转起来、给菜单配点声音，候补名单排着呢。反正波奇酱已经转正了，工资 0，跟我一样。
 
