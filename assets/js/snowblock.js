@@ -243,6 +243,10 @@ app.views = {
 // ============================================
 app.utils = {
   safeRender: function(text) {
+    if (!(window.DOMPurify && window.markdownit)) {
+      var esc = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      return '<p>' + esc + '</p>'
+    }
     return DOMPurify.sanitize(app.state.md.render(text), app.state.purifyConfig)
   },
 
