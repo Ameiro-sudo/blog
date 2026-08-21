@@ -563,22 +563,41 @@
 
   <script>
     // 文章渲染依赖(markdown-it/highlight/purify ~240KB)不阻塞首屏:
-    // 立即开始并行下载,但不占 defer 执行位(否则拖住 DCL→拖住首页渲染)
+    // 首页用不到它们 —— 延迟到「进入文章/关于路由」或浏览器空闲时才开始下载,
+    // 把首屏窗口的管道与主线程让给 LCP(hero 封面)。
+    // __depsReady 保持既有契约: 消费方(init.js/app.js)照常 .then,
+    // 依赖晚到时由既有的"重渲染当前路由"兜底(safeRender 亦有纯文本降级)。
     ;(function () {
       var deps = [
         'assets/vendor/markdown-it@14.1.0/markdown-it.min.js',
         'assets/vendor/highlight.js@11.9.0/highlight.min.js',
         'assets/vendor/dompurify@3.1.3/purify.min.js'
       ]
-      window.__depsReady = Promise.all(deps.map(function (src) {
-        return new Promise(function (res) {
-          var s = document.createElement('script')
-          s.src = src
-          s.onload = res
-          s.onerror = res // 失败也放行,由业务层降级
-          document.head.appendChild(s)
-        })
-      }))
+      var started = false
+      var resolveReady
+      window.__depsReady = new Promise(function (res) { resolveReady = res })
+      function start() {
+        if (started) return
+        started = true
+        Promise.all(deps.map(function (src) {
+          return new Promise(function (res) {
+            var s = document.createElement('script')
+            s.src = src
+            s.onload = res
+            s.onerror = res // 失败也放行,由业务层降级
+            document.head.appendChild(s)
+          })
+        })).then(resolveReady)
+      }
+      var NEEDS_MD = /^#\/(post|about)/
+      if (NEEDS_MD.test(location.hash)) { start(); return } // 直链文章/关于页立即加载
+      addEventListener('hashchange', function () { if (NEEDS_MD.test(location.hash)) start() })
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('a[href]') : null
+        if (a && NEEDS_MD.test(a.getAttribute('href') || '')) start()
+      }, true)
+      if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 3000 })
+      else setTimeout(start, 3000)
     })()
   </script>
   <script src="assets/js/app.js?v=4b90928a" defer></script>
