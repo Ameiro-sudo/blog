@@ -7,7 +7,7 @@ app.config = {
   "CDN_BASE": "assets/vendor/images/",
   "SITE_URL": "https://blog.snowblock.top",
   "profile": {
-    "avatar": "https://avatars.githubusercontent.com/u/269375186?v=4",
+    "avatar": "assets/vendor/images/profile.webp",
     "name": "Ameiro-sudo",
     "bio": "世界は大きい、君は行かなければならない",
     "links": [
@@ -31,7 +31,7 @@ app.config = {
   "ogDefaults": {
     "title": "SnowBlock · 博客",
     "description": "雪地笔记 — 技术、游戏、日常与碎片思考",
-    "image": "https://avatars.githubusercontent.com/u/269375186?v=4",
+    "image": "https://blog.snowblock.top/assets/vendor/images/profile.webp",
     "url": "https://blog.snowblock.top"
   }
 }
