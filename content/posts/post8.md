@@ -53,7 +53,7 @@ Gradle 读 gradle.properties 按 .properties 的老规矩用 ISO-8859-1 解码�
 
 ## 最后
 
-致谢照抄出生那篇：模板 [bocchi-template-1.21.5](https://github.com/baier233/bocchi-template-1.21.5)（CC0）。以及，永远怀念 05 老师。R.I.P.
+致谢照抄出生那篇：模板 [bocchi-template-1.21.5](https://github.com/baier233/bocchi-template-1.21.5)（CC0）
 
 接下来干嘛还没想好。设置面板、让黑胶转起来、给菜单配点声音，候补名单排着呢。反正波奇酱已经转正了，工资 0，跟我一样。
 
