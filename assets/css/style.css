@@ -396,7 +396,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   border-left: 2px solid transparent;
 }
 .toc-link.h2 { padding-left: 1rem; }
-.toc-link.h3 { padding-left: 1.8rem; font-size: 0.72rem; }
+.toc-link.h3 { padding-left: 1.8rem; font-size: 0.75rem; }
 .toc-link:hover { background: var(--glass-hover-bg); }
 .toc-link.active { color: var(--color-accent); border-left-color: var(--color-accent); }
 
@@ -452,13 +452,15 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   padding: 1rem 1.2rem; border-radius: 14px; overflow-x: auto;
   border: 1px solid var(--glass-border); font-family: var(--font-mono); font-size: 0.85rem;
 }
+/* pre 内的 code 不再被 0.85em 二次缩水(否则 <12px 可读线) */
+.article-content pre code { font-size: 1em; padding: 0; background: none; }
 .code-block-wrapper { position: relative; margin: 1rem 0; }
 .copy-btn {
   position: absolute; top: 0.5rem; right: 0.7rem;
   background: var(--glass-bg); backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--glass-border); color: var(--text-secondary);
-  font-family: var(--font-mono); font-size: 0.7rem;
+  font-family: var(--font-mono); font-size: 0.75rem;
   padding: 0.2rem 0.7rem; border-radius: 28px;
   cursor: pointer; transition: all 0.25s; z-index: 3;
 }
