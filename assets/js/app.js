@@ -659,7 +659,11 @@ app.article = {
       a.addEventListener('click', function (e) {
         e.preventDefault()
         var target = document.getElementById(a.getAttribute('href').slice(1))
-        if (target) target.scrollIntoView({ behavior: 'smooth' })
+        if (!target) return
+        // 键盘/读屏用户焦点随行: 先聚焦目标标题(防原生跳转),再平滑滚动
+        if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1')
+        target.focus({ preventScroll: true })
+        target.scrollIntoView({ behavior: 'smooth' })
       })
     })
     if (app.state.tocSpy) app.state.tocSpy.disconnect()
