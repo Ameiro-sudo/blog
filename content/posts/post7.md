@@ -63,7 +63,7 @@ Skija 是 multi-release jar,如果外层 jar 的 Manifest 没有 `Multi-Release:
 - Fabric:`remapJar` 之后用脚本重写 zip 补上 Manifest
 - NeoForge:`shadowJar` 配置 Manifest 属性
 
-具体分析和踩坑过程写在 [docs/Multi-Release-MANIFEST-问题说明.md](https://github.com/Ameiro-sudo/bocchi-mod/blob/main/docs/Multi-Release-MANIFEST-%E9%97%AE%E9%A2%98%E8%AF%B4%E6%98%8E.md)。
+具体分析和踩坑过程见 [bocchi-mod 仓库](https://github.com/Ameiro-sudo/bocchi-mod)。
 
 ## 多版本与发行
 
