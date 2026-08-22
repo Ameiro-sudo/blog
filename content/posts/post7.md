@@ -76,7 +76,9 @@ Skija 是 multi-release jar,如果外层 jar 的 Manifest 没有 `Multi-Release:
 
 ## 下载
 
-| 版本 | 加载器 | 下载 |
+当前正式版 **v1.0.1**(2026-08-22 发布,双 MC 版本 × 双加载器)。下表链接始终指向各 MC 版本的最新构建:
+
+| MC 版本 | 加载器 | 下载 |
 | --- | --- | --- |
 | 1.21.5 | Fabric / NeoForge | [GitHub Releases: 1.21.5](https://github.com/Ameiro-sudo/bocchi-mod/releases/tag/1.21.5) |
 | 1.21.1 | Fabric / NeoForge | [GitHub Releases: 1.21.1](https://github.com/Ameiro-sudo/bocchi-mod/releases/tag/1.21.1) |
