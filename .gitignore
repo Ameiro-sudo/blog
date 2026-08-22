@@ -3,3 +3,9 @@ node_modules/
 .lighthouseci/
 
 .vscode/
+
+# Nuxt ????
+.nuxt/
+.output/
+.data/
+ dist/

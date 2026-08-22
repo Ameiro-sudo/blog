@@ -1,10 +1,13 @@
-import { readFileSync, readdirSync, writeFileSync } from 'fs'
+import { readFileSync, readdirSync, writeFileSync, mkdirSync } from 'fs'
 import { readFile } from 'fs/promises'
 import { join, dirname, basename } from 'path'
 import { fileURLToPath } from 'url'
 import { createHash } from 'crypto'
 import exifr from 'exifr'
 import * as yaml from 'js-yaml'
+import MarkdownIt from 'markdown-it'
+import hljs from 'highlight.js'
+import sanitizeHtml from 'sanitize-html'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -303,6 +306,140 @@ async function buildAlbums() {
 }
 
 // ============================
+// BUILD-TIME MARKDOWN RENDERING (Nuxt SSG)
+// 与旧运行时链路对齐：markdown-it 配置 / hljs 高亮 / 代码块包装 / 表格包装
+// 全部在构建期完成，产物为 content/posts/<id>.json（元数据 + 消毒后的 HTML）
+// ============================
+const md = new MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+  highlight (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try { return `<pre class="hljs"><code>${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>` } catch (e) { /* fallthrough */ }
+    }
+    return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`
+  },
+})
+
+// vendor 图片懒加载规则（与旧 app.js 的 image 规则一致）
+const defaultImage = md.renderer.rules.image.bind(md.renderer.rules)
+md.renderer.rules.image = function (tokens, idx, options, env, self) {
+  const token = tokens[idx]
+  const srcIdx = token.attrIndex('src')
+  const src = srcIdx >= 0 ? token.attrs[srcIdx][1] : ''
+  const alt = token.content || ''
+  if (src.includes('../my-images/') || src.includes('assets/vendor/')) {
+    return `<img src="${md.utils.escapeHtml(src)}" alt="${md.utils.escapeHtml(alt)}" loading="lazy">`
+  }
+  return defaultImage(tokens, idx, options, env, self)
+}
+
+// 代码块：构建期直接产出 code-block-wrapper / code-lang / copy-btn 结构，
+// 替代旧 article.enhance 的运行时 DOM 改写
+md.renderer.rules.fence = function (tokens, idx) {
+  const token = tokens[idx]
+  const lang = (token.info || '').trim().split(/\s+/)[0]
+  let inner
+  if (lang && hljs.getLanguage(lang)) {
+    try {
+      inner = `<pre class="hljs"><code>${hljs.highlight(token.content, { language: lang, ignoreIllegals: true }).value}</code></pre>`
+    } catch (e) { /* fallthrough */ }
+  }
+  if (!inner) inner = `<pre class="hljs"><code>${md.utils.escapeHtml(token.content)}</code></pre>`
+  const lbl = lang ? `<span class="code-lang">${md.utils.escapeHtml(lang)}</span>` : ''
+  return `<div class="code-block-wrapper">${lbl}${inner}<button class="copy-btn" type="button">复制</button></div>\n`
+}
+
+function enhanceArticleHtml (html) {
+  // h2/h3 注入 TOC 锚点 id（与旧 renderTOC 同一 slug 规则）
+  const seenIds = {}
+  html = html.replace(/<h([23])>([\s\S]*?)<\/h\1>/g, function (_, lvl, inner) {
+    const text = inner.replace(/<[^>]+>/g, '')
+    const baseId = text.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fff-]/g, '')
+    let id = baseId
+    let n = 2
+    while (seenIds[id]) { id = baseId + '-' + n++ }
+    seenIds[id] = true
+    return `<h${lvl} id="${id}">${inner}</h${lvl}>`
+  })
+  // 表格响应式包装
+  html = html.replace(/<table>/g, '<div class="table-responsive"><table>').replace(/<\/table>/g, '</table></div>')
+  return html
+}
+
+function sanitizeArticleHtml (html) {
+  return sanitizeHtml(html, {
+    allowedTags: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'blockquote', 'ul', 'ol', 'li', 'a', 'strong', 'em', 'code', 'pre', 'img', 'br', 'hr', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'span', 'div', 'button', 'progress'],
+    allowedAttributes: {
+      '*': ['href', 'src', 'alt', 'class', 'id', 'loading', 'style', 'type', 'value', 'max'],
+    },
+  })
+}
+
+function extractBody(filepath) {
+  const text = readFileSync(filepath, 'utf-8')
+  const lines = text.split('\n')
+
+  // 标准围栏式 frontmatter：--- ... --- 在最前
+  if (lines[0]?.trim() === '---') {
+    let i = 1
+    while (i < lines.length && lines[i].trim() !== '---') i++
+    return lines.slice(i + 1).join('\n').trim()
+  }
+
+  // 本站旧格式：# 标题 + 元数据行，直到独立的一行 ---（post1~post8 均如此）
+  if (lines[0]?.startsWith('# ')) {
+    for (let j = 1; j < lines.length; j++) {
+      if (lines[j].trim() === '---') return lines.slice(j + 1).join('\n').trim()
+      // 空行后仍是元数据也继续扫；一旦出现普通正文段落则视为无 frontmatter
+      if (j > 1 && lines[j].trim() !== '' && !/^[A-Za-z_-]+:\s/.test(lines[j]) && !lines[j].startsWith('# ')) break
+    }
+    // 无 --- 收尾：仅剥掉标题行
+    return lines.slice(1).join('\n').trim()
+  }
+
+  return lines.join('\n').trim()
+}
+
+function buildArticlePayloads() {
+  const files = readdirSync(POSTS_DIR).filter(f => f.endsWith('.md') && f !== 'index.json' && !f.startsWith('_'))
+  const postsIndex = JSON.parse(readFileSync(join(POSTS_DIR, 'index.json'), 'utf-8'))
+  const byId = Object.fromEntries(postsIndex.map(p => [p.id, p]))
+  let count = 0
+  for (const f of files) {
+    const id = basename(f).replace(/\.md$/, '')
+    const meta = byId[id]
+    if (!meta) continue
+    const rawBody = extractBody(join(POSTS_DIR, f))
+    const wc = rawBody.replace(/\s+/g, '').length
+    const html = sanitizeArticleHtml(enhanceArticleHtml(md.render(rawBody)))
+    writeIfChanged(
+      join(POSTS_DIR, id + '.json'),
+      JSON.stringify({ ...meta, wc, html })
+    )
+    count++
+  }
+  console.log(`  article payloads: ${count}`)
+}
+
+function buildAboutPayload() {
+  const aboutFile = join(ROOT, 'content', 'pages', 'about.md')
+  try {
+    // about.md 为纯 Markdown（无 frontmatter），剥掉首个 h1 —— 页面模板已单独渲染标题
+    const body = extractBody(aboutFile).replace(/^# .+\r?\n/, '')
+    const html = sanitizeArticleHtml(enhanceArticleHtml(md.render(body)))
+    writeIfChanged(
+      join(ROOT, 'content', 'pages', 'about.json'),
+      JSON.stringify({ title: '关于', html })
+    )
+    console.log('  about payload: ok')
+  } catch (e) {
+    console.log('  about payload skipped (' + e.message + ')')
+  }
+}
+
+// ============================
 // BUILD: RSS FEED
 // ============================
 function buildFeed() {
@@ -324,14 +461,14 @@ function buildFeed() {
     const pubDate = d.toUTCString()
     xml += '    <item>\n'
     xml += '      <title>' + escXml(p.title) + '</title>\n'
-    xml += '      <link>' + SITE_URL + '/#/' + p.id + '</link>\n'
-    xml += '      <guid>' + SITE_URL + '/#/' + p.id + '</guid>\n'
+    xml += '      <link>' + SITE_URL + '/posts/' + p.id + '/</link>\n'
+    xml += '      <guid>' + SITE_URL + '/posts/' + p.id + '/</guid>\n'
     xml += '      <pubDate>' + pubDate + '</pubDate>\n'
     xml += '      <description>' + escXml(p.excerpt || '') + '</description>\n'
     xml += '    </item>\n'
   })
   xml += '  </channel>\n</rss>\n'
-  writeIfChanged(join(ROOT, 'feed.xml'), xml)
+  writeIfChanged(join(ROOT, 'public', 'feed.xml'), xml)
   console.log('  feed: ok')
 }
 
@@ -343,15 +480,18 @@ function buildSitemap() {
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
   xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
   xml += '  <url><loc>' + SITE_URL + '/</loc></url>\n'
-  xml += '  <url><loc>' + SITE_URL + '/#/archive</loc></url>\n'
-  xml += '  <url><loc>' + SITE_URL + '/#/gallery</loc></url>\n'
-  xml += '  <url><loc>' + SITE_URL + '/#/about</loc></url>\n'
+  xml += '  <url><loc>' + SITE_URL + '/posts/</loc></url>\n'
+  xml += '  <url><loc>' + SITE_URL + '/archive/</loc></url>\n'
+  xml += '  <url><loc>' + SITE_URL + '/gallery/</loc></url>\n'
+  xml += '  <url><loc>' + SITE_URL + '/moments/</loc></url>\n'
+  xml += '  <url><loc>' + SITE_URL + '/friends/</loc></url>\n'
+  xml += '  <url><loc>' + SITE_URL + '/about/</loc></url>\n'
   posts.forEach(function (p) {
     if (!p.date) return
-    xml += '  <url><loc>' + SITE_URL + '/#/' + p.id + '</loc></url>\n'
+    xml += '  <url><loc>' + SITE_URL + '/posts/' + p.id + '/</loc></url>\n'
   })
   xml += '</urlset>\n'
-  writeIfChanged(join(ROOT, 'sitemap.xml'), xml)
+  writeIfChanged(join(ROOT, 'public', 'sitemap.xml'), xml)
   console.log('  sitemap: ok')
 }
 
@@ -419,11 +559,14 @@ function versionAssets() {
 // ============================
 // MAIN
 // ============================
+mkdirSync(join(ROOT, 'public'), { recursive: true })
 console.log('Building indexes...')
 buildPosts()
 await buildAlbums()
 buildMoments()
 buildFriends()
+buildArticlePayloads()
+buildAboutPayload()
 buildFeed()
 buildSitemap()
 versionAssets()
