@@ -23,6 +23,8 @@ export default defineNuxtConfig({
     },
   },
   app: {
+    // 路由切换过渡：旧 SPA 是 hash 整页闪切，Vue 下用淡入上移平滑衔接
+    pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       htmlAttrs: { lang: 'zh-CN' },
       title: 'SnowBlock · 雪地笔记',
@@ -72,6 +74,13 @@ export default defineNuxtConfig({
           // FA 异步样式表加载完成后恢复生效（对应旧站 onload="this.media='all'"）
           innerHTML: "document.querySelector('link[href*=\"font-awesome\"][media=\"print\"]')?.addEventListener('load',function(){this.media='all'})",
           tagPosition: 'bodyClose'
+        }
+      ],
+      style: [
+        {
+          // 关键内联样式：在外部 CSS 就位前的窗口期只渲染加载层（不透明、定尺寸），
+          // 杜绝「无样式界面瞬时闪现」——任何首帧都不可能露出未装饰的内容
+          innerHTML: "html{background:#f2efe9}html.dark{background:#0b2b3b}#loader{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#e8eef2;font-family:system-ui,'Segoe UI',sans-serif}html.dark #loader{background:#12222c}.crystal-wrapper{position:relative;width:90px;height:90px;display:flex;align-items:center;justify-content:center}.crystal-svg{width:90px;height:90px;display:block}.loader-text-frost{margin-top:1.1rem;color:#5b8aa6;font-size:1.25rem;text-align:center}.loader-dots{display:flex;gap:6px;margin-top:.6rem}.loader-dots span{width:6px;height:6px;border-radius:50%;background:#8fd8ef}"
         }
       ]
     }
