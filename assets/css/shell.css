@@ -1,4 +1,4 @@
-﻿/* shell.css —— 自旧版 index.html 内联样式迁移（body 背景/loader/雪花层/暗色变体），供 Nuxt 全局引用 */
+/* shell.css —— 自旧版 index.html 内联样式迁移（body 背景/loader/雪花层/暗色变体），供 Nuxt 全局引用 */
     * {
       margin: 0;
       padding: 0;
@@ -25,12 +25,12 @@
       inset: 0;
       z-index: -1;
       pointer-events: none;
-      background: url('assets/vendor/images/bg-portrait.webp') center / cover no-repeat;
+      background: url('/assets/vendor/images/bg-portrait.webp') center / cover no-repeat;
     }
 
     @media (orientation: landscape) {
       body::after {
-        background-image: url('assets/vendor/images/bg.webp');
+        background-image: url('/assets/vendor/images/bg.webp');
       }
     }
 
@@ -280,12 +280,12 @@
     }
 
     html.dark body::after {
-      background: url('assets/vendor/images/bg-portrait.webp') center / cover no-repeat;
+      background: url('/assets/vendor/images/bg-portrait.webp') center / cover no-repeat;
     }
 
     @media (orientation: landscape) {
       html.dark body::after {
-        background-image: url('assets/vendor/images/bg.webp');
+        background-image: url('/assets/vendor/images/bg.webp');
       }
     }
 
