@@ -332,4 +332,5 @@
 
 
 /* Nuxt 版补充：body 为居中 flex 列布局，容器需显式占满以统一各页栏宽 */
+#__nuxt { width: 100%; }
 .container { width: 100%; }
