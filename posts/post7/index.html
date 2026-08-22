@@ -1,0 +1,186 @@
+<!DOCTYPE html><html  lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Bocchi Client:从原版模板一步一步来的改造记录 · SnowBlock</title>
+<script>try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark')}catch(e){}</script>
+<link rel="stylesheet" href="/assets/vendor/fonts/ZCOOL_KuaiLe.css">
+<link rel="stylesheet" href="/assets/vendor/highlight.js@11.9.0/styles/atom-one-dark.min.css">
+<link rel="stylesheet" href="/assets/vendor/font-awesome@6.5.1/css/all.min.css" media="print">
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/toast.css">
+<link rel="stylesheet" href="/assets/css/shell.css">
+<style>html{background:#f2efe9}html.dark{background:#0b2b3b}#loader{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#e8eef2;font-family:system-ui,'Segoe UI',sans-serif}html.dark #loader{background:#12222c}.crystal-wrapper{position:relative;width:90px;height:90px;display:flex;align-items:center;justify-content:center}.crystal-svg{width:90px;height:90px;display:block}.loader-text-frost{margin-top:1.1rem;color:#5b8aa6;font-size:1.25rem;text-align:center}.loader-dots{display:flex;gap:6px;margin-top:.6rem}.loader-dots span{width:6px;height:6px;border-radius:50%;background:#8fd8ef}</style>
+<link rel="preload" href="/assets/vendor/images/bg.webp" as="image" media="(orientation: landscape)" fetchpriority="low">
+<link rel="preload" href="/assets/vendor/images/bg-portrait.webp" as="image" media="(orientation: portrait)" fetchpriority="low">
+<link rel="preload" as="fetch" crossorigin="anonymous" href="/posts/post7/_payload.json?_b=14da0801-cffa-400e-8fc4-982b180cbcb5">
+<link rel="modulepreload" as="script" crossorigin href="/_nuxt/61H2_YhU.js">
+<link rel="modulepreload" as="script" crossorigin href="/_nuxt/CfZUljD2.js">
+<link rel="modulepreload" as="script" crossorigin href="/_nuxt/0XDQXvlh.js">
+<link rel="modulepreload" as="script" crossorigin href="/_nuxt/BolAIQma.js">
+<script type="module" src="/_nuxt/61H2_YhU.js" crossorigin></script>
+<link rel="prefetch" as="script" crossorigin href="/_nuxt/DtwkmfhO.js">
+<link rel="prefetch" as="script" crossorigin href="/_nuxt/D4KPvt-D.js">
+<link rel="prefetch" as="script" crossorigin href="/_nuxt/K_9IdfEs.js">
+<link rel="prefetch" as="script" crossorigin href="/_nuxt/BmgzzYZm.js">
+<link rel="prefetch" as="script" crossorigin href="/_nuxt/b4IVC6LA.js">
+<link rel="prefetch" as="script" crossorigin href="/_nuxt/DdO5zk8o.js">
+<link rel="prefetch" as="script" crossorigin href="/_nuxt/BSTy6W0o.js">
+<link rel="prefetch" as="script" crossorigin href="/_nuxt/BRMno9VO.js">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2efe9">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b2b3b">
+<meta name="color-scheme" content="light dark">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="SnowBlock · 博客 — 雪地笔记">
+<meta property="og:site_name" content="SnowBlock">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SnowBlock · 博客">
+<meta name="twitter:description" content="雪地笔记 — 技术、游戏、日常与碎片思考">
+<meta name="twitter:image" content="https://blog.snowblock.top/assets/brand/og-image.png">
+<link rel="icon" href="/assets/brand/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<meta property="og:title" content="Bocchi Client:从原版模板一步一步来的改造记录">
+<meta property="og:description" content="一直想要一个「孤独摇滚」主题的 Minecraft 客户端。机缘巧合之下,找到了baier233/bocchi-template-1.21.5 ,CC0 许可,随便用随便改,于是开始了这一步步改造（该说不说AI真好用吧，花了15¥就完事了） 声明：题主一点点程序能力都没有，顶多能看懂py的一些简单逻辑，所以本项目为纯vibecoding进行修改 现在这版0.1.0和原版模板之间,一共新增了 3 个">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.snowblock.top/posts/post7/">
+<meta property="og:image" content="/assets/vendor/images/posts/cover-104120832.webp">
+<meta name="description" content="一直想要一个「孤独摇滚」主题的 Minecraft 客户端。机缘巧合之下,找到了baier233/bocchi-template-1.21.5 ,CC0 许可,随便用随便改,于是开始了这一步步改造（该说不说AI真好用吧，花了15¥就完事了） 声明：题主一点点程序能力都没有，顶多能看懂py的一些简单逻辑，所以本项目为纯vibecoding进行修改 现在这版0.1.0和原版模板之间,一共新增了 3 个">
+<link rel="canonical" href="https://blog.snowblock.top/posts/post7/"></head><body><div id="__nuxt"><!--[--><div id="loader" class="" style=""><div class="loader-crystal"><div class="crystal-wrapper"><div class="crystal-glow"></div><svg class="crystal-svg" width="90" height="90" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path class="main-line" stroke="#8fd8ef" stroke-width="2.2" stroke-linecap="round" fill="none" d="M50 5 L50 95
+ M50 5 L75 25 L50 50
+ M50 5 L25 25 L50 50
+ M50 95 L75 75 L50 50
+ M50 95 L25 75 L50 50
+ M50 50 L95 50
+ M75 25 L95 50
+ M25 25 L5 50
+ M75 75 L95 50
+ M25 75 L5 50"></path><path class="inner-line" stroke="#c0f0ff" stroke-width="1.4" stroke-linecap="round" fill="none" d="M50 15 L50 85
+ M50 15 L65 30 L50 50
+ M50 15 L35 30 L50 50
+ M50 85 L65 70 L50 50
+ M50 85 L35 70 L50 50
+ M50 50 L85 50
+ M65 30 L85 50
+ M35 30 L15 50
+ M65 70 L85 50
+ M35 70 L15 50"></path><path class="core-line" stroke="#ffe6b0" stroke-width="1.8" stroke-linecap="round" fill="none" d="M50 38 L50 62
+ M50 38 L57 44 L50 50
+ M50 38 L43 44 L50 50
+ M50 62 L57 56 L50 50
+ M50 62 L43 56 L50 50
+ M50 50 L62 50
+ M57 44 L62 50
+ M43 44 L38 50
+ M57 56 L62 50
+ M43 56 L38 50"></path></svg></div><div class="loader-text-frost"><svg viewBox="0 0 24 24" width="17" height="17" style="vertical-align:-0.15em;" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 2v20M4 7l16 10M20 7L4 17"></path></svg> 正在连接雪境</div><div class="loader-dots"><span></span><span></span><span></span></div></div></div><canvas id="snowCanvas" aria-hidden="true"></canvas><div class="toast" id="toast" aria-live="polite"></div><button id="backToTop" aria-label="回到顶部" class="">^</button><div class="container" id="app"><header class="top-bar"><div class="top-bar-inner"><a href="/" class="site-name"><i class="fa-solid fa-snowflake"></i> SnowBlock</a><nav class="nav-links" id="navLinks"><!--[--><a href="/" class=""><i class="fa-solid fa-house"></i><span>首页</span></a><a href="/posts" class="active"><i class="fa-solid fa-book-open"></i><span>文章</span></a><a href="/archive" class=""><i class="fa-solid fa-clock"></i><span>归档</span></a><a href="/gallery" class=""><i class="fa-solid fa-camera"></i><span>相册</span></a><a href="/moments" class=""><i class="fa-solid fa-message"></i><span>说说</span></a><a href="/friends" class=""><i class="fa-solid fa-handshake"></i><span>友链</span></a><a href="/about" class=""><i class="fa-solid fa-user"></i><span>关于</span></a><!--]--></nav><div class="topbar-actions"><button id="themeToggle" class="topbar-btn" aria-label="切换主题" title="切换主题"><i id="themeIcon" class="fa-moon fa-solid"></i></button></div></div></header><div><div class="article-card"><div class="article-body"><h1 class="article-title" id="articleTitle">Bocchi Client:从原版模板一步一步来的改造记录</h1><div class="article-meta" id="articleMeta">2026-08-04 . 21:00 . 8 分钟 . 2.7k字 <!--[--><span class="tag tech">Mod</span><span class="tag tech">开发记录</span><!--]--></div><div class="article-content" id="articleContent"><p>一直想要一个「孤独摇滚」主题的 Minecraft 客户端。机缘巧合之下,找到了<a href="https://github.com/baier233/bocchi-template-1.21.5">baier233/bocchi-template-1.21.5</a>,CC0 许可,随便用随便改,于是开始了这一步步改造（该说不说AI真好用吧，花了15¥就完事了）</p>
+<p>声明：题主一点点程序能力都没有，顶多能看懂py的一些简单逻辑，所以本项目为纯vibecoding进行修改</p>
+<p>现在这版(0.1.0)和原版模板之间,一共新增了 3 个文件、修改了 21 个文件。这篇文章就记录下这些改动是怎么一步步来的。</p>
+<h2 id="为什么叫design-系统">为什么叫「Design 系统」</h2>
+<p>拿到模板之后,第一感觉是:纹理、SVG、字体、颜色全部硬编码在 Java 里,改一个立绘要翻好几层代码。</p>
+<p>所以第一步,先新增了 <code>Design.java</code> —— 一个设计资源集中管理器:</p>
+<ul>
+<li>所有纹理 / SVG / 字体 / 视频 / 动画 / 配色的路径和默认值,全部收进一个 <code>design.json</code></li>
+<li>材质包可以放一份 <code>assets/minecraft/client/design.json</code> 按 key 覆盖任何一项,不用碰 Java 代码</li>
+<li>配套新增 <code>ResPack.java</code> 资源读取工具:优先走 Minecraft 的 ResourceManager(材质包可覆盖),失败再回退 classpath</li>
+</ul>
+<h2 id="21-处硬编码迁移">21 处硬编码迁移</h2>
+<p>接下来就是把模板里散落的硬编码全部迁到 Design 系统,这是工作量最大的一步:</p>
+<div class="table-responsive"><table>
+<thead>
+<tr>
+<th>模块</th>
+<th>迁移内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>启动屏 SplashUI</td>
+<td>加载动画纹理改为 <code>Design.resource("textures.bocchi_loading")</code></td>
+</tr>
+<tr>
+<td>Logo / 立绘 / 背景</td>
+<td>Logo、后藤立绘、唱片纹理全部走 Design</td>
+</tr>
+<tr>
+<td>按钮图标</td>
+<td><code>Design.resource("svgs." + icon)</code></td>
+</tr>
+<tr>
+<td>字体</td>
+<td>字体路径统一 <code>Design.resource("fonts." + name, fallback)</code></td>
+</tr>
+<tr>
+<td>配色</td>
+<td>唱片配色等改为 <code>Design.color("colors.vinyl_*")</code></td>
+</tr>
+<tr>
+<td>Shader</td>
+<td>后处理 shader 路径走 Design</td>
+</tr>
+</tbody>
+</table></div>
+<p>迁移完顺手修了个隐藏雷:模板里的字体文件名带大写(如 <code>Kranky-Regular.ttf</code>),而 Minecraft 的 <code>ResourceLocation</code> 只允许小写 <code>[a-z0-9/._-]</code>,大写直接启动崩溃 —— 全部重命名为小写。</p>
+<h2 id="资源包热重载">资源包热重载</h2>
+<p>原版模板没有资源包功能，于是我增加了材质包设定，可以定制。</p>
+<p>给 <code>MixinMinecraftClient</code> 加了 <code>reloadResourcePacks</code> 钩子:资源包重载完成后调用 <code>Design.reload()</code> 并清空纹理缓存,装 / 卸材质包即时生效。立绘、背景、Logo、SVG、配色都能热重载;字体和背景视频因为是静态加载,还是得重启游戏(说明文档里写了)。</p>
+<h2 id="功能补全">功能补全</h2>
+<p>模板的按钮是「好看的摆设」,点了没反应。这一版把它们全部接上了:</p>
+<ul>
+<li>主菜单的 单人游戏 / 多人游戏 / 设置 / 语言 / 退出 按钮接入真实行为</li>
+<li>按 ESC 返回原版 <code>TitleScreen</code>,并实现 <code>onClose</code></li>
+<li>移除模板遗留的「Alt Manager」按钮和测试后处理调用</li>
+<li>挖出了作者的废案，增加了入口以及按钮</li>
+</ul>
+<p>顺手做了个性能优化:视频解码输出从每帧分配 AWT <code>BufferedImage</code> 改为 Skija <code>Bitmap</code> 复用 + 行拷贝。</p>
+<h2 id="打包时踩的坑multi-release-manifest">打包时踩的坑:Multi-Release Manifest</h2>
+<p>Skija 是 multi-release jar,如果外层 jar 的 Manifest 没有 <code>Multi-Release: true</code>,Java 21 会加载旧版的 <code>sun.misc.Cleaner</code> 路径,直接原生崩溃。</p>
+<ul>
+<li>Fabric:<code>remapJar</code> 之后用脚本重写 zip 补上 Manifest</li>
+<li>NeoForge:<code>shadowJar</code> 配置 Manifest 属性</li>
+</ul>
+<p>具体分析和踩坑过程见 <a href="https://github.com/Ameiro-sudo/bocchi-mod">bocchi-mod 仓库</a>。</p>
+<h2 id="多版本与发行">多版本与发行</h2>
+<p>模板只有 1.21.5,顺手把整个改造移植到了 1.21.1(Parchment 映射版本不同,其余代码基本通用)。</p>
+<p>现在源码仓库维护三个工程目录(1.21.5 / 1.21.1 / legacy),打包为 4 个变体 × 2 种按钮风格,CI 一键构建:</p>
+<ul>
+<li><strong>4 变体</strong>:1.21.5-Fabric / 1.21.5-NeoForge / 1.21.1-Fabric / 1.21.1-NeoForge</li>
+<li><strong>按钮风格</strong>:原版方形按钮(CozyUI 图标) / 圆角按钮(额外并入 Fogg05 的 CozyUI-Plus 圆角控件素材)</li>
+</ul>
+<h2 id="下载">下载</h2>
+<p>当前正式版 <strong>v1.0.1</strong>(2026-08-22 发布,双 MC 版本 × 双加载器)。下表链接始终指向各 MC 版本的最新构建:</p>
+<div class="table-responsive"><table>
+<thead>
+<tr>
+<th>MC 版本</th>
+<th>加载器</th>
+<th>下载</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.21.5</td>
+<td>Fabric / NeoForge</td>
+<td><a href="https://github.com/Ameiro-sudo/bocchi-mod/releases/tag/1.21.5">GitHub Releases: 1.21.5</a></td>
+</tr>
+<tr>
+<td>1.21.1</td>
+<td>Fabric / NeoForge</td>
+<td><a href="https://github.com/Ameiro-sudo/bocchi-mod/releases/tag/1.21.1">GitHub Releases: 1.21.1</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>安装:jar 丢进 mods 文件夹,Fabric或NeoForge。</p>
+<h2 id="许可与致谢">许可与致谢</h2>
+<ul>
+<li>模板 <a href="https://github.com/baier233/bocchi-template-1.21.5">bocchi-template-1.21.5</a> — baier233,CC0-1.0</li>
+<li>圆角控件素材 <a href="https://github.com/Fogg05/CozyUI-Plus">CozyUI-Plus</a> — Fogg05,GPL-3.0</li>
+<li>字体位图 <a href="https://github.com/Fogg05/MCsans-Plus">MCsans-Plus</a> — Fogg05,MIT</li>
+<li>Emoji 位图 <a href="https://github.com/Fogg05/Emoji-Plus">Emoji-Plus</a> — Fogg05,MIT</li>
+</ul>
+<p>以及,永远怀念 05 老师。R.I.P.</p>
+<p>源码:<a href="https://github.com/Ameiro-sudo/bocchi-mod">github.com/Ameiro-sudo/bocchi-mod</a></p>
+</div><div class="related-wrap"><div class="related-title">相关文章</div><div class="related-grid"><!--[--><a href="/posts/post8" class="related-card"><div class="related-card-title">喜报！Bocchi Client 1.0</div><div class="related-card-date">2026-08-22</div></a><!--]--></div></div><a href="/posts" class="back-link">&lt; 返回文章列表</a></div></div></div></div><!--]--></div><div id="teleports"></div><script>window.__NUXT__={};window.__NUXT__.config={public:{},app:{baseURL:"/",buildId:"14da0801-cffa-400e-8fc4-982b180cbcb5",buildAssetsDir:"/_nuxt/",cdnURL:""}}</script>
+<script>document.querySelector('link[href*="font-awesome"][media="print"]')?.addEventListener('load',function(){this.media='all'})</script>
+<script type="application/json" data-nuxt-data="nuxt-app" data-ssr="true" id="__NUXT_DATA__" data-src="/posts/post7/_payload.json?_b=14da0801-cffa-400e-8fc4-982b180cbcb5">[{"state":1,"once":3,"_errors":4,"serverRendered":6,"path":7,"prerenderedAt":8},["Reactive",2],{},["Set"],["ShallowReactive",5],{},true,"\u002Fposts\u002Fpost7",1787405719232]</script></body></html>

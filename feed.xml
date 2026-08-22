@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SnowBlock</title>
+    <link>https://blog.snowblock.top</link>
+    <description>雪地笔记</description>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 22 Aug 2026 00:00:00 GMT</lastBuildDate>
+    <atom:link href="https://blog.snowblock.top/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Bocchi Client:从原版模板一步一步来的改造记录</title>
+      <link>https://blog.snowblock.top/posts/post7/</link>
+      <guid>https://blog.snowblock.top/posts/post7/</guid>
+      <pubDate>Tue, 04 Aug 2026 00:00:00 GMT</pubDate>
+      <description>一直想要一个「孤独摇滚」主题的 Minecraft 客户端。机缘巧合之下,找到了baier233/bocchi-template-1.21.5 ,CC0 许可,随便用随便改,于是开始了这一步步改造（该说不说AI真好用吧，花了15¥就完事了） 声明：题主一点点程序能力都没有，顶多能看懂py的一些简单逻辑，所以本项目为纯vibecoding进行修改 现在这版0.1.0和原版模板之间,一共新增了 3 个</description>
+    </item>
+    <item>
+      <title>SnowBlock 博客项目总览</title>
+      <link>https://blog.snowblock.top/posts/post1/</link>
+      <guid>https://blog.snowblock.top/posts/post1/</guid>
+      <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
+      <description>一个零后端静态单页博客。基于 Markdown 写作，构建时生成索引，GitHub Pages 托管，全站无数据库无服务器。所有源码在 github.com/Ameiro-sudo/blog 。 --- 架构总览 blog/ ├── index.html SPA 入口（加载器 + 毛玻璃 + 雪花粒子） ├── assets/ │ ├── css/style.css 全局样式系统 │ └── js</description>
+    </item>
+    <item>
+      <title>喜报！Bocchi Client 1.0</title>
+      <link>https://blog.snowblock.top/posts/post8/</link>
+      <guid>https://blog.snowblock.top/posts/post8/</guid>
+      <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+      <description>喜报！Bocchi Client 1.0 正式发布了🎉 上回书说到，这只从模板改出来的客户端才刚出生（出生记录 ）。出生第 18 天，直接办成人礼：版本号跳到 1.0.0，双 MC 版本 × 双加载器，四个 jar 整整齐齐上架 GitHub Releases。 半个月从 0.1 干到 1.0，凭什么 凭审计。本来打完 0.3.0 就想直接拍 1.0 tag，被按住了：再审几轮，干净就发。行，那</description>
+    </item>
+    <item>
+      <title>神奇数字马戏团 观后感</title>
+      <link>https://blog.snowblock.top/posts/post6/</link>
+      <guid>https://blog.snowblock.top/posts/post6/</guid>
+      <pubDate>Thu, 02 Jul 2026 00:00:00 GMT</pubDate>
+      <description>作为一部 2023 年首播的剧集，鄙人居然今天才看到。不过这样也挺好的，至少不用半年看一集不是吗（） 继《夏洛特》之后，又一部让我一天看完的剧。 此片讲述了一群人的意识被扫描并复制，数字意识被上传到数字马戏团中。在不断相处的过程中，他们逐渐坦诚相见，奋起反抗假牙/马戏团。最后，他们发现现实中的自己依旧生活得很好，于是决定接受现在作为数字生命的自己，留在马戏团。 本片整体塑造我觉得是真的很好。友情、</description>
+    </item>
+    <item>
+      <title>我再也不买VPS了</title>
+      <link>https://blog.snowblock.top/posts/post5/</link>
+      <guid>https://blog.snowblock.top/posts/post5/</guid>
+      <pubDate>Tue, 16 Jun 2026 00:00:00 GMT</pubDate>
+      <description>你知道一个刚考完试回家一看阿里云，余额-80的感受吗 登后台一看，220GIB免费流量全没了 再查阿里云流量目录价，香港1r/1GIB 也就是说byd玩意刷了我300GIB流量 要我说世界上还是初生多啊 要这么说的话运营商不给公网IP是对的 要是给了不到俩小时互联网全沦陷了（绷 还是NAT内网物理机好（望 阿里云用用LLM模型就好了 国内云服务器我真这辈子都不买了 谷歌大人送我点额度吧（</description>
+    </item>
+    <item>
+      <title>悲报 本人 VPS 被爆破了😭</title>
+      <link>https://blog.snowblock.top/posts/post4/</link>
+      <guid>https://blog.snowblock.top/posts/post4/</guid>
+      <pubDate>Sun, 07 Jun 2026 00:00:00 GMT</pubDate>
+      <description>悲报，本人 VPS 被爆破了😭 SSH发现服务器 CPU 飙到 90%，一看服务器被挖了 以下是IP名单： | IP | 归属 | |----|------| | 80.94.92.166 | 新加坡（挖矿主谋） | | 47.96.60.0/24 | 阿里云 botnet C 段 | | 8.139.112.0/24 | 阿里云 botnet C 段 | | 8.139.112.13 | 阿里</description>
+    </item>
+    <item>
+      <title>喜报！咱终于有 VPS 了</title>
+      <link>https://blog.snowblock.top/posts/post3/</link>
+      <guid>https://blog.snowblock.top/posts/post3/</guid>
+      <pubDate>Sun, 07 Jun 2026 00:00:00 GMT</pubDate>
+      <description>喜报！咱终于有 VPS 了。 把图片域名反代到香港 VPS，充当 CDN，极大提升了国内网络的载图速度。 然后呢，将处于私网物理机的端口映射至了 VPS，绑定至了 vps.snowblock.top，终于不仅限于私网使用。 6.12更新:阿里云香港VPS被GFW阻断，所以国内服务完全失效，后续可能会释放实例分配新IP</description>
+    </item>
+    <item>
+      <title>博客更新日志</title>
+      <link>https://blog.snowblock.top/posts/post2/</link>
+      <guid>https://blog.snowblock.top/posts/post2/</guid>
+      <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
+      <description>2026-06-06 更新 文章系统 - Markdown 写作，支持置顶 / 分页 / 搜索 / 标签筛选 / 标签云 - 全文搜索匹配标题 + 标签 + 日期 + 正文摘要 - 搜索关键词黄色高亮显示 - 每页 5 篇，底部分页栏支持跳转 归档与热力图 - 按年月分组展示所有文章和相册 - 年度贡献热力图（GitHub 风格），4 级颜色浓度 - 支持切换年份 - 点击方块查看当日文章列表 画</description>
+    </item>
+  </channel>
+</rss>
