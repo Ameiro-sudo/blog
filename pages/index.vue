@@ -82,7 +82,7 @@ onBeforeUnmount(stopPhotoTimer)
     <div class="home-row">
       <div class="home-col-main">
         <!-- 个人卡片 -->
-        <div id="profileCard" v-if="profile.name">
+        <div id="profileCard" v-if="profile.name" style="display:block;">
           <div class="profile-wrap">
             <span v-if="avatarSrc" class="profile-avatar-ring">
               <img class="profile-avatar" :src="avatarSrc" alt="avatar">

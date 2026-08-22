@@ -6,10 +6,13 @@ const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=u
 http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0])
   if (p.endsWith('/')) p += 'index.html'
-  const file = path.join(ROOT, p)
-  if (!file.startsWith(ROOT) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
-    res.writeHead(404); return res.end('nf')
+  const candidates = [p, path.join(p, 'index.html'), p + '.html']
+  let file = null
+  for (const c of candidates) {
+    const f = path.join(ROOT, c)
+    if (f.startsWith(ROOT) && fs.existsSync(f) && fs.statSync(f).isFile()) { file = f; break }
   }
+  if (!file) { res.writeHead(404); return res.end('nf') }
   res.writeHead(200, { 'content-type': MIME[path.extname(file)] || 'application/octet-stream' })
   fs.createReadStream(file).pipe(res)
 }).listen(4173, () => console.log('dist served at :4173'))
