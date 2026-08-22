@@ -5,7 +5,7 @@
     <link>https://blog.snowblock.top</link>
     <description>雪地笔记</description>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 04 Aug 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 22 Aug 2026 00:00:00 GMT</lastBuildDate>
     <atom:link href="https://blog.snowblock.top/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
       <title>Bocchi Client:从原版模板一步一步来的改造记录</title>
@@ -20,6 +20,13 @@
       <guid>https://blog.snowblock.top/#/post1</guid>
       <pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
       <description>一个零后端静态单页博客。基于 Markdown 写作，构建时生成索引，GitHub Pages 托管，全站无数据库无服务器。所有源码在 github.com/Ameiro-sudo/blog 。 --- 架构总览 blog/ ├── index.html SPA 入口（加载器 + 毛玻璃 + 雪花粒子） ├── assets/ │ ├── css/style.css 全局样式系统 │ └── js</description>
+    </item>
+    <item>
+      <title>喜报！Bocchi Client 1.0</title>
+      <link>https://blog.snowblock.top/#/post8</link>
+      <guid>https://blog.snowblock.top/#/post8</guid>
+      <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+      <description>喜报！Bocchi Client 1.0 正式发布了🎉 上回书说到，这只从模板改出来的客户端才刚出生（出生记录 ）。出生第 18 天，直接办成人礼：版本号跳到 1.0.0，双 MC 版本 × 双加载器，四个 jar 整整齐齐上架 GitHub Releases。 半个月从 0.1 干到 1.0，凭什么 凭审计。本来打完 0.3.0 就想直接拍 1.0 tag，被按住了：再审几轮，干净就发。行，那</description>
     </item>
     <item>
       <title>神奇数字马戏团 观后感</title>

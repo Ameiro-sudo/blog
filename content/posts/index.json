@@ -31,6 +31,22 @@
     "excerpt": "一个零后端静态单页博客。基于 Markdown 写作，构建时生成索引，GitHub Pages 托管，全站无数据库无服务器。所有源码在 github.com/Ameiro-sudo/blog 。 --- 架构总览 blog/ ├── index.html SPA 入口（加载器 + 毛玻璃 + 雪花粒子） ├── assets/ │ ├── css/style.css 全局样式系统 │ └── js"
   },
   {
+    "id": "post8",
+    "title": "喜报！Bocchi Client 1.0",
+    "date": "2026-08-22",
+    "time": "03:17",
+    "readTime": "6 分钟",
+    "tags": [
+      "Mod",
+      "开发记录"
+    ],
+    "pinned": false,
+    "file": "post8.md",
+    "description": "",
+    "image": "",
+    "excerpt": "喜报！Bocchi Client 1.0 正式发布了🎉 上回书说到，这只从模板改出来的客户端才刚出生（出生记录 ）。出生第 18 天，直接办成人礼：版本号跳到 1.0.0，双 MC 版本 × 双加载器，四个 jar 整整齐齐上架 GitHub Releases。 半个月从 0.1 干到 1.0，凭什么 凭审计。本来打完 0.3.0 就想直接拍 1.0 tag，被按住了：再审几轮，干净就发。行，那"
+  },
+  {
     "id": "post6",
     "title": "神奇数字马戏团 观后感",
     "date": "2026-07-02",

@@ -7,7 +7,7 @@ app.config = {
   "CDN_BASE": "assets/vendor/images/",
   "SITE_URL": "https://blog.snowblock.top",
   "profile": {
-    "avatar": "assets/vendor/images/profile.webp",
+    "avatar": "assets/vendor/images/avatar.jpg",
     "name": "Ameiro-sudo",
     "bio": "世界は大きい、君は行かなければならない",
     "links": [
@@ -1357,10 +1357,6 @@ app.init = function () {
   })
 
   app.profile.render()
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-  }
 
   // 立即激活路由视图(不依赖数据加载),数据到达后再 handleHash 刷新
   app.router.handleHash()

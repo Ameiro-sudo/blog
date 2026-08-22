@@ -55,10 +55,6 @@ app.init = function () {
 
   app.profile.render()
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-  }
-
   // 立即激活路由视图(不依赖数据加载),数据到达后再 handleHash 刷新
   app.router.handleHash()
 
