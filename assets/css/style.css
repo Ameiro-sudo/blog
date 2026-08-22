@@ -346,8 +346,10 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   max-width: 90vw; max-height: 85vh;
   border-radius: 0.8rem;   box-shadow: 0 20px 60px var(--shadow-card-color, rgba(0,0,0,0.5));
   cursor: zoom-out; object-fit: contain;
-  transition: opacity 0.3s, transform 0.2s;
+  transition: opacity 0.3s, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: scale(0.96);
 }
+#lightbox.show img { transform: scale(1); }
 #lightbox-close {
   position: absolute; top: 1.5rem; right: 1.5rem; z-index: 10;
   width: 2.5rem; height: 2.5rem; border-radius: 50%;
@@ -692,10 +694,10 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .album-layer {
   border: 4px solid var(--glass-border);
   border-radius: 3px; overflow: hidden;
-  transition: all 0.4s;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease, filter 0.5s ease, box-shadow 0.5s ease;
   box-shadow: var(--shadow-item);
 }
-.album-layer img { width: 100%; display: block; transition: transform 0.5s ease; }
+.album-layer img { width: 100%; display: block; transition: transform 0.7s ease; }
 .album-card:hover .album-layer-2 img { transform: scale(1.05); }
 .album-layer-0 {
   position: relative;
@@ -717,12 +719,35 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   z-index: 2;
   box-shadow: 0 8px 24px var(--shadow-card-color, rgba(0,0,0,0.3));
 }
-.album-card:hover .album-layer-0 { transform: rotate(6deg) translate(12px, 6px); }
-.album-card:hover .album-layer-1 { transform: rotate(-5deg) translate(-8px, -3px); }
-.album-card:hover .album-layer-2 { transform: translateY(-3px) scale(1.02); }
+/* 悬停扇形展开（参考 XinghuisamaBlogs 相册卡片） */
+.album-card:hover .album-layer-0 { transform: rotate(12deg) translate(26px, 8px); opacity: 0.55; }
+.album-card:hover .album-layer-1 { transform: rotate(-6deg) translate(-22px, -4px); opacity: 0.85; filter: grayscale(0.2); }
+.album-card:hover .album-layer-2 { transform: translateY(-10px) scale(1.05); box-shadow: 0 16px 40px var(--shadow-card-color, rgba(0,0,0,0.4)); }
 
-.album-info { text-align: center; padding: 0 0.5rem; }
-.album-title { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem;   text-shadow: 0 1px 6px var(--shadow-item-color, rgba(0,0,0,0.4)); }
+/* 封面浮层：底部渐变 + 计数/提示滑入 */
+.album-layer-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start;
+  padding: 1rem;
+  background: linear-gradient(to top, rgba(10, 30, 45, 0.78), rgba(10, 30, 45, 0.15) 48%, transparent);
+  opacity: 0; transition: opacity 0.5s ease;
+}
+.album-card:hover .album-layer-overlay { opacity: 1; }
+.album-layer-overlay span {
+  color: #fff; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  transform: translateY(10px); transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.album-card:hover .album-layer-overlay span { transform: translateY(0); }
+.album-layer-count { font-size: 0.95rem; font-weight: 700; }
+.album-layer-hint {
+  font-size: 0.66rem; font-family: var(--font-mono); color: var(--color-accent);
+  margin-top: 0.15rem; letter-spacing: 0.08em;
+  transition-delay: 0.06s !important;
+}
+
+.album-info { text-align: center; padding: 0 0.5rem; transition: color 0.35s; }
+.album-title { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem;   text-shadow: 0 1px 6px var(--shadow-item-color, rgba(0,0,0,0.4)); transition: color 0.35s; }
+.album-card:hover .album-title { color: var(--color-accent); }
 .album-date {
   font-size: 0.65rem; color: var(--text-secondary); font-family: var(--font-mono);
   background: var(--body-overlay); display: inline-block;

@@ -4,6 +4,7 @@ tags: Mod, 开发记录
 time: 03:17
 readTime: 6 分钟
 pinned: false
+image: assets/vendor/images/posts/cover-px-4.webp
 ---
 
 喜报！Bocchi Client 1.0 正式发布了🎉

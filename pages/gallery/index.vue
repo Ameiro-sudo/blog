@@ -32,6 +32,10 @@ function layerImg (a, i) {
           <div class="album-stack">
             <div v-for="i in 3" :key="i" class="album-layer" :class="`album-layer-${i - 1}`">
               <img :src="layerImg(a, i - 1)" alt="" loading="lazy">
+              <div v-if="i === 3" class="album-layer-overlay">
+                <span class="album-layer-count">{{ a.photos.length }} 张照片</span>
+                <span class="album-layer-hint">点击进入 →</span>
+              </div>
             </div>
           </div>
           <div class="album-info">

@@ -51,7 +51,7 @@ function heroStyle (p) {
 // —— 最新说说（前 3 条）——
 const latestMoments = computed(() => (moments.value || []).slice(0, 3))
 
-// —— 照片墙轮播（对应旧 app.home.renderPhotos）——
+// —— 照片墙轮播（对应旧 app.home.renderPhotos）：交叉淡入淡出切换，SSR 直出首图 ——
 const photos = computed(() => {
   const out = []
   for (const a of (albums.value || [])) {
@@ -61,19 +61,38 @@ const photos = computed(() => {
   return out
 })
 const photoIdx = ref(0)
-const photoUrl = ref('')
+const shownSrc = ref(photos.value.length ? abs(photos.value[0].url) : '')
+const imgEl = ref(null)
 let photoTimer = null
-function showPhoto (i) {
+let swapTimer = null
+
+function applyPhoto (i) {
   if (!photos.value.length) return
-  photoIdx.value = (i + photos.value.length) % photos.value.length
-  photoUrl.value = abs(photos.value[photoIdx.value].url)
+  const idx = ((i % photos.value.length) + photos.value.length) % photos.value.length
+  const next = abs(photos.value[idx].url)
+  if (next === shownSrc.value) return
+  photoIdx.value = idx
+  const img = imgEl.value
+  if (!img) { shownSrc.value = next; return }
+  img.style.opacity = '0'
+  clearTimeout(swapTimer)
+  swapTimer = setTimeout(() => {
+    const done = () => { img.removeEventListener('load', done); img.style.opacity = '1' }
+    img.addEventListener('load', done)
+    img.src = next
+    shownSrc.value = next
+    setTimeout(done, 900) // 缓存/异常兜底，防止卡在半透明
+  }, 250)
 }
 function startPhotoTimer () {
   stopPhotoTimer()
-  photoTimer = setInterval(() => showPhoto(photoIdx.value + 1), 4000)
+  photoTimer = setInterval(() => applyPhoto(photoIdx.value + 1), 4000)
 }
-function stopPhotoTimer () { if (photoTimer) clearInterval(photoTimer); photoTimer = null }
-onMounted(() => { showPhoto(0); startPhotoTimer() })
+function stopPhotoTimer () {
+  if (photoTimer) clearInterval(photoTimer); photoTimer = null
+  clearTimeout(swapTimer)
+}
+onMounted(() => { startPhotoTimer() })
 onBeforeUnmount(stopPhotoTimer)
 </script>
 
@@ -162,7 +181,7 @@ onBeforeUnmount(stopPhotoTimer)
           <div class="home-panel-title"><i class="fa-solid fa-camera"></i> 照片墙</div>
           <div id="homePhotosBody">
             <div v-if="photos.length" class="home-photo" @click="navigateTo('/gallery')" @mouseenter="stopPhotoTimer" @mouseleave="startPhotoTimer">
-              <img :src="photoUrl" alt="">
+              <img ref="imgEl" :src="shownSrc" alt="">
             </div>
             <div v-else class="home-empty">暂无照片</div>
           </div>

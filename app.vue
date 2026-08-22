@@ -170,7 +170,9 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
         </nav>
         <div class="topbar-actions">
           <button id="themeToggle" class="topbar-btn" aria-label="切换主题" title="切换主题" @click="toggleTheme">
-            <i id="themeIcon" class="fa-solid" :class="dark ? 'fa-sun' : 'fa-moon'"></i>
+            <Transition name="ti" mode="out-in">
+              <i id="themeIcon" :key="dark ? 'sun' : 'moon'" class="fa-solid" :class="dark ? 'fa-sun' : 'fa-moon'"></i>
+            </Transition>
           </button>
         </div>
       </div>

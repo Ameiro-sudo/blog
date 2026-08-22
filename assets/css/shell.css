@@ -334,3 +334,30 @@
 /* Nuxt 版补充：body 为居中 flex 列布局，容器需显式占满以统一各页栏宽 */
 #__nuxt { width: 100%; }
 .container { width: 100%; }
+
+/* ===== 路由切换过渡（pageTransition: out-in） ===== */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.page-leave-to {
+  opacity: 0;
+}
+
+/* ===== 主题图标切换微动效（太阳/月亮旋转换位） ===== */
+.ti-enter-active,
+.ti-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.ti-enter-from {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.6);
+}
+.ti-leave-to {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.6);
+}

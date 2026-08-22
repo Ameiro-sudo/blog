@@ -43,7 +43,7 @@
     "pinned": false,
     "file": "post8.md",
     "description": "",
-    "image": "",
+    "image": "assets/vendor/images/posts/cover-px-4.webp",
     "excerpt": "喜报！Bocchi Client 1.0 正式发布了🎉 上回书说到，这只从模板改出来的客户端才刚出生（出生记录 ）。出生第 18 天，直接办成人礼：版本号跳到 1.0.0，双 MC 版本 × 双加载器，四个 jar 整整齐齐上架 GitHub Releases。 半个月从 0.1 干到 1.0，凭什么 凭审计。本来打完 0.3.0 就想直接拍 1.0 tag，被按住了：再审几轮，干净就发。行，那"
   },
   {
