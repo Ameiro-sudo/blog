@@ -28,19 +28,18 @@ jobs:
       - name: 安装依赖
         run: npm ci
 
-      - name: 构建 (Linux 环境, 规避 Windows 路径问题)
-        run: node scripts/build.js
+      - name: 构建（内容索引 + Nuxt SSG + 静态资源并入）
+        run: npm run build
 
-      - name: 部署到 gh-pages 分支
+      - name: 部署 gh-pages（SSG 产物）
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_dir: .output/public
           force_orphan: true
-          exclude_assets: '.github/**,node_modules/**,.lighthouseci/**,scripts/**,package.json,package-lock.json,deploy.sh,deploy-full.sh,.gitignore,.nvmrc,.vscode/**'
 
-      - name: Lighthouse CI (本地静态产物, 仅收集报告)
+      - name: Lighthouse CI（对 SSG 产物收集报告）
         run: npx lhci collect --config=./scripts/lighthouserc.cjs
 
       - name: 上传 Lighthouse 报告

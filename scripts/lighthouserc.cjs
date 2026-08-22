@@ -1,7 +1,7 @@
 module.exports = {
   ci: {
     collect: {
-      staticDistDir: '.',
+      staticDistDir: '.output/public',
       numberOfRuns: 1,
       settings: {
         chromeFlags: '--no-sandbox --disable-dev-shm-usage',
