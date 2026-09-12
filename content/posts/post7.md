@@ -12,7 +12,7 @@ image: assets/vendor/images/posts/cover-104120832.webp
 
 声明：题主一点点程序能力都没有，顶多能看懂py的一些简单逻辑，所以本项目为纯vibecoding进行修改
 
-现在这版(0.1.0)和原版模板之间,一共新增了 3 个文件、修改了 21 个文件。这篇文章就记录下这些改动是怎么一步步来的。
+第一版(0.1.0)相对原版模板,一共新增了 3 个文件、修改了 21 个文件。这篇文章就记录下这些改动是怎么一步步来的。
 
 ## 为什么叫「Design 系统」
 
@@ -72,7 +72,7 @@ Skija 是 multi-release jar,如果外层 jar 的 Manifest 没有 `Multi-Release:
 现在源码仓库维护三个工程目录(1.21.5 / 1.21.1 / legacy),打包为 4 个变体 × 2 种按钮风格,CI 一键构建:
 
 - **4 变体**:1.21.5-Fabric / 1.21.5-NeoForge / 1.21.1-Fabric / 1.21.1-NeoForge
-- **按钮风格**:原版方形按钮(CozyUI 图标) / 圆角按钮(额外并入 Fogg05 的 CozyUI-Plus 圆角控件素材)
+- **按钮风格**:主菜单按钮图标为自绘 SVG,经 `design.json` 可换 (早期并入的 CozyUI-Plus 圆角控件素材已随 v1.0 移除,不再依赖外部图标素材)
 
 ## 下载
 
@@ -80,18 +80,15 @@ Skija 是 multi-release jar,如果外层 jar 的 Manifest 没有 `Multi-Release:
 
 | MC 版本 | 加载器 | 下载 |
 | --- | --- | --- |
-| 1.21.5 | Fabric / NeoForge | [GitHub Releases: 1.21.5](https://github.com/Ameiro-sudo/bocchi-mod/releases/tag/1.21.5) |
-| 1.21.1 | Fabric / NeoForge | [GitHub Releases: 1.21.1](https://github.com/Ameiro-sudo/bocchi-mod/releases/tag/1.21.1) |
+| 1.21.5 | Fabric / NeoForge | [GitHub Releases: v1.0.1-1.21.5](https://github.com/Ameiro-sudo/bocchi-mod/releases/tag/v1.0.1-1.21.5) |
+| 1.21.1 | Fabric / NeoForge | [GitHub Releases: v1.0.1-1.21.1](https://github.com/Ameiro-sudo/bocchi-mod/releases/tag/v1.0.1-1.21.1) |
 
 安装:jar 丢进 mods 文件夹,Fabric或NeoForge。
 
 ## 许可与致谢
 
 - 模板 [bocchi-template-1.21.5](https://github.com/baier233/bocchi-template-1.21.5) — baier233,CC0-1.0
-- 圆角控件素材 [CozyUI-Plus](https://github.com/Fogg05/CozyUI-Plus) — Fogg05,GPL-3.0
-- 字体位图 [MCsans-Plus](https://github.com/Fogg05/MCsans-Plus) — Fogg05,MIT
-- Emoji 位图 [Emoji-Plus](https://github.com/Fogg05/Emoji-Plus) — Fogg05,MIT
-
-以及,永远怀念 05 老师。R.I.P.
+- 界面图标 / 配色 / 纹理均为自绘资源,经 `design.json` 定义,不依赖第三方素材
+  (早期并入的 CozyUI-Plus、MCsans-Plus、Emoji-Plus 素材已随 v1.0 移除)
 
 源码:[github.com/Ameiro-sudo/bocchi-mod](https://github.com/Ameiro-sudo/bocchi-mod)

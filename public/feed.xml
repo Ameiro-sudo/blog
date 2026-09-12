@@ -12,7 +12,7 @@
       <link>https://blog.snowblock.top/posts/post7/</link>
       <guid>https://blog.snowblock.top/posts/post7/</guid>
       <pubDate>Tue, 04 Aug 2026 00:00:00 GMT</pubDate>
-      <description>一直想要一个「孤独摇滚」主题的 Minecraft 客户端。机缘巧合之下,找到了baier233/bocchi-template-1.21.5 ,CC0 许可,随便用随便改,于是开始了这一步步改造（该说不说AI真好用吧，花了15¥就完事了） 声明：题主一点点程序能力都没有，顶多能看懂py的一些简单逻辑，所以本项目为纯vibecoding进行修改 现在这版0.1.0和原版模板之间,一共新增了 3 个</description>
+      <description>一直想要一个「孤独摇滚」主题的 Minecraft 客户端。机缘巧合之下,找到了baier233/bocchi-template-1.21.5 ,CC0 许可,随便用随便改,于是开始了这一步步改造（该说不说AI真好用吧，花了15¥就完事了） 声明：题主一点点程序能力都没有，顶多能看懂py的一些简单逻辑，所以本项目为纯vibecoding进行修改 第一版0.1.0相对原版模板,一共新增了 3 个文件</description>
     </item>
     <item>
       <title>SnowBlock 博客项目总览</title>
