@@ -2,7 +2,6 @@ import { readFileSync, readdirSync, writeFileSync, mkdirSync } from 'fs'
 import { readFile } from 'fs/promises'
 import { join, dirname, basename } from 'path'
 import { fileURLToPath } from 'url'
-import { createHash } from 'crypto'
 import exifr from 'exifr'
 import * as yaml from 'js-yaml'
 import MarkdownIt from 'markdown-it'
@@ -498,62 +497,17 @@ function buildSitemap() {
 // ============================
 // HELPERS
 // ============================
-let changedAny = false
-
 function writeIfChanged(file, content) {
   try {
     const old = readFileSync(file, 'utf-8')
     if (old === content) return false
   } catch (e) {}
   writeFileSync(file, content, 'utf-8')
-  changedAny = true
   return true
 }
 
 function escXml(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-}
-
-// ============================
-// BUILD: VERSION HASHING
-// ============================
-function versionAssets() {
-  const CSS_SRC = ['style.css', 'tokens.css', 'toast.css']
-  const cssDir = join(ROOT, 'assets', 'css')
-  const cssContent = CSS_SRC.map(function (f) {
-    return readFileSync(join(cssDir, f), 'utf-8')
-  }).join('\n')
-  const cssHash = createHash('md5').update(cssContent).digest('hex').slice(0, 8)
-
-  const JS_SRC = ['snowblock.js', 'profile.js', 'posts.js', 'article.js', 'archive.js', 'gallery.js', 'modules.js', 'router.js', 'init.js']
-  const jsDir = join(ROOT, 'assets', 'js')
-  const jsContent = JS_SRC.map(function (f) {
-    return readFileSync(join(jsDir, f), 'utf-8')
-  }).join('\n')
-
-  const appConfig = {
-    CDN_BASE: siteConfig.CDN_BASE,
-    SITE_URL: siteConfig.SITE_URL,
-    profile: siteConfig.profile,
-    ogDefaults: siteConfig.ogDefaults,
-  }
-  const appJs = jsContent.replace(
-    'app.config = {} // 构建时由 build.js 注入 JSON 内容',
-    'app.config = ' + JSON.stringify(appConfig, null, 2)
-  )
-  writeIfChanged(join(jsDir, 'app.js'), appJs)
-  const jsHash = createHash('md5').update(appJs).digest('hex').slice(0, 8)
-
-  let html = readFileSync(join(ROOT, 'index.html'), 'utf-8')
-  html = html.replace(/(href="assets\/css\/tokens\.css)(?:\?v=[^"]*)?(")/, '$1?v=' + cssHash + '"')
-  html = html.replace(/(href="assets\/css\/style\.css)(?:\?v=[^"]*)?(")/, '$1?v=' + cssHash + '"')
-  html = html.replace(/(href="assets\/css\/toast\.css)(?:\?v=[^"]*)?(")/, '$1?v=' + cssHash + '"')
-  html = html.replace(/(src="assets\/js\/app\.js)(?:\?v=[^"]*)?(")/, '$1?v=' + jsHash + '"')
-  if (changedAny) {
-    html = html.replace(/(<meta name="build-ts" content=")\d*(")/, '$1' + Date.now() + '"')
-  }
-  writeIfChanged(join(ROOT, 'index.html'), html)
-  console.log('  version: ok (css=' + cssHash + ', js=' + jsHash + (changedAny ? ', build-ts bumped' : ', no changes') + ')')
 }
 
 // ============================
@@ -569,5 +523,4 @@ buildArticlePayloads()
 buildAboutPayload()
 buildFeed()
 buildSitemap()
-versionAssets()
 console.log('Done.')
