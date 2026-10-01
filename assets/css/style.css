@@ -862,7 +862,10 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
 }
-.album-detail-title { font-size: 1.6rem; font-weight: 600; color: var(--text-primary); font-family: var(--font-serif); margin-bottom: 0.3rem; }
+/* margin: 0 是必要的：这个元素刚从 <div> 提成 <h1>（本页此前整页零个标题元素，
+   读屏按标题导航时这里是空的）。UA 样式给 h1 的 margin 是 0.67em 上下，
+   不抹掉就会在照片墙标题上方凭空多出约 17px 空白。视觉保持零变化。 */
+.album-detail-title { font-size: 1.6rem; font-weight: 600; color: var(--text-primary); font-family: var(--font-serif); margin: 0 0 0.3rem; }
 .album-detail-meta { font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-mono); margin-bottom: 0.4rem; }
 .album-detail-desc { font-size: 0.9rem; color: var(--text-secondary); text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.5)); }
 .photo-grid {
