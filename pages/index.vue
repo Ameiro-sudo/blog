@@ -106,7 +106,9 @@ onBeforeUnmount(stopPhotoTimer)
             <span v-if="avatarSrc" class="profile-avatar-ring">
               <img class="profile-avatar" :src="avatarSrc" alt="avatar">
             </span>
-            <NuxtLink to="https://snowblock.top" class="profile-name">{{ profile.name }}</NuxtLink>
+            <h1 class="profile-heading">
+              <NuxtLink to="https://snowblock.top" class="profile-name">{{ profile.name }}</NuxtLink>
+            </h1>
             <div class="profile-divider"></div>
             <div v-if="profile.bio" class="profile-bio">{{ profile.bio }}</div>
             <div class="profile-stats">
@@ -133,7 +135,7 @@ onBeforeUnmount(stopPhotoTimer)
               <NuxtLink class="home-hero" :to="`/posts/${hero.id}`" :style="heroStyle(hero)">
                 <div class="home-hero-mask"></div>
                 <div class="home-hero-info">
-                  <h3 class="home-hero-title">{{ hero.title }}</h3>
+                  <h2 class="home-hero-title">{{ hero.title }}</h2>
                   <div class="home-hero-meta">{{ hero.date }}<template v-if="hero.readTime"> · {{ hero.readTime }}</template></div>
                 </div>
               </NuxtLink>

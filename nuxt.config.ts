@@ -75,8 +75,11 @@ export default defineNuxtConfig({
           innerHTML: "try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark')}catch(e){}"
         },
         {
-          // FA 异步样式表加载完成后恢复生效（对应旧站 onload="this.media='all'"）
-          innerHTML: "document.querySelector('link[href*=\"font-awesome\"][media=\"print\"]')?.addEventListener('load',function(){this.media='all'})",
+          // FA 异步样式表加载完成后恢复生效（对应旧站 onload="this.media='all'"）。
+          // 必须同时兜住「样式表先于本脚本加载完」这一路：那种情况下 load 事件早已
+          // 触发过，只挂监听会永远等不到，media 永久停在 print，全站图标消失
+          // （实测线上约 1/4 的访问命中）。
+          innerHTML: "(function(){var l=document.querySelector('link[href*=\"font-awesome\"][media=\"print\"]');if(!l)return;var go=function(){l.media='all'};if(l.sheet){go();return}l.addEventListener('load',go,{once:true});l.addEventListener('error',go,{once:true})})()",
           tagPosition: 'bodyClose'
         }
       ],

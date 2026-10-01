@@ -110,6 +110,9 @@ const yearGroups = computed(() => {
 
 <template>
   <div>
+    <!-- 本页所有标题元素都是 div/span，整页一个 h1 都没有。补一个只给读屏用的，
+         不改动视觉；其余页面（文章/相册/说说/友链）都是可见标题，若想对齐可再改成可见。 -->
+    <h1 class="sr-only">归档</h1>
     <div class="archive-card">
       <div class="archive-body">
         <!-- 热力图 -->

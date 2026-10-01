@@ -19,6 +19,12 @@ function isActiveCls (n) {
 const dark = ref(false)
 const showTop = ref(false)
 
+// —— 移动端菜单（CSS 侧 .topbar-menu / .nav-links.open 早已就绪，这里补上元素与状态）——
+const menuOpen = ref(false)
+function toggleMenu () { menuOpen.value = !menuOpen.value }
+function closeMenu () { menuOpen.value = false }
+watch(() => route.path, closeMenu)
+
 // —— 加载层（对应旧版内联 #loader：最短展示 1s 即撤，与背景下载解耦）——
 const loaderHidden = ref(false)
 const loaderGone = ref(false)
@@ -160,7 +166,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
     <header class="top-bar">
       <div class="top-bar-inner">
         <NuxtLink to="/" class="site-name"><i class="fa-solid fa-snowflake"></i> SnowBlock</NuxtLink>
-        <nav class="nav-links" id="navLinks">
+        <nav class="nav-links" id="navLinks" :class="{ open: menuOpen }" @click="closeMenu">
           <NuxtLink
             v-for="n in navs"
             :key="n.key"
@@ -169,6 +175,14 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
           ><i class="fa-solid" :class="n.icon"></i><span>{{ n.label }}</span></NuxtLink>
         </nav>
         <div class="topbar-actions">
+          <button
+            id="navToggle"
+            class="topbar-menu topbar-btn"
+            aria-label="切换导航菜单"
+            aria-controls="navLinks"
+            :aria-expanded="menuOpen ? 'true' : 'false'"
+            @click="toggleMenu"
+          ><i class="fa-solid fa-bars" :class="{ open: menuOpen }"></i></button>
           <button id="themeToggle" class="topbar-btn" aria-label="切换主题" title="切换主题" @click="toggleTheme">
             <Transition name="ti" mode="out-in">
               <i id="themeIcon" :key="dark ? 'sun' : 'moon'" class="fa-solid" :class="dark ? 'fa-sun' : 'fa-moon'"></i>

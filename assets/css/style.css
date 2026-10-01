@@ -29,11 +29,15 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   padding: 0.7rem 1.8rem;
 }
 .site-name {
+  position: relative;
   font-size: 1.35rem; font-weight: 700; font-family: var(--font-title);
   background: linear-gradient(135deg, var(--color-accent-warm), var(--color-accent));
   -webkit-background-clip: text; background-clip: text;
   color: transparent; text-decoration: none; letter-spacing: 1px;
 }
+/* 把点击热区外扩到 ≥24px（WCAG 2.5.8）。用伪元素而不是 padding，
+   避免 background-clip:text 的渐变随 padding 偏移。 */
+.site-name::after { content: ''; position: absolute; inset: -0.4rem -0.6rem; }
 .nav-links { display: flex; gap: 1rem; align-items: center; }
 .nav-links a {
   position: relative; color: var(--text-secondary); text-decoration: none;
@@ -56,7 +60,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1.2);
 }
 .nav-links a:hover { background: var(--glass-hover-bg); color: var(--text-primary); }
-.nav-links a.active { color: var(--color-accent); }
+.nav-links a.active { color: var(--heading-accent); }
 .nav-links a.active > span::after { transform: translateX(-50%) scale(1); }
 
 .topbar-actions { display: flex; gap: 0.4rem; align-items: center; }
@@ -72,6 +76,10 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 }
 .topbar-btn:hover { background: var(--glass-hover-bg); color: var(--color-accent); transform: translateY(-1px); }
 .topbar-menu { display: none; }
+/* 展开时把三条杠转 90° 作为状态反馈（不引入新图标，
+   以免超出 FA 子集化后仅 12 个字形的覆盖范围） */
+.topbar-menu i { transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.topbar-menu i.open { transform: rotate(90deg); }
 
 /* ===== 简介卡片 ===== */
 #profileCard { display: none; }
@@ -115,6 +123,16 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 .profile-avatar {
   width: 100%; height: 100%; border-radius: 50%;
   object-fit: cover; display: block;
+}
+/* 首页此前一个 <h1> 都没有，标题层级直接从 h3 起步。简介卡的站名就是这个页面
+   的主标题，补成真正的 h1；外层 h1 抹掉浏览器默认样式，视觉零变化。 */
+.profile-heading { margin: 0; font-size: inherit; font-weight: inherit; }
+/* 仅供读屏使用的标题。自己定义而不是借用 Font Awesome 里的 .sr-only ——
+   FA 样式表是异步加载的，它一掉这个类就会失效，标题会直接显形。 */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
 }
 .profile-name {
   font-size: 1.3rem; font-weight: 700; color: var(--text-primary);
@@ -264,7 +282,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 .tag {
   display: inline-block; padding: 2px 10px; border-radius: 40px;
   font-size: 0.65rem; font-weight: 600; cursor: pointer;
-  background: var(--color-accent-glow); color: var(--color-accent); letter-spacing: 0.3px;
+  background: var(--color-accent-glow); color: var(--heading-accent); letter-spacing: 0.3px;
   transition: background 0.25s; text-shadow: 0 1px 3px var(--shadow-item-color, rgba(0,0,0,0.3));
 }
 .tag:hover { background: var(--glass-hover-bg); }
@@ -303,7 +321,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 }
 .page-btn:hover { background: var(--glass-hover-bg); color: var(--text-primary); }
 .page-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
-.page-btn.active { background: var(--color-accent-glow); color: var(--color-accent); border-color: var(--color-accent); }
+.page-btn.active { background: var(--color-accent-glow); color: var(--heading-accent); border-color: var(--color-accent); }
 .page-btn:disabled { opacity: 0.35; cursor: default; }
 .page-info { color: var(--text-muted); font-family: var(--font-mono); font-size: 0.75rem; padding: 0 0.3rem; }
 
@@ -405,14 +423,16 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 /* ===== 置顶标记 ===== */
 .pinned-badge {
   display: inline-block; font-size: 0.6rem;
-  color: var(--color-accent); margin-right: 0.4rem;
+  color: var(--heading-accent); margin-right: 0.4rem;
 }
 
 /* ===== 代码语言标签 ===== */
 .code-lang {
   position: absolute; top: 0.3rem; right: 2.8rem;
   font-size: 0.6rem; font-family: var(--font-mono);
-  color: var(--text-muted); text-transform: uppercase;
+  /* 语言标签落在深色代码块上，用固定浅色而不是跟随主题的 --text-muted
+     （浅色主题下那是 #4d5b6b，压在 #0d1117 上只有 2.73:1） */
+  color: #8b949e; text-transform: uppercase;
   letter-spacing: 0.05em; z-index: 2;
 }
 
@@ -447,26 +467,44 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 .article-content h3 { font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin: 1.2rem 0 0.6rem; }
 .article-content code {
   background: var(--glass-bg); padding: 0.2rem 0.4rem;
-  border-radius: 8px; font-family: var(--font-mono); font-size: 0.85em; color: var(--color-accent);
+  border-radius: 8px; font-family: var(--font-mono); font-size: 0.85em;
 }
+/* 行内 code 用深蓝保证浅底可读（--color-accent 在浅底上只有 2.99:1）。
+   这里按父元素逐个点名，刻意不写 .article-content code ——
+   那条规则会把 <pre> 里的 hljs token 颜色一起盖掉
+   （.article-content code 的特指度高于 .hljs-string）。 */
+.article-content p code,
+.article-content li code,
+.article-content td code,
+.article-content th code,
+.article-content h1 code,
+.article-content h2 code,
+.article-content h3 code,
+.article-content h4 code,
+.article-content blockquote code { color: var(--heading-accent); }
 .article-content pre {
-  margin: 1rem 0; background: var(--body-overlay);
+  margin: 1rem 0; background: var(--code-surface);
   padding: 1rem 1.2rem; border-radius: 14px; overflow-x: auto;
-  border: 1px solid var(--glass-border); font-family: var(--font-mono); font-size: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: var(--font-mono); font-size: 0.85rem;
 }
 /* pre 内的 code 不再被 0.85em 二次缩水(否则 <12px 可读线) */
 .article-content pre code { font-size: 1em; padding: 0; background: none; }
 .code-block-wrapper { position: relative; margin: 1rem 0; }
 .copy-btn {
   position: absolute; top: 0.5rem; right: 0.7rem;
-  background: var(--glass-bg); backdrop-filter: blur(8px);
+  /* 代码块现在恒为深色，复制按钮也改成深底浅字：原先跟着主题的浅色玻璃
+     压在深色块上只剩 3.88:1 */
+  background: rgba(255, 255, 255, 0.10); backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--glass-border); color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.16); color: #c9d1d9;
   font-family: var(--font-mono); font-size: 0.75rem;
   padding: 0.2rem 0.7rem; border-radius: 28px;
   cursor: pointer; transition: all 0.25s; z-index: 3;
 }
-.copy-btn:hover { background: var(--color-accent); color: var(--color-bg-deep); border-color: var(--color-accent); }
+/* hover 走深色块内的提亮，而不是主题强调色 —— 强调色那版是代码块改深底之前的残留，
+   同特指度写在后面会整条盖掉这一条（已删）。 */
+.copy-btn:hover { background: rgba(255, 255, 255, 0.22); color: #fff; border-color: rgba(255, 255, 255, 0.32); }
 .copy-btn.copied { background: var(--color-success); color: white; border-color: var(--color-success); }
 .table-responsive { overflow-x: auto; margin: 1rem 0; border-radius: 12px; }
 .article-content table {
@@ -476,7 +514,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 .article-content th, .article-content td { border: 1px solid var(--glass-border); padding: 8px 12px; text-align: left; }
 .article-content th { background: var(--color-accent-glow); color: var(--text-primary); }
 .article-content img { max-width: 100%; border-radius: 16px; margin: 1rem 0; box-shadow: 0 8px 20px var(--shadow-card-color, rgba(0,0,0,0.25)); height: auto; }
-.article-content a { color: var(--color-accent); text-decoration: none; border-bottom: 1px dotted var(--color-accent); }
+.article-content a { color: var(--heading-accent); text-decoration: none; border-bottom: 1px dotted var(--heading-accent); }
 .article-content a:hover { color: var(--text-primary); border-bottom-color: var(--text-primary); }
 .back-link {
   display: block; margin-top: 2rem; width: 100%;
@@ -490,6 +528,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 }
 .back-link:hover { background: var(--glass-hover-bg); color: var(--color-accent); }
 .hljs { background: transparent; }
+/* atom-one-dark 自带的注释色 #5c6370 压在 #0d1117 上只有 3.13:1，
+   单独提亮到 6.17:1，其余 token 保持原样 */
+.article-content pre .hljs-comment { color: #8b949e; }
 pre code { background: none !important; padding: 0; border-radius: 0; }
 
 /* ===== 相关文章 ===== */
@@ -527,7 +568,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 }
 .archive-month { margin-bottom: 1rem; }
 .archive-month-header {
-  font-size: 0.9rem; font-weight: 600; color: var(--color-accent);
+  font-size: 0.9rem; font-weight: 600; color: var(--heading-accent);
   font-family: var(--font-mono); margin-bottom: 0.4rem; padding-left: 1rem;
 }
 .archive-list { list-style: none; padding-left: 2rem; border-left: 2px solid var(--color-accent-glow); }
@@ -552,11 +593,20 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   font-family: var(--font-mono); flex-shrink: 0; width: 3rem;
 }
 .archive-item-title { font-size: 0.9rem; color: var(--text-primary); text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.2)); }
-.archive-album .archive-item-date { color: var(--color-accent); }
-.archive-album .archive-item-title { color: var(--color-accent); }
+.archive-album .archive-item-date { color: var(--heading-accent); }
+.archive-album .archive-item-title { color: var(--heading-accent); }
 
 /* ===== 热力图 ===== */
-.heatmap-wrap { margin-bottom: 2rem; }
+.heatmap-wrap {
+  margin-bottom: 2rem;
+  /* 背景照片恢复可见后，热力图的月份/星期标签只有 0.55~0.6rem，
+     压在透过卡片玻璃的照片上实测最低 1.27:1。给图表区一块自己的底，
+     让这排极小字有稳定可读的背景。 */
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 0.9rem;
+}
 .heatmap-header {
   display: flex; gap: 0.4rem; justify-content: center;
   margin-bottom: 0.6rem; flex-wrap: wrap;
@@ -573,7 +623,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .heatmap-year-btn.active {
   background: var(--color-accent-glow);
   border-color: var(--color-accent);
-  color: var(--color-accent);
+  color: var(--heading-accent);
 }
 .heatmap-body { display: flex; justify-content: center; overflow-x: auto; }
 .heatmap-body-inner { display: flex; gap: 4px; }
@@ -697,7 +747,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease, filter 0.5s ease, box-shadow 0.5s ease;
   box-shadow: var(--shadow-item);
 }
-.album-layer img { width: 100%; display: block; transition: transform 0.7s ease; }
+.album-layer img { width: 100%; height: auto; display: block; object-fit: cover; transition: transform 0.7s ease; }
 .album-card:hover .album-layer-2 img { transform: scale(1.05); }
 .album-layer-0 {
   position: relative;
@@ -798,6 +848,12 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 
 @media (max-width: 600px) {
   .album-grid { grid-template-columns: 1fr; gap: 2rem; }
+}
+
+/* 导航折叠：断点从 600px 提到 880px。原断点下 601~870px 会让 nav 换行，
+   顶栏高度从 59px 突增到 89~101px（820px 实测 101px）；880px 起实测稳定 59px。
+   折叠态需要 .topbar-menu 按钮来展开（app.vue #navToggle）。 */
+@media (max-width: 880px) {
   .topbar-menu { display: flex; }
   .top-bar-inner { flex-wrap: nowrap; }
   .nav-links {
@@ -805,7 +861,9 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
     display: flex;
     flex-direction: column; align-items: stretch; gap: 0.2rem;
     max-height: 0; overflow: hidden;
-    background: var(--glass-header-bg);
+    /* 抽屉是盖在内容上的浮层，单层玻璃（浅色下 0.65 不透明）会让下面的卡片透上来，
+       叠两层到 ~0.88 才够实 */
+    background: linear-gradient(var(--glass-bg), var(--glass-bg)), var(--glass-bg);
     -webkit-backdrop-filter: blur(12px) saturate(1.4); backdrop-filter: blur(12px) saturate(1.4);
     border-bottom: 1px solid var(--glass-border);
     padding: 0 1rem;
@@ -923,7 +981,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
 }
 .friend-card:hover { background: var(--glass-hover-bg); transform: translateY(-3px); box-shadow: var(--shadow-card); }
-.friend-name { font-size: 1.05rem; font-weight: 700; color: var(--color-accent); font-family: var(--font-serif); margin-bottom: 0.3rem; }
+.friend-name { font-size: 1.05rem; font-weight: 700; color: var(--heading-accent); font-family: var(--font-serif); margin-bottom: 0.3rem; }
 .friend-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4; }
 .friend-url { font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 0.4rem; word-break: break-all; }
 
@@ -1008,12 +1066,14 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .home-post-card:hover { transform: translateY(-2px); }
 .home-post-card-mask {
   position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.5), rgba(0,0,0,0.08) 55%, transparent);
+  /* 原蒙版底部只到 0.5，标题所在的下半段实际只有 ~0.3，白字压在亮封面图上
+     实测 1.67:1、日期 1.97:1。加深到 0.78 并抬高中段，让文字落在受控底色上。 */
+  background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.15));
   opacity: 0.9;
 }
 .home-post-card-info { position: relative; padding: 0.7rem; display: flex; flex-direction: column; justify-content: flex-end; min-height: 76px; }
 .home-post-card-title { font-size: 0.78rem; font-weight: 700; color: #fff; }
-.home-post-card-date { font-size: 0.64rem; color: rgba(255,255,255,0.6); margin-top: 0.15rem; font-family: var(--font-mono); }
+.home-post-card-date { font-size: 0.64rem; color: rgba(255,255,255,0.82); margin-top: 0.15rem; font-family: var(--font-mono); }
 
 /* 照片墙单图轮播 */
 .home-photo-panel { padding: 1.2rem 1.4rem; }
@@ -1086,3 +1146,21 @@ body::after,
   transition-timing-function: ease !important;
   transition-delay: 0s !important;
 }
+
+/* ===== 键盘焦点可见性 =====
+   搜索框、归档年份按钮、回到顶部这几处原本只改边框色或直接 outline:none，
+   键盘用户看不出焦点落在哪。放在文件末尾：:focus-visible 的特指度
+   (0,1,1) 高于这些规则的 (0,1,0)，不需要逐处改原有声明。 */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* 回到顶部未显示时是 opacity:0，但仍留在 Tab 序列里 —— 用 visibility 移出焦点序列 */
+#backToTop { visibility: hidden; transition: opacity 0.25s, transform 0.25s, background 0.25s, visibility 0.25s; }
+#backToTop.show { visibility: visible; }
