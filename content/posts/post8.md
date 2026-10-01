@@ -9,7 +9,7 @@ image: assets/vendor/images/posts/cover-px-4.webp
 
 喜报！Bocchi Client 1.0 正式发布了🎉
 
-上回书说到，这只从模板改出来的客户端才刚出生（[出生记录](https://blog.snowblock.top/#/post7)）。出生第 18 天，直接办成人礼：版本号跳到 1.0.0，双 MC 版本 × 双加载器，四个 jar 整整齐齐上架 GitHub Releases。
+上回书说到，这只从模板改出来的客户端才刚出生（[出生记录](https://blog.snowblock.top/posts/post7/)）。出生第 18 天，直接办成人礼：版本号跳到 1.0.0，双 MC 版本 × 双加载器，四个 jar 整整齐齐上架 GitHub Releases。
 
 ## 半个月从 0.1 干到 1.0，凭什么
 
