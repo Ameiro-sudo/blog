@@ -110,10 +110,11 @@ const yearGroups = computed(() => {
 
 <template>
   <div>
-    <!-- 本页所有标题元素都是 div/span，整页一个 h1 都没有。补一个只给读屏用的，
-         不改动视觉；其余页面（文章/相册/说说/友链）都是可见标题，若想对齐可再改成可见。 -->
-    <h1 class="sr-only">归档</h1>
     <div class="archive-card">
+      <!-- 本页此前整页一个标题元素都没有。补上可见的 h1：放在卡片内、说说页的
+           .module-header 同一个位置，既与其余页面视觉一致，也让文字落在卡片
+           的受控底色上而不是直接压背景照。该类是通用样式，未新增 CSS。 -->
+      <div class="module-header"><h1>归档</h1></div>
       <div class="archive-body">
         <!-- 热力图 -->
         <div class="heatmap-wrap">

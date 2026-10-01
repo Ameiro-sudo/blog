@@ -180,6 +180,9 @@
   /* 在线/成功文字专用色：--color-success 作前景色在自身色底上只有 1.80:1 */
   --status-blue-text: #124a80;
   /* 基岩/蓝文字专用色：--status-blue 作前景色在自身色底上只有 1.69:1 */
+  --status-danger-text: #a3241c;
+  /* 危险/红文字专用色：--status-offline(#f25e5e) 作前景色在自身色底上只有
+     2.6:1。这支保留红相但压到 5:1 以上，与上面两支同一套做法。 */
   --status-blue: #5ea3f2;
   /* 蓝色状态 */
 
@@ -196,6 +199,11 @@ html.dark {
     --heading-accent: #8fd8ef;
     --color-accent-warm: #e8c98a;
     --status-warning-text: #ffe4a8;
+    --status-success-text: #7ee2a8;
+    --status-blue-text: #8cc8f5;
+    --status-danger-text: #ff9d94;
+    /* 上面四支「为前景优化」的色，深色主题一律翻到亮支。此前成功/蓝两支
+       的深色值硬编码在状态站 style.css 里，token 与实现不同源，已归位。 */
     --color-accent-glow: rgba(143, 216, 239, 0.15);
     --text-primary: #ffffff;
     --text-secondary: rgba(230, 245, 255, 0.92);

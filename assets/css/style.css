@@ -127,13 +127,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 /* 首页此前一个 <h1> 都没有，标题层级直接从 h3 起步。简介卡的站名就是这个页面
    的主标题，补成真正的 h1；外层 h1 抹掉浏览器默认样式，视觉零变化。 */
 .profile-heading { margin: 0; font-size: inherit; font-weight: inherit; }
-/* 仅供读屏使用的标题。自己定义而不是借用 Font Awesome 里的 .sr-only ——
-   FA 样式表是异步加载的，它一掉这个类就会失效，标题会直接显形。 */
-.sr-only {
-  position: absolute; width: 1px; height: 1px;
-  padding: 0; margin: -1px; overflow: hidden;
-  clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
-}
+/* 原先这里有一份 .sr-only 工具类（给归档页的屏读专用 h1 用）。归档页的标题
+   已改成可见的 .module-header h1，全站再无使用者，连同注释一并移除。 */
 .profile-name {
   font-size: 1.3rem; font-weight: 700; color: var(--text-primary);
   font-family: var(--font-serif);
@@ -505,7 +500,10 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 /* hover 走深色块内的提亮，而不是主题强调色 —— 强调色那版是代码块改深底之前的残留，
    同特指度写在后面会整条盖掉这一条（已删）。 */
 .copy-btn:hover { background: rgba(255, 255, 255, 0.22); color: #fff; border-color: rgba(255, 255, 255, 0.32); }
-.copy-btn.copied { background: var(--color-success); color: white; border-color: var(--color-success); }
+/* copied 态原先是白字压 --color-success(#4caf50)，实测 2.78:1，而按钮字号只有
+   0.75rem（需 4.5:1）。改用为前景优化的绿色实心：浅色 8.0:1、深色 9.37:1。 */
+.copy-btn.copied { background: var(--status-success-text); color: #fff; border-color: var(--status-success-text); }
+html.dark .copy-btn.copied { color: var(--color-bg-deep); }
 .table-responsive { overflow-x: auto; margin: 1rem 0; border-radius: 12px; }
 .article-content table {
   width: 100%; border-collapse: collapse;
