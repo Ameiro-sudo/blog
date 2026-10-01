@@ -1,4 +1,5 @@
 <script setup>
+import siteConfig from '~/site.config.json'
 import postsAll from '~/content/posts/index.json'
 
 const route = useRoute()
@@ -19,11 +20,14 @@ const post = ref(mod.default)
 
 const allPosts = ref(postsAll)
 
-const SITE = 'https://blog.snowblock.top'
+const SITE = siteConfig.SITE_URL
+const OG_IMAGE = siteConfig.ogDefaults.image
+// og:image 必须是绝对 URL —— 爬虫不会拿当前页地址去补相对路径，
+// 留成 /assets/... 会让微信/微博/FB 的分享卡片取不到图
 function abs (u) {
   if (!u) return ''
   if (/^(https?:)?\/\//.test(u)) return u
-  return u.startsWith('/') ? u : '/' + u
+  return SITE + (u.startsWith('/') ? u : '/' + u)
 }
 function esc (s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -60,7 +64,7 @@ useHead({
     { property: 'og:description', content: post.value.description || post.value.excerpt || '' },
     { property: 'og:type', content: 'article' },
     { property: 'og:url', content: `${SITE}/posts/${id}/` },
-    { property: 'og:image', content: abs(post.value.image) || `${SITE}/assets/brand/og-image.png` },
+    { property: 'og:image', content: abs(post.value.image) || OG_IMAGE },
     { name: 'description', content: post.value.description || post.value.excerpt || '' }
   ],
   link: [{ rel: 'canonical', href: `${SITE}/posts/${id}/` }]

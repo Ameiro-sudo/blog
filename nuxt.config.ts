@@ -6,8 +6,12 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 // 文章路由显式展开：列表分页是按钮而非链接，仅靠爬虫会漏掉第 2 页起的文章
+const ROOT = dirname(fileURLToPath(import.meta.url))
+const siteConfig = JSON.parse(readFileSync(resolve(ROOT, 'site.config.json'), 'utf-8'))
+const SITE = siteConfig.SITE_URL
+const OG = siteConfig.ogDefaults
 const postRoutes = JSON.parse(
-  readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), 'content/posts/index.json'), 'utf-8')
+  readFileSync(resolve(ROOT, 'content/posts/index.json'), 'utf-8')
 ).map((p: { id: string }) => '/posts/' + p.id)
 
 export default defineNuxtConfig({
@@ -35,20 +39,20 @@ export default defineNuxtConfig({
         { name: 'theme-color', media: '(prefers-color-scheme: light)', content: '#f2efe9' },
         { name: 'theme-color', media: '(prefers-color-scheme: dark)', content: '#0b2b3b' },
         { name: 'color-scheme', content: 'light dark' },
-        { property: 'og:title', content: 'SnowBlock · 博客' },
-        { property: 'og:description', content: '雪地笔记 — 技术、游戏、日常与碎片思考' },
+        { property: 'og:title', content: OG.title },
+        { property: 'og:description', content: OG.description },
         { property: 'og:type', content: 'website' },
         { property: 'og:locale', content: 'zh_CN' },
-        { property: 'og:url', content: 'https://blog.snowblock.top' },
-        { property: 'og:image', content: 'https://blog.snowblock.top/assets/brand/og-image.png' },
+        { property: 'og:url', content: SITE },
+        { property: 'og:image', content: OG.image },
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
         { property: 'og:image:alt', content: 'SnowBlock · 博客 — 雪地笔记' },
         { property: 'og:site_name', content: 'SnowBlock' },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'SnowBlock · 博客' },
-        { name: 'twitter:description', content: '雪地笔记 — 技术、游戏、日常与碎片思考' },
-        { name: 'twitter:image', content: 'https://blog.snowblock.top/assets/brand/og-image.png' }
+        { name: 'twitter:title', content: OG.title },
+        { name: 'twitter:description', content: OG.description },
+        { name: 'twitter:image', content: OG.image }
       ],
       link: [
         { rel: 'icon', href: '/assets/brand/favicon.ico', sizes: '48x48' },

@@ -1,6 +1,5 @@
 {
   "SITE_URL": "https://blog.snowblock.top",
-  "CDN_BASE": "assets/vendor/images/",
   "albumsSource": "",
   "profile": {
     "avatar": "assets/vendor/images/avatar.jpg",

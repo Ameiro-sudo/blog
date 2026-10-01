@@ -1,8 +1,11 @@
 <script setup>
+import siteConfig from '~/site.config.json'
 import albumsAll from '~/content/albums/index.json'
 
 const route = useRoute()
 const albumId = String(route.params.album)
+
+const SITE = siteConfig.SITE_URL
 
 const album = albumsAll.find(a => a.id === albumId) || null
 
@@ -14,9 +17,9 @@ useHead({
   title: `${album.title} · SnowBlock`,
   meta: [
     { property: 'og:title', content: `${album.title} · SnowBlock` },
-    { property: 'og:url', content: `https://blog.snowblock.top/gallery/${albumId}/` }
+    { property: 'og:url', content: `${SITE}/gallery/${albumId}/` }
   ],
-  link: [{ rel: 'canonical', href: `https://blog.snowblock.top/gallery/${albumId}/` }]
+  link: [{ rel: 'canonical', href: `${SITE}/gallery/${albumId}/` }]
 })
 
 function abs (u) {

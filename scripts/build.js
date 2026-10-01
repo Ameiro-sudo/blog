@@ -495,6 +495,16 @@ function buildSitemap() {
 }
 
 // ============================
+// BUILD: ROBOTS.TXT
+// ============================
+// sitemap 地址跟着 SITE_URL 走：换域名时不必再手工改这一份
+function buildRobots() {
+  const txt = 'User-agent: *\nAllow: /\n\nSitemap: ' + SITE_URL + '/sitemap.xml\n'
+  writeIfChanged(join(ROOT, 'public', 'robots.txt'), txt)
+  console.log('  robots: ok')
+}
+
+// ============================
 // HELPERS
 // ============================
 function writeIfChanged(file, content) {
@@ -523,4 +533,5 @@ buildArticlePayloads()
 buildAboutPayload()
 buildFeed()
 buildSitemap()
+buildRobots()
 console.log('Done.')
