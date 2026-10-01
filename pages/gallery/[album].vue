@@ -62,7 +62,7 @@ function onKey (e) { if (e.key === 'Escape') closeLb() }
         <NuxtLink to="/gallery" class="album-back">&larr; 返回</NuxtLink>
       </div>
       <div class="album-detail-header">
-        <div class="album-detail-title">{{ album.title }}</div>
+        <h1 class="album-detail-title">{{ album.title }}</h1>
         <div class="album-detail-meta">{{ album.date }} . {{ album.photos.length }} 个瞬间</div>
         <div v-if="album.description" class="album-detail-desc">{{ album.description }}</div>
       </div>
