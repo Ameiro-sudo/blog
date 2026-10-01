@@ -111,11 +111,16 @@ const yearGroups = computed(() => {
 <template>
   <div>
     <div class="archive-card">
-      <!-- 本页此前整页一个标题元素都没有。补上可见的 h1：放在卡片内、说说页的
-           .module-header 同一个位置，既与其余页面视觉一致，也让文字落在卡片
-           的受控底色上而不是直接压背景照。该类是通用样式，未新增 CSS。 -->
-      <div class="module-header"><h1>归档</h1></div>
       <div class="archive-body">
+        <!-- 本页此前整页一个标题元素都没有。补上可见的 h1，复用说说页同一个
+             .module-header（通用样式，未新增 CSS）。
+             放在 .archive-body 里面而不是 .archive-card 的直接子级：卡片本身
+             没有 padding（padding 只加在 .archive-body 上），而 --radius-card
+             是 3rem 的大圆角——标题若贴着卡片左上角，头一个字会压在圆角缺口上，
+             那里透出的是背景照片。审查脚本实测该处 rgb(203,108,124)，
+             深蓝标题压上去只有 1.66:1。放进 .archive-body 即获得 2.2rem 内缩，
+             与 .module-wrap > .module-header 的结构一致。 -->
+        <div class="module-header"><h1>归档</h1></div>
         <!-- 热力图 -->
         <div class="heatmap-wrap">
           <div class="heatmap-header">
