@@ -4,8 +4,11 @@ node_modules/
 
 .vscode/
 
-# Nuxt ????
+# 视觉自检截图（scripts/visual-check.cjs 输出）
+.visual-check/
+
+# Nuxt 构建产物
 .nuxt/
 .output/
 .data/
- dist/
+dist/
