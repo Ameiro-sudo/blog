@@ -15,7 +15,13 @@
   box-shadow: var(--shadow-toast);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s, transform 0.3s;
+  /* 退场走 accelerate：淡出本来就在往「不打扰」的方向走，尾巴再拖一段等于把提示
+   赖在屏幕上。
+   这里刻意不动 visibility：toast 是 aria-live 区域，文本是「先写进去、再加
+   .show」的顺序；一旦在未显示时 visibility: hidden，内容就落在隐藏子树里，
+   部分读屏组合不会再播报这条提示。 */
+  transition: opacity var(--dur-fast) var(--ease-in),
+              transform var(--dur-fast) var(--ease-in);
   z-index: 999;
 }
 
@@ -23,4 +29,6 @@
   opacity: 1;
   pointer-events: auto;
   transform: translateX(-50%) translateY(0);
+  transition: opacity var(--dur-normal) var(--ease-out),
+              transform var(--dur-normal) var(--ease-out);
 }

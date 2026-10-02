@@ -99,16 +99,28 @@ onMounted(() => {
   startSnow()
 })
 
+/* 主题切换的整场过渡由 <html>.theme-shift 统一扫一遍，扫完立刻撤掉——
+   不撤的话它会一直用 !important 压着全站每张卡片自己的 transition，
+   鼠标划过就只有 350ms 一个速度（见 style.css 里那条规则的注释）。 */
+let themeShiftTimer = 0
 function toggleTheme () {
   dark.value = !dark.value
-  document.documentElement.classList.toggle('dark', dark.value)
+  const el = document.documentElement
+  el.classList.toggle('dark', dark.value)
+  el.classList.add('theme-shift')
+  if (themeShiftTimer) clearTimeout(themeShiftTimer)
+  // 400ms > 那条规则的 350ms，多留半档让最后一批属性收完再撤
+  themeShiftTimer = window.setTimeout(() => el.classList.remove('theme-shift'), 400)
   try { localStorage.setItem('theme', dark.value ? 'dark' : 'light') } catch (e) {}
 }
 
 function onScroll () { showTop.value = window.scrollY > 300 }
 function toTop () { window.scrollTo({ top: 0, behavior: 'smooth' }) }
 
-onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onScroll)
+  if (themeShiftTimer) clearTimeout(themeShiftTimer)
+})
 </script>
 
 <template>

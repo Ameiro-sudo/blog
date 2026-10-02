@@ -44,7 +44,10 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   font-size: 0.85rem;
   padding: 0.4rem 0.7rem; border-radius: 0.6rem; cursor: pointer;
   display: flex; align-items: center; gap: 0.4rem;
-  transition: color 0.25s, background 0.25s;
+  /* 简写 background 会把 background-image/position 一起挂上过渡，而它们多数
+     不可插值，整条声明会被忽略——hover 底色不渐变、直接跳。
+     悬停也从 250ms 收到 --dur-fast：鼠标在导航项上滑过时，底色该跟着走。 */
+  transition: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
 }
 .nav-links a > span {
   font-family: var(--font-sans);
@@ -57,9 +60,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   width: 5px; height: 5px; border-radius: 50%;
   background: var(--color-accent);
   transform: translateX(-50%) scale(0);
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+  transition: transform var(--dur-normal) var(--ease-soft);
 }
-.nav-links a:hover { background: var(--glass-hover-bg); color: var(--text-primary); }
+.nav-links a:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
 .nav-links a.active { color: var(--link-text); }
 .nav-links a.active > span::after { transform: translateX(-50%) scale(1); }
 
@@ -72,13 +75,13 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   border-radius: 0.6rem;
   color: var(--text-secondary);
   cursor: pointer; font-size: 0.85rem;
-  transition: background 0.25s, color 0.25s, transform 0.25s;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
-.topbar-btn:hover { background: var(--glass-hover-bg); color: var(--color-accent); transform: translateY(-1px); }
+.topbar-btn:hover { background-color: var(--glass-hover-bg); color: var(--color-accent); transform: translateY(-1px); }
 .topbar-menu { display: none; }
 /* 展开时把三条杠转 90° 作为状态反馈（不引入新图标，
    以免超出 FA 子集化后仅 12 个字形的覆盖范围） */
-.topbar-menu i { transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.topbar-menu i { transition: transform var(--dur-normal) var(--ease-soft); }
 .topbar-menu i.open { transform: rotate(90deg); }
 
 /* ===== 简介卡片 ===== */
@@ -117,7 +120,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
   padding: 3px; margin: 0 auto 0.6rem;
   display: block; box-shadow: var(--shadow-item);
-  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1.2);
+  transition: transform var(--dur-slow) var(--ease-soft);
 }
 .profile-avatar-ring:hover { transform: scale(1.06) rotate(4deg); }
 .profile-avatar {
@@ -175,9 +178,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   box-shadow: var(--shadow-item);
   color: var(--text-secondary); text-decoration: none;
   font-size: 0.75rem;
-  transition: background 0.25s, color 0.25s, transform 0.3s;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-normal) var(--ease-soft);
 }
-.profile-links a:hover { background: var(--glass-hover-bg); color: var(--color-accent); transform: translateY(-3px) scale(1.1); }
+.profile-links a:hover { background-color: var(--glass-hover-bg); color: var(--color-accent); transform: translateY(-3px) scale(1.1); }
 
 /* ===== 页面头部 ===== */
 .page-header {
@@ -209,10 +212,10 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-item); color: var(--text-primary);
   font-family: var(--font-sans); font-size: 0.9rem; outline: none;
-  transition: border 0.25s, background 0.25s;
+  transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
 }
 .search-input::placeholder { color: var(--text-muted); }
-.search-input:focus { border-color: var(--color-accent); background: var(--glass-hover-bg); }
+.search-input:focus { border-color: var(--color-accent); background-color: var(--glass-hover-bg); }
 .rss-link {
   display: inline-flex; align-items: center;
   margin-left: 8px; padding: 5px 12px;
@@ -222,10 +225,10 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   color: var(--text-muted);
   font-family: var(--font-mono); font-size: 0.75rem;
   text-decoration: none;
-  transition: background 0.25s, color 0.25s;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
   flex-shrink: 0;
 }
-.rss-link:hover { background: var(--glass-hover-bg); color: var(--color-accent); }
+.rss-link:hover { background-color: var(--glass-hover-bg); color: var(--color-accent); }
 
 /* ===== 标签筛选 ===== */
 .tag-filters {
@@ -238,10 +241,16 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   color: var(--text-secondary);
-  transition: all 0.25s; user-select: none;
+  /* 原来是 transition: all 0.25s。all 要让浏览器盯着每一个可动画属性，
+   包括 width/height/top/left 这些会触发布局的：点一下标签，行高跟着量一次。
+   这里实际会变的就三样，按名字列出来。 */
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
+  user-select: none;
   text-shadow: 0 1px 3px var(--shadow-item-color, rgba(0,0,0,0.2));
 }
-.tag-filter:hover { background: var(--glass-hover-bg); color: var(--text-primary); }
+.tag-filter:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
 .tag-filter.active {
   background: var(--color-accent-glow);
   border-color: var(--color-accent);
@@ -254,21 +263,28 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 /* ===== 文章列表 ===== */
 .post-list { display: flex; flex-direction: column; gap: 1.3rem; }
 .post-card {
-  background: linear-gradient(var(--body-overlay), var(--body-overlay)), var(--glass-bg);
+  /* 渐变和底色拆成两个属性分开写：原来挤在一个 background 简写里，
+     hover 换底色时整条 background 过渡被忽略（两套绘制结构不同）。
+     拆开后两态结构一致，只换 background-color，就插得进去了。
+     渐变配方本身没动，--body-overlay 那层压暗的效果原样保留。 */
+  background-color: var(--glass-bg);
+  background-image: linear-gradient(var(--body-overlay), var(--body-overlay));
   backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(12px) saturate(1.2);
   border-radius: var(--radius-card);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-item);
   animation: var(--motion-enter);
-  transition: transform 0.25s, box-shadow 0.25s;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
   cursor: pointer; outline: none;
 }
 .post-card:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; transform: scale(0.99); }
 .post-card:hover {
   transform: translateX(4px) scale(1.01);
   box-shadow: var(--shadow-card);
-  background: linear-gradient(var(--body-overlay), var(--body-overlay)), var(--glass-hover-bg);
+  background-color: var(--glass-hover-bg);
 }
 .post-body { padding: 1.4rem 1.8rem; }
 .post-meta {
@@ -279,11 +295,15 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 .tag {
   display: inline-block; padding: 2px 10px; border-radius: 40px;
   font-size: 0.65rem; font-weight: 600; cursor: pointer;
-  background: linear-gradient(var(--color-accent-glow), var(--color-accent-glow)), var(--glass-bg);
+  /* 与 .post-card 同一处拆分：渐变留在 background-image 常驻，hover 只换底色，
+     两态结构一致才插得进去。不拆的话底色被上面这层渐变盖着，
+     background-color 过渡也看不出变化。 */
+  background-color: var(--glass-bg);
+  background-image: linear-gradient(var(--color-accent-glow), var(--color-accent-glow));
     color: var(--link-text); letter-spacing: 0.3px;
-  transition: background 0.25s; text-shadow: 0 1px 3px var(--shadow-item-color, rgba(0,0,0,0.3));
+  transition: background-color var(--dur-fast) var(--ease-out); text-shadow: 0 1px 3px var(--shadow-item-color, rgba(0,0,0,0.3));
 }
-.tag:hover { background: var(--glass-hover-bg); }
+.tag:hover { background-color: var(--glass-hover-bg); }
 .tag.active-tag {
   box-shadow: 0 0 0 1px var(--color-accent);
   background: var(--color-accent-glow) !important;
@@ -315,9 +335,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   border-radius: var(--radius-item);
   color: var(--text-secondary);
   font-family: var(--font-mono); font-size: 0.8rem;
-  cursor: pointer; transition: background 0.25s, color 0.25s; outline: none;
+  cursor: pointer; transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); outline: none;
 }
-.page-btn:hover { background: var(--glass-hover-bg); color: var(--text-primary); }
+.page-btn:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
 .page-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 /* 当前页码：原先只有单层 --color-accent-glow(0.15) 当底，深蓝标题压上去
    实测 3.01:1。补一层 --glass-bg，与状态站 .chart-btn 同一套配方。 */
@@ -345,11 +365,23 @@ html.dark .page-btn.active {
   color: var(--text-secondary); cursor: pointer; font-size: 1.2rem;
   display: flex; align-items: center; justify-content: center;
   opacity: 0; transform: translateY(20px);
-  transition: opacity 0.25s, transform 0.25s, background 0.25s;
+  /* 收起走 accelerate，展开走 decelerate；visibility 延迟一档才摘，
+     等淡出真的走完——不写的话它在还没淡完就已经从无障碍树里消失了。 */
+  transition: opacity var(--dur-fast) var(--ease-in),
+              transform var(--dur-fast) var(--ease-in),
+              background-color var(--dur-fast) var(--ease-in),
+              visibility 0s linear var(--dur-fast);
   pointer-events: none;
+  visibility: hidden;
 }
-#backToTop.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
-#backToTop:hover { background: var(--glass-hover-bg); color: var(--text-primary); }
+#backToTop.show {
+  opacity: 1; transform: translateY(0); pointer-events: auto; visibility: visible;
+  transition: opacity var(--dur-normal) var(--ease-out),
+              transform var(--dur-normal) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out),
+              visibility 0s;
+}
+#backToTop:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
 
 /* ===== 图片灯箱 ===== */
 #lightbox {
@@ -358,7 +390,7 @@ html.dark .page-btn.active {
   -webkit-backdrop-filter: blur(20px);
   display: flex; align-items: center; justify-content: center;
   opacity: 0; pointer-events: none;
-  transition: opacity 0.3s;
+  transition: opacity var(--dur-normal) var(--ease-out);
   cursor: zoom-out;
 }
 #lightbox.show { opacity: 1; pointer-events: auto; }
@@ -374,7 +406,7 @@ html.dark .page-btn.active {
   max-width: 90vw; max-height: 85vh;
   border-radius: 0.8rem;   box-shadow: 0 20px 60px var(--shadow-card-color, rgba(0,0,0,0.5));
   cursor: zoom-out; object-fit: contain;
-  transition: opacity 0.3s, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-soft);
   transform: scale(0.96);
 }
 #lightbox.show img { transform: scale(1); }
@@ -384,10 +416,10 @@ html.dark .page-btn.active {
   background: var(--lightbox-close-bg);
   border: 1px solid var(--lightbox-close-border);
   color: var(--lightbox-close-color); font-size: 1.1rem;
-  cursor: pointer; transition: background 0.25s, color 0.25s;
+  cursor: pointer; transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
   display: flex; align-items: center; justify-content: center;
 }
-#lightbox-close:hover { background: var(--lightbox-close-hover-bg); color: var(--lightbox-close-hover-color); }
+#lightbox-close:hover { background-color: var(--lightbox-close-hover-bg); color: var(--lightbox-close-hover-color); }
 
 /* ===== 文章目录 TOC ===== */
 #tocToggle {
@@ -398,9 +430,9 @@ html.dark .page-btn.active {
   border: 1px solid var(--glass-border);
   color: var(--text-secondary); cursor: pointer; font-size: 1rem;
   display: none; align-items: center; justify-content: center;
-  transition: background 0.25s;
+  transition: background-color var(--dur-fast) var(--ease-out);
 }
-#tocToggle:hover { background: var(--glass-hover-bg); color: var(--text-primary); }
+#tocToggle:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
 #tocToggle.show { display: flex; }
 
 #tocPanel {
@@ -415,19 +447,28 @@ html.dark .page-btn.active {
   min-width: 180px; max-width: 260px;
   opacity: 0; pointer-events: none;
   transform: translateY(6px);
-  transition: opacity 0.25s, transform 0.25s;
+  /* 展开走 decelerate，收起走 accelerate */
+  transition: opacity var(--dur-fast) var(--ease-in),
+              transform var(--dur-fast) var(--ease-in),
+              visibility 0s linear var(--dur-fast);
+  visibility: hidden;
 }
-#tocPanel.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+#tocPanel.show {
+  opacity: 1; pointer-events: auto; transform: translateY(0); visibility: visible;
+  transition: opacity var(--dur-normal) var(--ease-out),
+              transform var(--dur-normal) var(--ease-out),
+              visibility 0s;
+}
 .toc-link {
   display: block; padding: 0.4rem 1rem;
   color: var(--text-secondary); text-decoration: none;
   font-size: 0.78rem; font-family: var(--font-sans);
-  transition: color 0.15s, background 0.15s;
+  transition: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
   border-left: 2px solid transparent;
 }
 .toc-link.h2 { padding-left: 1rem; }
 .toc-link.h3 { padding-left: 1.8rem; font-size: 0.75rem; }
-.toc-link:hover { background: var(--glass-hover-bg); }
+.toc-link:hover { background-color: var(--glass-hover-bg); }
 .toc-link.active { color: var(--color-accent); border-left-color: var(--color-accent); }
 
 /* ===== 置顶标记 ===== */
@@ -510,7 +551,12 @@ html.dark .page-btn.active {
   border: 1px solid rgba(255, 255, 255, 0.16); color: #c9d1d9;
   font-family: var(--font-mono); font-size: 0.75rem;
   padding: 0.2rem 0.7rem; border-radius: 28px;
-  cursor: pointer; transition: all 0.25s; z-index: 3;
+  cursor: pointer; z-index: 3;
+  /* 原来是 transition: all 0.25s：all 要盯着 width/height/padding 这类
+     会触发布局的属性，复制态只改底色也照样每次量一遍布局。 */
+  transition: background-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
 }
 /* hover 走深色块内的提亮，而不是主题强调色 —— 强调色那版是代码块改深底之前的残留，
    同特指度写在后面会整条盖掉这一条（已删）。 */
@@ -537,9 +583,9 @@ html.dark .copy-btn.copied { color: var(--color-bg-deep); }
   border-radius: var(--radius-item);
   color: var(--text-secondary); font-family: var(--font-mono);
   font-size: 0.85rem; text-decoration: none; text-align: center;
-  transition: background 0.25s, color 0.25s;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
 }
-.back-link:hover { background: var(--glass-hover-bg); color: var(--color-accent); }
+.back-link:hover { background-color: var(--glass-hover-bg); color: var(--color-accent); }
 .hljs { background: transparent; }
 /* atom-one-dark 自带的注释色 #5c6370 压在 #0d1117 上只有 3.13:1，
    单独提亮到 6.17:1，其余 token 保持原样 */
@@ -556,9 +602,9 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   background: var(--glass-bg);
   border-radius: 1rem; border: 1px solid var(--glass-border);
   padding: 0.8rem 1rem; cursor: pointer;
-  transition: background 0.25s, transform 0.25s;
+  transition: background-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
-.related-card:hover { background: var(--glass-hover-bg); transform: translateY(-2px); }
+.related-card:hover { background-color: var(--glass-hover-bg); transform: translateY(-2px); }
 .related-card-title { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem; text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.2)); }
 .related-card-date { font-size: 0.65rem; color: var(--text-muted); font-family: var(--font-mono); }
 
@@ -589,7 +635,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   display: flex; align-items: baseline; gap: 0.8rem;
   padding: 0.35rem 0 0.35rem 1rem;
   position: relative; cursor: pointer;
-  transition: background 0.15s; border-radius: 0.5rem;
+  transition: background-color var(--dur-fast) var(--ease-out); border-radius: 0.5rem;
   text-decoration: none;
 }
 .archive-item::before {
@@ -597,10 +643,10 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   left: -0.6rem; top: 50%; transform: translateY(-50%);
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--color-accent); opacity: 0.4;
-  transition: opacity 0.25s, transform 0.25s;
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
 .archive-item:hover::before { opacity: 1; transform: translateY(-50%) scale(1.3); }
-.archive-item:hover { background: var(--glass-bg); }
+.archive-item:hover { background-color: var(--glass-bg); }
 .archive-item-date {
   font-size: 0.7rem; color: var(--text-muted);
   font-family: var(--font-mono); flex-shrink: 0; width: 3rem;
@@ -676,7 +722,7 @@ html.dark .heatmap-wrap {
   width: 10px; height: 10px;
   border-radius: 2px;
   cursor: pointer;
-  transition: transform 0.15s;
+  transition: transform var(--dur-fast) var(--ease-soft);
   flex-shrink: 0;
 }
 .heatmap-cell:hover { transform: scale(1.4); }
@@ -700,17 +746,17 @@ html.dark .heatmap-wrap {
 .heatmap-detail-close {
   cursor: pointer; font-size: 1rem;
   color: var(--text-muted);
-  transition: color 0.2s; padding: 0 4px;
+  transition: color var(--dur-fast) var(--ease-out); padding: 0 4px;
 }
 .heatmap-detail-close:hover { color: var(--text-primary); }
 .heatmap-detail-list { display: flex; flex-direction: column; gap: 0.3rem; }
 .heatmap-detail-item {
   padding: 0.3rem 0.5rem; border-radius: 6px;
   font-size: 0.85rem; color: var(--text-primary); cursor: pointer;
-  transition: background 0.15s;
+  transition: background-color var(--dur-fast) var(--ease-out);
   text-decoration: none;
 }
-.heatmap-detail-item:hover { background: var(--glass-bg); }
+.heatmap-detail-item:hover { background-color: var(--glass-bg); }
 
 /* ===== 状态提示 ===== */
 .state-error { color: var(--text-primary); text-align: center; padding: 2rem; }
@@ -778,10 +824,10 @@ html.dark .heatmap-wrap {
 .album-layer {
   border: 4px solid var(--glass-border);
   border-radius: 3px; overflow: hidden;
-  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease, filter 0.5s ease, box-shadow 0.5s ease;
+  transition: transform var(--dur-slow) var(--ease-soft), opacity var(--dur-slow) var(--ease-soft), filter var(--dur-slow) var(--ease-soft), box-shadow var(--dur-slow) var(--ease-soft);
   box-shadow: var(--shadow-item);
 }
-.album-layer img { width: 100%; height: auto; display: block; object-fit: cover; transition: transform 0.7s ease; }
+.album-layer img { width: 100%; height: auto; display: block; object-fit: cover; transition: transform 0.7s var(--ease-soft); }
 .album-card:hover .album-layer-2 img { transform: scale(1.05); }
 .album-layer-0 {
   position: relative;
@@ -859,9 +905,9 @@ html.dark .heatmap-wrap {
   background: var(--glass-bg); border: 1px solid var(--glass-border);
   border-radius: 2rem; padding: 0.4rem 1rem;
   color: var(--text-secondary); cursor: pointer; font-family: var(--font-mono); font-size: 0.8rem;
-  transition: background 0.25s;
+  transition: background-color var(--dur-fast) var(--ease-out);
 }
-.album-back:hover { background: var(--glass-hover-bg); color: var(--text-primary); }
+.album-back:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
 /* 与 .gallery-wrap / .album-detail-wrap 同理，这两个容器都没有背景
    （照片网格要透出背景照），于是标题是整页唯一直接压在照片上的文字块。
    实测浅色下标题 2.43:1、副标题 1.94:1，连大字号要求的 3:1 都不到，
@@ -891,12 +937,15 @@ html.dark .heatmap-wrap {
   break-inside: avoid; margin-bottom: 0.8rem;
   border-radius: 0.8rem; overflow: hidden; cursor: zoom-in;
   animation: var(--motion-photo-fast);
-  transition: transform 0.3s, box-shadow 0.3s;
+  /* 这条以前是死代码：--motion-photo-fast 用的 fill 是 forwards，动画填充值在
+     层叠里压过普通声明，:hover 的 scale(1.02) 一直轮不到执行。令牌改成
+     backwards 之后才真的能缩放。 */
+  transition: transform var(--dur-normal) var(--ease-soft), box-shadow var(--dur-normal) var(--ease-soft);
   position: relative;
   box-shadow: var(--shadow-item);
 }
 .photo-item:hover { transform: scale(1.02); box-shadow: 0 8px 24px var(--shadow-card-color, rgba(0,0,0,0.3)); }
-.photo-item img { width: 100%; height: auto; display: block; transition: transform 0.5s; }
+.photo-item img { width: 100%; height: auto; display: block; transition: transform var(--dur-slow) var(--ease-soft); }
 .photo-item:hover img { transform: scale(1.05); }
 
 @media (max-width: 600px) {
@@ -921,11 +970,18 @@ html.dark .heatmap-wrap {
     border-bottom: 1px solid var(--glass-border);
     padding: 0 1rem;
     opacity: 0;
-    transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.35s ease;
+    /* 收起走 accelerate，展开走 decelerate——见下面 .nav-links.open 里覆盖的
+       进场那条。两个状态各自声明 transition，进场/退场才用得上不同曲线。 */
+    transition: max-height var(--dur-fast) var(--ease-in),
+                opacity var(--dur-fast) var(--ease-in),
+                padding var(--dur-fast) var(--ease-in);
   }
   .nav-links.open {
     max-height: 60vh; opacity: 1;
     padding: 0.5rem 1rem 0.8rem;
+    transition: max-height var(--dur-normal) var(--ease-out),
+                opacity var(--dur-normal) var(--ease-out),
+                padding var(--dur-normal) var(--ease-out);
   }
   .nav-links a { justify-content: center; padding: 0.55rem; }
 }
@@ -951,9 +1007,12 @@ html.dark .heatmap-wrap {
 }
 
 @media (hover: hover) {
-  .post-card:hover { background: var(--glass-hover-bg); }
-  .tag-filter:hover { background: var(--glass-hover-bg); }
-  .profile-links a:hover { background: var(--glass-hover-bg); transform: translateY(-3px); }
+  /* 这里原先是 background: var(--glass-hover-bg)，同特指度写在 .post-card:hover
+     之后，把上面那层 --body-overlay 渐变整个抹掉了——在有 hover 的设备上卡片
+     一悬停底色配方就变样。改成只换底色，渐变留住。 */
+  .post-card:hover { background-color: var(--glass-hover-bg); }
+  .tag-filter:hover { background-color: var(--glass-hover-bg); }
+  .profile-links a:hover { background-color: var(--glass-hover-bg); transform: translateY(-3px); }
 }
 
 /* ===== 打印 ===== */
@@ -1031,9 +1090,9 @@ html.dark .heatmap-wrap {
   border: 1px solid var(--glass-border);
   border-radius: 1rem;
   padding: 1rem 1.1rem;
-  transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+  transition: background-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
-.friend-card:hover { background: var(--glass-hover-bg); transform: translateY(-3px); box-shadow: var(--shadow-card); }
+.friend-card:hover { background-color: var(--glass-hover-bg); transform: translateY(-3px); box-shadow: var(--shadow-card); }
 .friend-name { font-size: 1.05rem; font-weight: 700; color: var(--heading-accent); font-family: var(--font-serif); margin-bottom: 0.3rem; }
 .friend-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4; }
 .friend-url { font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 0.4rem; word-break: break-all; }
@@ -1101,7 +1160,7 @@ html.dark .heatmap-wrap {
   position: relative; display: block; overflow: hidden;
   border-radius: 1rem; min-height: 150px;
   text-decoration: none;
-  transition: transform 0.3s;
+  transition: transform var(--dur-normal) var(--ease-soft);
 }
 .home-hero:hover { transform: translateY(-2px); }
 .home-hero-mask {
@@ -1115,7 +1174,7 @@ html.dark .heatmap-wrap {
 .home-post-card {
   position: relative; display: block; overflow: hidden;
   border-radius: 0.8rem; min-height: 76px; text-decoration: none;
-  transition: transform 0.3s;
+  transition: transform var(--dur-normal) var(--ease-soft);
 }
 .home-post-card:hover { transform: translateY(-2px); }
 .home-post-card-mask {
@@ -1139,7 +1198,7 @@ html.dark .heatmap-wrap {
 .home-photo img {
   width: 100%; height: 100%;
   object-fit: cover; display: block;
-  transition: opacity 0.3s ease;
+  transition: opacity var(--dur-normal) var(--ease-out);
 }
 
 @media (max-width: 760px) {
@@ -1147,57 +1206,66 @@ html.dark .heatmap-wrap {
   .home-panel { padding: 1rem 1.1rem; }
 }
 
-/* ===== 主题切换平滑过渡（统一时长，覆盖所有卡片） ===== */
-body,
-body::before,
-body::after,
-.top-bar,
-.top-bar-inner,
-.site-name,
-.nav-links a,
-.nav-links a > span::after,
-.topbar-btn,
-.profile-wrap,
-.profile-name,
-.profile-bio,
-.profile-links a,
-.home-panel,
-.home-panel-title,
-.page-header,
-.search-input,
-.tag-filter,
-.tag,
-.post-card,
-.post-title,
-.post-excerpt,
-.post-meta,
-.article-card,
-.article-title,
-.article-meta,
-.article-content,
-.archive-card,
-.archive-year-header,
-.archive-item-title,
-.module-wrap,
-.friend-card,
-.friend-name,
-.friend-desc,
-.moment-content,
-.moment-text,
-.album-card,
-.album-title,
-.album-date,
-.album-detail-wrap,
-.photo-item,
-#backToTop,
-#tocToggle,
-#tocPanel,
-.toc-link,
-.back-link,
-.related-card {
+/* ===== 主题切换平滑过渡 =====
+   原来这条是无条件生效的：45 个选择器 + transition-duration/timing-function
+   带 !important，把它们各自的 transition 永久盖成 0.35s ease。后果是
+   .tag-filter 里写的 0.15s、.post-card 里写的 0.25s、.toc-link 里写的
+   0.15s 从来没生效过——鼠标划过卡片、标签、导航项全是同一个 350ms 慢动作，
+   「点了没反应」大半来自这里。
+
+   现在只在切换那一刻由 <html>.theme-shift 打开（见 app.vue toggleTheme），
+   扫完 350ms 就撤掉，各组件自己的节奏随即恢复。!important 保留：扫主题时要的是
+   全体统一，压过组件规则正是它的用途，作用域收窄之后就不会误伤了。 */
+.theme-shift body,
+.theme-shift body::before,
+.theme-shift body::after,
+.theme-shift .top-bar,
+.theme-shift .top-bar-inner,
+.theme-shift .site-name,
+.theme-shift .nav-links a,
+.theme-shift .nav-links a > span::after,
+.theme-shift .topbar-btn,
+.theme-shift .profile-wrap,
+.theme-shift .profile-name,
+.theme-shift .profile-bio,
+.theme-shift .profile-links a,
+.theme-shift .home-panel,
+.theme-shift .home-panel-title,
+.theme-shift .page-header,
+.theme-shift .search-input,
+.theme-shift .tag-filter,
+.theme-shift .tag,
+.theme-shift .post-card,
+.theme-shift .post-title,
+.theme-shift .post-excerpt,
+.theme-shift .post-meta,
+.theme-shift .article-card,
+.theme-shift .article-title,
+.theme-shift .article-meta,
+.theme-shift .article-content,
+.theme-shift .archive-card,
+.theme-shift .archive-year-header,
+.theme-shift .archive-item-title,
+.theme-shift .module-wrap,
+.theme-shift .friend-card,
+.theme-shift .friend-name,
+.theme-shift .friend-desc,
+.theme-shift .moment-content,
+.theme-shift .moment-text,
+.theme-shift .album-card,
+.theme-shift .album-title,
+.theme-shift .album-date,
+.theme-shift .album-detail-wrap,
+.theme-shift .photo-item,
+.theme-shift #backToTop,
+.theme-shift #tocToggle,
+.theme-shift #tocPanel,
+.theme-shift .toc-link,
+.theme-shift .back-link,
+.theme-shift .related-card {
   transition-property: background-color, color, border-color, box-shadow, opacity, transform;
   transition-duration: 0.35s !important;
-  transition-timing-function: ease !important;
+  transition-timing-function: var(--ease-out) !important;
   transition-delay: 0s !important;
 }
 
@@ -1215,6 +1283,20 @@ textarea:focus-visible,
   outline-offset: 2px;
   border-radius: 4px;
 }
-/* 回到顶部未显示时是 opacity:0，但仍留在 Tab 序列里 —— 用 visibility 移出焦点序列 */
-#backToTop { visibility: hidden; transition: opacity 0.25s, transform 0.25s, background 0.25s, visibility 0.25s; }
-#backToTop.show { visibility: visible; }
+/* 回到顶部未显示时是 opacity:0，但仍留在 Tab 序列里 —— 用 visibility 移出焦点序列。
+   过渡在这里重声明一次：它带 id 选择器且写在文件末尾，会盖掉前面 #backToTop 上
+   那条进场/退场分开的写法，不重写就退回 250ms ease 的旧节奏。 */
+#backToTop {
+  visibility: hidden;
+  transition: opacity var(--dur-fast) var(--ease-in),
+              transform var(--dur-fast) var(--ease-in),
+              background-color var(--dur-fast) var(--ease-in),
+              visibility 0s linear var(--dur-fast);
+}
+#backToTop.show {
+  visibility: visible;
+  transition: opacity var(--dur-normal) var(--ease-out),
+              transform var(--dur-normal) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out),
+              visibility 0s;
+}
