@@ -60,7 +60,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1.2);
 }
 .nav-links a:hover { background: var(--glass-hover-bg); color: var(--text-primary); }
-.nav-links a.active { color: var(--heading-accent); }
+.nav-links a.active { color: var(--link-text); }
 .nav-links a.active > span::after { transform: translateX(-50%) scale(1); }
 
 .topbar-actions { display: flex; gap: 0.4rem; align-items: center; }
@@ -279,7 +279,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 .tag {
   display: inline-block; padding: 2px 10px; border-radius: 40px;
   font-size: 0.65rem; font-weight: 600; cursor: pointer;
-  background: var(--color-accent-glow); color: var(--heading-accent); letter-spacing: 0.3px;
+  background: linear-gradient(var(--color-accent-glow), var(--color-accent-glow)), var(--glass-bg);
+    color: var(--link-text); letter-spacing: 0.3px;
   transition: background 0.25s; text-shadow: 0 1px 3px var(--shadow-item-color, rgba(0,0,0,0.3));
 }
 .tag:hover { background: var(--glass-hover-bg); }
@@ -322,8 +323,14 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
    实测 3.01:1。补一层 --glass-bg，与状态站 .chart-btn 同一套配方。 */
 .page-btn.active {
   background: linear-gradient(var(--color-accent-glow), var(--color-accent-glow)), var(--glass-bg);
-  color: var(--heading-accent);
+  color: var(--link-text);
   border-color: var(--color-accent);
+}
+/* 深色下 --glass-hover-bg 是浅板岩 rgba(71,85,105,.75)，比 --glass-bg 亮，
+   浅蓝的 --link-text 压上去只有 3.47:1；换用更暗的 --color-bg-deep 打底。 */
+html.dark .page-btn.active {
+  background: linear-gradient(var(--color-accent-glow), var(--color-accent-glow)), var(--color-bg-deep);
+  color: var(--link-text);
 }
 .page-btn:disabled { opacity: 0.35; cursor: default; }
 .page-info { color: var(--text-muted); font-family: var(--font-mono); font-size: 0.75rem; padding: 0 0.3rem; }
@@ -426,7 +433,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 /* ===== 置顶标记 ===== */
 .pinned-badge {
   display: inline-block; font-size: 0.6rem;
-  color: var(--heading-accent); margin-right: 0.4rem;
+  color: var(--link-text); margin-right: 0.4rem;
 }
 
 /* ===== 代码语言标签 ===== */
@@ -520,7 +527,7 @@ html.dark .copy-btn.copied { color: var(--color-bg-deep); }
 .article-content th, .article-content td { border: 1px solid var(--glass-border); padding: 8px 12px; text-align: left; }
 .article-content th { background: var(--color-accent-glow); color: var(--text-primary); }
 .article-content img { max-width: 100%; border-radius: 16px; margin: 1rem 0; box-shadow: 0 8px 20px var(--shadow-card-color, rgba(0,0,0,0.25)); height: auto; }
-.article-content a { color: var(--heading-accent); text-decoration: none; border-bottom: 1px dotted var(--heading-accent); }
+.article-content a { color: var(--link-text); text-decoration: none; border-bottom: 1px dotted var(--link-text); }
 .article-content a:hover { color: var(--text-primary); border-bottom-color: var(--text-primary); }
 .back-link {
   display: block; margin-top: 2rem; width: 100%;
@@ -599,7 +606,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   font-family: var(--font-mono); flex-shrink: 0; width: 3rem;
 }
 .archive-item-title { font-size: 0.9rem; color: var(--text-primary); text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.2)); }
-.archive-album .archive-item-date { color: var(--heading-accent); }
+.archive-album .archive-item-date { color: var(--link-text); }
 .archive-album .archive-item-title { color: var(--heading-accent); }
 
 /* ===== 热力图 ===== */
@@ -612,6 +619,11 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
   padding: 0.8rem 0.9rem;
+}
+/* 深色下热力图面板玻璃叠照片后采样仍有 rgb(140,140,139) 这类中灰，
+   白色轴标签（--text-primary）压上去只有 3.37:1。补一层不透明底把面板压暗。 */
+html.dark .heatmap-wrap {
+  background: linear-gradient(var(--body-overlay), var(--body-overlay)), var(--color-bg-deep);
 }
 .heatmap-header {
   display: flex; gap: 0.4rem; justify-content: center;
@@ -639,7 +651,10 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 }
 .heatmap-label {
   height: 10px; font-size: 0.55rem;
-  color: var(--text-muted);
+  /* 这两排是全站最小的字（0.55~0.6rem），而 .heatmap-wrap 的玻璃只有 0.65，底下
+     是照片：实测采样底色最差 rgb(170,134,143)（相对亮度 0.276），
+     --text-secondary 只有 2.74:1。改用最深的一支，两种主题都稳。 */
+  color: var(--text-primary);
   font-family: var(--font-mono);
   line-height: 10px;
 }
@@ -648,7 +663,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .heatmap-month {
   width: 10px; flex-shrink: 0;
   font-size: 0.6rem;
-  color: var(--text-muted);
+  color: var(--text-primary);
   font-family: var(--font-mono);
   line-height: 16px;
   text-align: center;
@@ -1054,7 +1069,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
 .home-empty { color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0; text-align: center; }
 .home-more {
   display: inline-flex; align-items: center; gap: 0.3rem;
-  font-size: 0.78rem; color: #2f6a84; text-decoration: none;
+  font-size: 0.78rem; color: var(--link-text); text-decoration: none;
   margin-top: 0.7rem;
   /* 触控目标 >=44px 高(视觉字号不变,用负 margin 抵消额外内边距) */
   padding: 0.65rem 0.75rem;
@@ -1078,7 +1093,8 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   background: var(--color-accent);
 }
 .home-moment-text { font-size: 0.85rem; color: var(--text-primary); line-height: 1.4; }
-.home-moment-time { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.2rem; font-family: var(--font-mono); }
+.home-moment-time { font-size: 0.68rem; color: var(--text-secondary); margin-top: 0.2rem; font-family: var(--font-mono); }
+  /* 原为 --text-muted，压在照片上只有 3.88~4.39:1 */
 
 /* 最新文章 */
 .home-hero {
@@ -1106,7 +1122,7 @@ pre code { background: none !important; padding: 0; border-radius: 0; }
   position: absolute; inset: 0;
   /* 原蒙版底部只到 0.5，标题所在的下半段实际只有 ~0.3，白字压在亮封面图上
      实测 1.67:1、日期 1.97:1。加深到 0.78 并抬高中段，让文字落在受控底色上。 */
-  background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.15));
+  background: linear-gradient(to top, rgba(0,0,0,0.88), rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.20));
   opacity: 0.9;
 }
 .home-post-card-info { position: relative; padding: 0.7rem; display: flex; flex-direction: column; justify-content: flex-end; min-height: 76px; }
