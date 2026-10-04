@@ -25,7 +25,16 @@ function toggleMenu () { menuOpen.value = !menuOpen.value }
 function closeMenu () { menuOpen.value = false }
 watch(() => route.path, closeMenu)
 
-// —— 加载层（对应旧版内联 #loader：最短展示 1s 即撤，与背景下载解耦）——
+// —— 加载层 ——
+// 这里原来是一个写死的 setTimeout(hideLoader, 1000)：任何网络条件下用户都要先看
+// 1 秒全屏 #loader，LCP 被硬生生推后至少 1000ms。而它又是**纯计时器**——bg.webp
+// （140KB）1 秒后还没到，hideLoader 照样执行，背景位先闪一下底色再补上。
+//
+// 改成「就绪或兜底，谁先到谁撤」。就绪信号两个：
+//   document.fonts.ready —— ZCOOL KuaiLe 晚到，标题会先回退成系统字体再跳一下
+//   bg.webp 的 decode()   —— body::after 用的就是它，早撤会先闪 --color-bg-deep
+// 兜底 600ms：正常网络远早于它到达，慢网络不再额外受罚。
+const LOADER_FALLBACK_MS = 600
 const loaderHidden = ref(false)
 const loaderGone = ref(false)
 
@@ -33,6 +42,19 @@ function hideLoader () {
   if (loaderHidden.value) return
   loaderHidden.value = true
   document.body.classList.add('bg-loaded')
+}
+
+function loaderReady () {
+  const waits = []
+  // fonts.ready 在不支持的浏览器上是 undefined，这里当已就绪
+  if (document.fonts && document.fonts.ready) waits.push(document.fonts.ready)
+  // 与 CSS 里 body::after 引的是同一个 URL，走同一份 HTTP 缓存，不会多下一遍。
+  // decode() 在图片还没挂到文档上也能跑；失败（404 / 解码错误）不算就绪信号，
+  // 由 600ms 兜底接手。
+  const bg = new Image()
+  bg.src = '/assets/vendor/images/bg.webp'
+  waits.push(bg.decode ? bg.decode().catch(() => {}) : Promise.resolve())
+  return Promise.all(waits)
 }
 
 // —— 雪花层（旧版 snowCanvas 粒子系统：30fps + 移动端减半 + reduced-motion 停止）——
@@ -89,13 +111,15 @@ function startSnow () {
   })
 }
 
+let loaderCap = 0
 onMounted(() => {
   dark.value = document.documentElement.classList.contains('dark')
   window.addEventListener('scroll', onScroll, { passive: true })
   onScroll()
 
-  // 最短 1s 后撤下加载层（transitionend 后彻底移除，避免遮挡点击）
-  setTimeout(hideLoader, 1000)
+  // 就绪先到就撤；600ms 兜底保证再慢的网络也不会被加载层一直挡着
+  loaderCap = window.setTimeout(hideLoader, LOADER_FALLBACK_MS)
+  loaderReady().then(() => { clearTimeout(loaderCap); hideLoader() })
   startSnow()
 })
 
@@ -120,6 +144,7 @@ function toTop () { window.scrollTo({ top: 0, behavior: 'smooth' }) }
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll)
   if (themeShiftTimer) clearTimeout(themeShiftTimer)
+  if (loaderCap) clearTimeout(loaderCap)
 })
 </script>
 
