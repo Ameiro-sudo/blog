@@ -29,14 +29,29 @@
   --color-highlight: rgba(255, 213, 79, 0.25);
   /* 高亮标记（文章搜索/选中） */
 
-  /* ===== 毛玻璃系统 ===== */
-  --glass-bg: rgba(255, 255, 255, 0.65);
+  /* ===== 毛玻璃系统 =====
+     alpha 从 0.65 提到 0.90。**这是量出来的**：卡片压在 bg.webp 上，
+     把整张图采样 83328 点、取最暗 2% 的平均像素（rgb(35,17,6)）再合成，
+     0.65 时卡片最坏底色是 rgb(178,172,168)，而
+        --text-secondary 3.92   --text-muted 3.09
+        --link-text     3.56   --heading-accent 2.66      全部不达标。
+     0.90 时同一处合成出 rgb(234,231,230)，四支分别是 12.9 / 6.7 / 6.9 / 7.3，全过。
+
+     之前 tokens.css 里那句「--heading-accent 在玻璃叠加照片处只有 4.0~4.4:1 ……
+     标题仍用 --heading-accent，不受影响」是**没量过的断言**：--link-text 被压深
+     之后确实过了，可它只对着不透明底色过了，压在照片上的那一层没人算过。
+     axe 门禁开起来之后 /moments/ 的 h1 与 .moment-text / .moment-time 一起报了出来，
+     就是那句话被证伪。
+
+     hover 态必须**比常态更不透明**而不是更少 —— 原来 0.75 < 0.65 之外任何值都
+     会让卡片在鼠标移上去时变透明，最坏底色也跟着变差。 */
+  --glass-bg: rgba(255, 255, 255, 0.90);
   /* 毛玻璃卡片默认背景 */
   --glass-border: rgba(255, 255, 255, 0.50);
   /* 毛玻璃边框 */
-  --glass-hover-bg: rgba(255, 255, 255, 0.75);
-  /* 毛玻璃悬浮态背景 */
-  --glass-header-bg: rgba(255, 255, 255, 0.65);
+  --glass-hover-bg: rgba(255, 255, 255, 0.94);
+  /* 毛玻璃悬浮态背景（比常态更实：hover 不能让卡片变透明） */
+  --glass-header-bg: rgba(255, 255, 255, 0.90);
   /* 顶栏毛玻璃背景 */
 
   /* ===== 阴影系统 ===== */
@@ -240,10 +255,13 @@ html.dark {
     --text-secondary: rgba(230, 245, 255, 0.92);
     --text-muted: rgba(205, 235, 250, 0.70);
 
-    --glass-bg: rgba(30, 41, 59, 0.70);
+    /* 暗色同一套量法，最坏情况反过来是照片**最亮**的 2%（平均源像素约 rgb(127,140,155)）：
+       0.70 时卡片最坏底色 rgb(98,105,118)，--text-muted 只有 2.46、--link-text 3.80、
+       --heading-accent 3.48。0.90 时最坏底色 rgb(51,62,76)，--text-muted 升到 5.4，全过。 */
+    --glass-bg: rgba(30, 41, 59, 0.90);
     --glass-border: rgba(255, 255, 255, 0.14);
-    --glass-hover-bg: rgba(71, 85, 105, 0.75);
-    --glass-header-bg: rgba(30, 41, 59, 0.50);
+    --glass-hover-bg: rgba(71, 85, 105, 0.94);
+    --glass-header-bg: rgba(30, 41, 59, 0.90);
 
     --shadow-card: 0 30px 60px -16px rgba(0, 0, 0, 0.45);
     --shadow-card-color: rgba(0, 0, 0, 0.45);
