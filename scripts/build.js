@@ -527,6 +527,13 @@ function writeIfChanged(file, content) {
     const old = readFileSync(file, 'utf-8')
     if (old === content) return false
   } catch (e) {}
+  // 目录可能不存在。`content/**/*.json` 全部出库之后，git 就不再跟踪那些目录
+  // —— git 不跟踪空目录，而 content/albums/ 里只有 index.json 一个文件，
+  // 于是干净 clone 上那个目录根本不存在。本地不会暴露这个问题：工作区里
+  // 目录一直都在（23c62fa 之前就有），只有 CI 的干净 checkout 才撞得到。
+  // `writeIfChanged` 是所有产物的唯一出口，所以修在这里而不是散在各个
+  // buildXxx 里。
+  mkdirSync(dirname(file), { recursive: true })
   writeFileSync(file, content, 'utf-8')
   return true
 }
