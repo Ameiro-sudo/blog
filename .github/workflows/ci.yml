@@ -77,8 +77,20 @@ jobs:
         # 的服务器，那个地址不存在，于是它拿回一个错误页并对着错误页报错——
         # 实测报出过「没有 main landmark」和一个幻影 id，而那个文件明明有。
         # 端口沿用起预览那一步的 4173。
+        #
+        # --load-delay 1500：默认是 0，也就是 load 事件一触发就开始扫。这个站首屏要下
+        # 140KB 的 bg.webp 与两个字体文件，扫得太早等于量一个还没成型的页面——
+        # 之前 /moments/ 在 CI 上稳定报 7 处 color-contrast 而本地怎么跑都是 0，
+        # 而把玻璃 alpha 从 0.65 提到 0.90（实测最坏底色下六支文字色全部达标）
+        # 之后 CI 报的**还是一模一样的 7 处**。一个能把所有比值都抬过去的改动
+        # 在结果里看不出任何痕迹，说明 CI 量到的根本不是同一个东西。
+        # 留出时间让它成型，是门禁能做对比的前提。
+        #
+        # --save 把完整结果落盘并在下面作为 artifact 上传：CI 的文本报告只给
+        # 「哪条规则、哪些选择器」，不给**前景色/背景色/实际比值**。三处红的
+        # 排查全靠猜——下次至少不用猜。
         run: |
-          npx --yes @axe-core/cli@latest --exit \
+          npx --yes @axe-core/cli@latest --exit --load-delay 1500 --save axe-report \
             http://127.0.0.1:4173/ \
             http://127.0.0.1:4173/posts/ \
             http://127.0.0.1:4173/posts/post1/ \
@@ -89,6 +101,14 @@ jobs:
             http://127.0.0.1:4173/moments/ \
             http://127.0.0.1:4173/friends/ \
             http://127.0.0.1:4173/about/
+
+      - name: 上传 axe 报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-report
+          path: axe-report
+          if-no-files-found: ignore
 
       - name: 上传 Lighthouse 报告
         if: always()
