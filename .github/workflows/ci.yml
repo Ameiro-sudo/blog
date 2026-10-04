@@ -1,5 +1,10 @@
 name: CI Build & Deploy
 
+# 门禁排在部署前面：作者早就写好了两个质量工具（scripts/visual-check.cjs 的标题
+# 字体断言、scripts/font-coverage-check.py 的字形覆盖），但它们只在本地手动跑，
+# 于是每次 a11y 修复都只能靠人记得再验一遍——修完没有闸门，下一次改动照样回归。
+# 现在它们和 Lighthouse 一样是硬门禁，失败就不会部署。
+
 on:
   push:
     branches: [main]
@@ -13,7 +18,7 @@ jobs:
     permissions:
       contents: write
     concurrency:
-      group: blog-deploy-${{ github.ref }}
+      group: blog-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout
@@ -31,16 +36,37 @@ jobs:
       - name: 构建（内容索引 + Nuxt SSG + 静态资源并入）
         run: npm run build
 
-      - name: 部署 gh-pages（SSG 产物）
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .output/public
-          force_orphan: true
+      - name: 装 Chromium（visual-check / Lighthouse 共用）
+        run: npx playwright-core install --with-deps chromium
 
-      - name: Lighthouse CI（对 SSG 产物收集报告）
-        run: npx lhci collect --config=./scripts/lighthouserc.cjs
+      - name: 起本地预览
+        run: |
+          node scripts/serve-dist.cjs &
+          echo $! > /tmp/serve.pid
+          for i in $(seq 1 40); do
+            if curl -sf http://127.0.0.1:4173/ -o /dev/null; then echo "serve ready"; exit 0; fi
+            sleep 0.5
+          done
+          echo "serve 未在 20s 内就绪" >&2
+          exit 1
+
+      - name: 视觉 / 排版自检（标题必须真的用 ZCOOL KuaiLe 且没被横向截断）
+        # 退出码 0/1/2 本身就是门禁：0 全过，1 有 BAD 项，2 找不到浏览器。
+        run: node scripts/visual-check.cjs
+
+      - name: 标题字体子集覆盖检查
+        # 少一个字形，那个字会静默回退成系统字体——正是「标题里一个字的字体和
+        # 其余不同」这个 bug。fontTools 是未声明的外部前置条件，这里显式装上。
+        run: |
+          python -m pip install --quiet fonttools brotli
+          python scripts/font-coverage-check.py
+
+      - name: Lighthouse CI（收集 + 断言）
+        # collect 排在 assert 前面是必须的：assert 只在 collect 产出的报告上跑。
+        # 部署排在两者之后，所以性能或可访问性退了就发不出去。
+        run: |
+          npx lhci collect --config=./scripts/lighthouserc.cjs
+          npx lhci assert --config=./scripts/lighthouserc.cjs
 
       - name: 上传 Lighthouse 报告
         if: always()
@@ -50,3 +76,19 @@ jobs:
           path: .lighthouseci
           include-hidden-files: true
           if-no-files-found: ignore
+
+      - name: 上传视觉自检截图
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-check
+          path: .visual-check
+          if-no-files-found: ignore
+
+      - name: 部署 gh-pages（SSG 产物）
+        if: success() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .output/public
+          force_orphan: true
