@@ -68,6 +68,28 @@ jobs:
           npx lhci collect --config=./scripts/lighthouserc.cjs
           npx lhci assert --config=./scripts/lighthouserc.cjs
 
+      - name: axe 可访问性扫描（全站页面）
+        # Lighthouse 只扫首页，而首页通过不代表 /posts/post8/、/gallery/ 通过。
+        # A 站与 B 站早就有这道门禁了，blog 一直没有——两个 Vue 应用都缺，
+        # 而可访问性恰恰是最容易在改版时整片回归的东西。
+        #
+        # 必须扫真 HTTP origin：传本地文件路径时 @axe-core/cli 会请求**自己**
+        # 的服务器，那个地址不存在，于是它拿回一个错误页并对着错误页报错——
+        # 实测报出过「没有 main landmark」和一个幻影 id，而那个文件明明有。
+        # 端口沿用起预览那一步的 4173。
+        run: |
+          npx --yes @axe-core/cli@latest --exit \
+            http://127.0.0.1:4173/ \
+            http://127.0.0.1:4173/posts/ \
+            http://127.0.0.1:4173/posts/post1/ \
+            http://127.0.0.1:4173/posts/post8/ \
+            http://127.0.0.1:4173/archive/ \
+            http://127.0.0.1:4173/gallery/ \
+            http://127.0.0.1:4173/gallery/photo-wall/ \
+            http://127.0.0.1:4173/moments/ \
+            http://127.0.0.1:4173/friends/ \
+            http://127.0.0.1:4173/about/
+
       - name: 上传 Lighthouse 报告
         if: always()
         uses: actions/upload-artifact@v4

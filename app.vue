@@ -149,8 +149,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <!-- ===== 加载层（保留在 DOM：#loader.hidden~#snowCanvas 的显隐依赖兄弟选择器） ===== -->
-  <div id="loader" :class="{ hidden: loaderHidden }" :style="loaderGone ? { display: 'none' } : null" @transitionend="loaderGone = true">
+  <!-- ===== 加载层（保留在 DOM：#loader.hidden~#snowCanvas 的显隐依赖兄弟选择器）
+       aria-hidden：这段文字「正在连接雪境」是唯一落在任何 landmark 之外的内容，
+       axe 的 region 规则会在**加载层还可见的那 600ms 里**逐页报一次
+       （而 @axe-core/cli 恰好就在这一刻扫）。更要紧的是它对读屏用户没有价值——
+       一个不透明全屏浮层里的孤零零一句话，没有上下文、紧接着就被真实内容取代。
+       另外两个站的加载层都已经是 aria-hidden，这里是唯一漏下的一个。 ===== -->
+  <div id="loader" aria-hidden="true" :class="{ hidden: loaderHidden }" :style="loaderGone ? { display: 'none' } : null" @transitionend="loaderGone = true">
     <div class="loader-crystal">
       <div class="crystal-wrapper">
         <div class="crystal-glow"></div>
@@ -229,6 +234,18 @@ onBeforeUnmount(() => {
       </div>
     </header>
 
-    <NuxtPage />
+    <!-- 页���内容包在 <main> 里。
+         每个页面自己的根元素都是一个裸 <div>，所以整站**一个 main landmark 都没有**——
+         axe 的 landmark-one-main 在十个页面上各报一次，读屏用户只能靠「浏览模式」盲猜
+         当前在哪一节。页面里那些 article-card / archive-card / module-wrap 全落在
+         任何 landmark 之外，于是 region 规则又把里面每一个可交互元素逐个报一遍
+         （实测 post1 一页 108 处）。
+
+         这里只加一层语义标签，不改任何类名与层级：main 是 display:block，
+         而 .container 上没有任何 `> ` 子选择器，所以布局不受影响——
+         这件事由 CI 里的 visual-check 盯着（它量标题字体与横向截断）。 -->
+    <main id="mainContent">
+      <NuxtPage />
+    </main>
   </div>
 </template>

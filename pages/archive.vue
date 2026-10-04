@@ -132,7 +132,15 @@ const yearGroups = computed(() => {
               @click="heatYear = Number(y); detail = null"
             >{{ y }}</button>
           </div>
-          <div class="heatmap-body">
+          <!-- tabindex="0" + role="region"：这是一年的提交热力图，窄屏下必然横向
+               滚动（实测 800px 宽时内容 632px / 盒子 617px，overflow-x:auto 是设计
+               的一部分，不该改成"挤进去"）。但它里面**一个可聚焦元素都没有**——
+               也就是说纯键盘用户根本滚不动它：Tab 走不到，方向键也没处可发。
+               axe 的 scrollable-region-focusable 说的正是这件事。
+
+               aria-label 必须给：role="region" 之后它成了 landmark，名字缺失的
+               landmark 对读屏用户是负担而不是帮助。 -->
+          <div class="heatmap-body" role="region" aria-label="提交热力图，可横向滚动" tabindex="0">
             <div class="heatmap-body-inner">
               <div class="heatmap-labels">
                 <span v-for="(l, i) in dayLabels" :key="i" class="heatmap-label">{{ l }}</span>
