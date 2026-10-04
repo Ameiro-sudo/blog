@@ -5,14 +5,16 @@ import { readFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-// 文章路由显式展开：列表分页是按钮而非链接，仅靠爬虫会漏掉第 2 页起的文章
+// 这里原来还读 content/posts/index.json、把每篇文章的路由手工展开进 prerender.routes——
+// 因为文章卡片当时是 <div role="button"> 而不是链接，crawlLinks 爬不到第 2 页起的文章。
+// 卡片改成 NuxtLink 之后链接就在 DOM 里，crawlLinks 自己能发现，那段展开连同它对
+// build.js 产物的隐式依赖一起删掉了：配置文件不该在**加载期**去读另一个脚本的输出。
+//
+// 唯一读 site.config.json 的地方还在（下面 OG 那些 meta 用）。
 const ROOT = dirname(fileURLToPath(import.meta.url))
 const siteConfig = JSON.parse(readFileSync(resolve(ROOT, 'site.config.json'), 'utf-8'))
 const SITE = siteConfig.SITE_URL
 const OG = siteConfig.ogDefaults
-const postRoutes = JSON.parse(
-  readFileSync(resolve(ROOT, 'content/posts/index.json'), 'utf-8')
-).map((p: { id: string }) => '/posts/' + p.id)
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-01',
@@ -21,7 +23,7 @@ export default defineNuxtConfig({
     preset: 'static',
     prerender: {
       crawlLinks: true,
-      routes: ['/', '/posts', ...postRoutes],
+      routes: ['/', '/posts'],
       // 单篇失败不吞掉整站构建，错误会在日志里可见
       failOnError: false,
     },

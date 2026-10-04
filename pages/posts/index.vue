@@ -112,14 +112,20 @@ function pickTag (t) {
 
     <div id="postList">
       <div id="dynamicPostList" class="post-list">
-        <div
+        <!-- 用 NuxtLink 而不是 <div role="button" @click navigateTo>。
+             卡片是「一篇文章」而不是「一个按钮」：原来的写法让 crawlLinks 爬不到
+             第 2 页起的文章，于是 nuxt.config 不得不在**配置加载期** readFileSync
+             content/posts/index.json 把每篇文章的路由手工展开一遍——那份文件是
+             scripts/build.js 的产物，两者之间的正确性没有任何校验。
+             换成 NuxtLink 之后链接天然在 DOM 里，crawlLinks 自己就能发现，
+             nuxt.config 里那段展开可以整段删掉，两个问题一起解决。
+             附带好处：中键/右键「在新标签打开」恢复了，Enter 键由浏览器原生处理，
+             不必再自己挂 keydown。 -->
+        <NuxtLink
           v-for="p in pagePosts"
           :key="p.id"
           class="post-card"
-          tabindex="0"
-          role="button"
-          @click="navigateTo(`/posts/${p.id}`)"
-          @keydown.enter="navigateTo(`/posts/${p.id}`)"
+          :to="`/posts/${p.id}`"
         >
           <div class="post-body">
             <div class="post-meta">
@@ -137,7 +143,7 @@ function pickTag (t) {
             <p class="post-excerpt" v-html="highlight(p.excerpt)"></p>
             <div class="post-footer"><span class="post-date">{{ p.date }} . {{ p.time }}</span></div>
           </div>
-        </div>
+        </NuxtLink>
         <div v-if="!pagePosts.length" class="state-empty">没有匹配的文章</div>
       </div>
 
@@ -148,6 +154,7 @@ function pickTag (t) {
             v-if="it !== '...'"
             class="page-btn"
             :class="{ active: it === pageShown }"
+            :aria-current="it === pageShown ? 'page' : undefined"
             @click="currentPage = it"
           >{{ it }}</button>
           <span v-else class="page-info">...</span>

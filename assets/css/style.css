@@ -263,6 +263,13 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 /* ===== 文章列表 ===== */
 .post-list { display: flex; flex-direction: column; gap: 1.3rem; }
 .post-card {
+  /* 这三行是它从 <div> 变成 <a> 之后必须补的：锚点默认 inline、有下划线、
+     且颜色取 UA 默认蓝。少了它们，卡片会整体塌成一行带蓝下划线的文字。
+     换标签换来的是 crawlLinks 爬得到第 2 页起的文章、浏览器原生的中键新开、
+     以及不必再自己挂 keydown —— 见 pages/posts/index.vue 的注释。 */
+  display: block;
+  text-decoration: none;
+  color: inherit;
   /* 渐变和底色拆成两个属性分开写：原来挤在一个 background 简写里，
      hover 换底色时整条 background 过渡被忽略（两套绘制结构不同）。
      拆开后两态结构一致，只换 background-color，就插得进去了。

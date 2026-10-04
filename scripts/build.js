@@ -266,8 +266,24 @@ async function buildAlbums() {
       photos.push({ url, ...(exif ? { exif } : {}) })
     }
 
+    // id 决定公开 URL（/gallery/<id>/），一旦发出去就是对外地址，而改名之后旧地址
+    // 只能靠 301 站住——静态站没地方发 301。所以它必须**显式写出来**：
+    // 目录名是文件名，相册 id 是网址，两者没有理由相同。
+    //
+    // 这里原来 fallback 到字面量 'test'，而 assets/vendor/images/albums/ 是平铺的
+    // （没有子目录），于是每个走这条路的相册都会拿到同一个 id，并且因为
+    // nuxt.config 的 crawlLinks 已经把它爬过一遍，https://blog.snowblock.top/gallery/test/
+    // 就是一个真的已经被索引的公开地址。占位符不该固化进对外 URL。
+    const id = dirName || meta.id
+    if (!id) {
+      throw new Error(
+        '相册缺少 id。给 ' + (dirName ? join('assets/vendor/images/albums/', dirName) : 'assets/vendor/images/albums/') +
+        '/meta.json 加一个 "id" 字段（它会成为 /gallery/<id>/ 这个公开地址）'
+      )
+    }
+
     return {
-      id: dirName || 'test',
+      id,
       title: meta.title || fallbackTitle,
       description: meta.description || '',
       cover,
@@ -476,6 +492,7 @@ function buildFeed() {
 // ============================
 function buildSitemap() {
   const posts = JSON.parse(readFileSync(join(POSTS_DIR, 'index.json'), 'utf-8'))
+  const albums = JSON.parse(readFileSync(join(ALBUMS_DIR, 'index.json'), 'utf-8'))
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
   xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
   xml += '  <url><loc>' + SITE_URL + '/</loc></url>\n'
@@ -488,6 +505,14 @@ function buildSitemap() {
   posts.forEach(function (p) {
     if (!p.date) return
     xml += '  <url><loc>' + SITE_URL + '/posts/' + p.id + '/</loc></url>\n'
+  })
+  // 相册详情页原来完全不在 sitemap 里：上面那七条固定页里有 /gallery/（列表页），
+  // 却没有 /gallery/<id>/。而这些页面是 crawlLinks 能爬到的公开地址——爬到了却
+  // 没告诉搜索引擎它存在，替代关系（将来改名）就无从建立，只能靠 301，而静态站
+  // 没有地方发 301。
+  albums.forEach(function (a) {
+    if (!a || !a.id) return
+    xml += '  <url><loc>' + SITE_URL + '/gallery/' + a.id + '/</loc></url>\n'
   })
   xml += '</urlset>\n'
   writeIfChanged(join(ROOT, 'public', 'sitemap.xml'), xml)
