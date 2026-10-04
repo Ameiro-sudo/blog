@@ -60,7 +60,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   width: 5px; height: 5px; border-radius: 50%;
   background: var(--color-accent);
   transform: translateX(-50%) scale(0);
-  transition: transform var(--dur-normal) var(--ease-soft);
+  transition: transform var(--dur-normal) var(--ease-out);
 }
 .nav-links a:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
 .nav-links a.active { color: var(--link-text); }
@@ -81,7 +81,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 .topbar-menu { display: none; }
 /* 展开时把三条杠转 90° 作为状态反馈（不引入新图标，
    以免超出 FA 子集化后仅 12 个字形的覆盖范围） */
-.topbar-menu i { transition: transform var(--dur-normal) var(--ease-soft); }
+.topbar-menu i { transition: transform var(--dur-normal) var(--ease-out); }
 .topbar-menu i.open { transform: rotate(90deg); }
 
 /* ===== 简介卡片 ===== */
@@ -120,7 +120,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
   padding: 3px; margin: 0 auto 0.6rem;
   display: block; box-shadow: var(--shadow-item);
-  transition: transform var(--dur-slow) var(--ease-soft);
+  transition: transform var(--dur-slow) var(--ease-out);
 }
 .profile-avatar-ring:hover { transform: scale(1.06) rotate(4deg); }
 .profile-avatar {
@@ -178,7 +178,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   box-shadow: var(--shadow-item);
   color: var(--text-secondary); text-decoration: none;
   font-size: 0.75rem;
-  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-normal) var(--ease-soft);
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-normal) var(--ease-out);
 }
 .profile-links a:hover { background-color: var(--glass-hover-bg); color: var(--color-accent); transform: translateY(-3px) scale(1.1); }
 
@@ -406,7 +406,7 @@ html.dark .page-btn.active {
   max-width: 90vw; max-height: 85vh;
   border-radius: 0.8rem;   box-shadow: 0 20px 60px var(--shadow-card-color, rgba(0,0,0,0.5));
   cursor: zoom-out; object-fit: contain;
-  transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-soft);
+  transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-out);
   transform: scale(0.96);
 }
 #lightbox.show img { transform: scale(1); }
@@ -722,7 +722,7 @@ html.dark .heatmap-wrap {
   width: 10px; height: 10px;
   border-radius: 2px;
   cursor: pointer;
-  transition: transform var(--dur-fast) var(--ease-soft);
+  transition: transform var(--dur-fast) var(--ease-out);
   flex-shrink: 0;
 }
 .heatmap-cell:hover { transform: scale(1.4); }
@@ -824,10 +824,10 @@ html.dark .heatmap-wrap {
 .album-layer {
   border: 4px solid var(--glass-border);
   border-radius: 3px; overflow: hidden;
-  transition: transform var(--dur-slow) var(--ease-soft), opacity var(--dur-slow) var(--ease-soft), filter var(--dur-slow) var(--ease-soft), box-shadow var(--dur-slow) var(--ease-soft);
+  transition: transform var(--dur-slow) var(--ease-out), opacity var(--dur-slow) var(--ease-out), filter var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow) var(--ease-out);
   box-shadow: var(--shadow-item);
 }
-.album-layer img { width: 100%; height: auto; display: block; object-fit: cover; transition: transform 0.7s var(--ease-soft); }
+.album-layer img { width: 100%; height: auto; display: block; object-fit: cover; transition: transform 0.7s var(--ease-out); }
 .album-card:hover .album-layer-2 img { transform: scale(1.05); }
 .album-layer-0 {
   position: relative;
@@ -940,12 +940,12 @@ html.dark .heatmap-wrap {
   /* 这条以前是死代码：--motion-photo-fast 用的 fill 是 forwards，动画填充值在
      层叠里压过普通声明，:hover 的 scale(1.02) 一直轮不到执行。令牌改成
      backwards 之后才真的能缩放。 */
-  transition: transform var(--dur-normal) var(--ease-soft), box-shadow var(--dur-normal) var(--ease-soft);
+  transition: transform var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
   position: relative;
   box-shadow: var(--shadow-item);
 }
 .photo-item:hover { transform: scale(1.02); box-shadow: 0 8px 24px var(--shadow-card-color, rgba(0,0,0,0.3)); }
-.photo-item img { width: 100%; height: auto; display: block; transition: transform var(--dur-slow) var(--ease-soft); }
+.photo-item img { width: 100%; height: auto; display: block; transition: transform var(--dur-slow) var(--ease-out); }
 .photo-item:hover img { transform: scale(1.05); }
 
 @media (max-width: 600px) {
@@ -1135,9 +1135,17 @@ html.dark .heatmap-wrap {
   margin: 0.25rem -0.75rem 0;
 }
 .home-more:hover { text-decoration: underline; }
-@media (prefers-color-scheme: dark) {
-  .home-more { color: var(--color-accent); }
-}
+/* 这里原来还有一条 @media (prefers-color-scheme: dark) 把 .home-more 改回
+   --color-accent。它是全站唯一一处用媒体查询（而不是 html.dark）做样式决策的
+   地方，于是全站的暗色体系在这里分叉成了两套并行策略。
+
+   代价比看起来大：系统偏好暗色、而用户在本站手动点过「浅色主题」并写进
+   localStorage 时，--color-accent 仍是浅色值 #5b9bb5，落到 #f2efe9 底上实测
+   2.69:1；.home-more 是 0.78rem 的正文，AA 要 4.5:1。这条媒体查询把上面刚用
+   --link-text 压到 6.97:1 的成果又顶了回去。
+
+   暗色下的亮色链接由 tokens.css:231 的 `html.dark { --link-text: #9fe0f5 }`
+   负责，不需要在这里另开一套。要加暗色适配，改 tokens.css，别在这里加媒体查询。 */
 
 /* 最新说说 */
 .home-moments { display: flex; flex-direction: column; }
@@ -1160,7 +1168,7 @@ html.dark .heatmap-wrap {
   position: relative; display: block; overflow: hidden;
   border-radius: 1rem; min-height: 150px;
   text-decoration: none;
-  transition: transform var(--dur-normal) var(--ease-soft);
+  transition: transform var(--dur-normal) var(--ease-out);
 }
 .home-hero:hover { transform: translateY(-2px); }
 .home-hero-mask {
@@ -1174,7 +1182,7 @@ html.dark .heatmap-wrap {
 .home-post-card {
   position: relative; display: block; overflow: hidden;
   border-radius: 0.8rem; min-height: 76px; text-decoration: none;
-  transition: transform var(--dur-normal) var(--ease-soft);
+  transition: transform var(--dur-normal) var(--ease-out);
 }
 .home-post-card:hover { transform: translateY(-2px); }
 .home-post-card-mask {
@@ -1285,7 +1293,7 @@ textarea:focus-visible,
 }
 /* 回到顶部未显示时是 opacity:0，但仍留在 Tab 序列里 —— 用 visibility 移出焦点序列。
    过渡在这里重声明一次：它带 id 选择器且写在文件末尾，会盖掉前面 #backToTop 上
-   那条进场/退场分开的写法，不重写就退回 250ms ease 的旧节奏。 */
+   那条进场/退场分开的写法，不重写就退回 --dur-fast ease 的旧节奏。 */
 #backToTop {
   visibility: hidden;
   transition: opacity var(--dur-fast) var(--ease-in),
