@@ -1,23 +1,24 @@
 // Lighthouse 的门禁配置。
 //
-// 阈值不是拍脑袋定的，是对着本地 serve-dist 实测出来的分数反推的
-// （2026-10-05，Chrome 稳定版，模拟节流单次跑）：
+// **不用 preset。** 之前试过 `preset: 'lighthouse:recommended'`，第一次跑就红了
+// 18 条：bf-cache / forced-reflow-insight / image-delivery-insight /
+// lcp-discovery-insight / network-dependency-tree-insight / unminified-css /
+// unused-css-rules / unused-javascript …… 里面没有一条是「这个站最近变差了」，
+// 全是「Google 有一条 audit 而这个站没满分」。对个人博客来说那不是门禁，
+// 是罚站，而罚站的红会被习惯性忽略，忽略的红等于没有红。
 //
-//   类别                实测     门槛     依据
-//   accessibility       100      100      最近几轮 a11y 修复打下的地基，不许退
-//   best-practices      100      100      同上
-//   seo                 100      100      OG/canonical/sitemap 都是构建期生成的
-//   performance          84       75      见下
+// 所以这里只断言两类东西：
+//   1. 四个类别的分数——防止整体退步
+//   2. 两条我亲手修过、且想钉住不许退回去的：压缩与缓存（serve-dist 不开这两样
+//      时实测 performance 是 68 而不是 84）
+// 外加 FCP/LCP 两条警告级的红线——加载层写死 1 秒那次就是它们能咬住的那类回归，
+// 等 CSS 渲染阻塞解决后把 warn 改成 error。
 //
-// performance 为什么不是 90：这一站真正的瓶颈是渲染阻塞——nuxt.config.ts 刻意
-// 用 <link> 直连 4 个 CSS 绕过 Vite（为了「保证视觉零回归」），CSS 又没压缩，
-// 于是 hydration 在模拟节流下要 3.5s 才跑得到，Lighthouse 量到的 LCP 元素是
-// #loader 里的那句「正在连接雪境」本身（4070ms）。这是真问题，但修它要动
-// nuxt.config 的 CSS 加载策略，不在这次范围内。
-//
-// 门槛 75 的作用是「不许再退回去」：serve-dist 没开 gzip 之前实测是 68，
-// 加载层写死 1 秒时更差。也就是说这个门槛能咬住已经修好的两类回归，
-// 又给 CI runner 的抖动留了余量。真的把 CSS 压缩 + 提上去之后，把这里调高。
+// 阈值对着本地实测反推（2026-10-05，Chrome 稳定版，模拟节流单次跑，
+// 经 scripts/serve-dist.cjs 带 gzip + cache-control 起服务）：
+//   accessibility / best-practices / seo = 100  -> 门槛 100，不许退
+//   performance = 84                          -> 门槛 75（没开 gzip 时是 68，
+//                                               加载层写死 1s 时更差）
 module.exports = {
   ci: {
     collect: {
@@ -35,12 +36,20 @@ module.exports = {
       }
     },
     assert: {
-      preset: 'lighthouse:recommended',
       assertions: {
         'categories:performance': ['error', { minScore: 0.75 }],
         'categories:accessibility': ['error', { minScore: 1 }],
         'categories:best-practices': ['error', { minScore: 1 }],
         'categories:seo': ['error', { minScore: 1 }],
+
+        // 传输层这两条是 serve-dist.cjs 提供的。少一样，这个站的分数就会掉回 68。
+        'uses-text-compression': ['error', { minScore: 1 }],
+        'uses-long-cache-ttl': ['error', { minScore: 1 }],
+
+        // 加载层回归的红线。LCP 元素目前就是 #loader 里那句「正在连接雪境」，
+        // 所以它同时是「加载层多久撤下」的度量——写死 1 秒那次它冲到 4s+。
+        'first-contentful-paint': ['warn', { maxNumericValue: 4000 }],
+        'largest-contentful-paint': ['warn', { maxNumericValue: 6000 }]
       }
     }
     // 不配 upload：temporary-public-storage 会把报告传到 Google 的公开桶里，
