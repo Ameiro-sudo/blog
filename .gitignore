@@ -2,6 +2,20 @@ node_modules/
 .build-cache.json
 .lighthouseci/
 
+# scripts/build.js 的产物：content/ 下全是生成出来的 JSON。
+#
+# 它们原来入库，有两个具体代价：
+# 1. 每次改一篇正文，PR 里会多出一份 20KB 的 diff——而 build.js:416 是
+#    `JSON.stringify({...meta, wc, html})` **不带缩进**，post1.json 于是是一整行
+#    20KB，任何改动在 git 里都表现为「整行替换」，review 时无法 diff。
+# 2. post1.md 与 post1.json 同目录同名同基名，改 md 的人很容易顺手去改 json，
+#    而下一次 build 会**静默覆盖**掉——改错文件没有任何症状。
+#
+# 不存在「忘了跑 build 导致线上是旧文章」这种事：npm run build 就是
+# build.js && nuxt generate && copy-static.js，CI 走的正是这条，内容一定先于
+# 渲染生成。
+content/**/*.json
+
 .vscode/
 
 # 视觉自检截图（scripts/visual-check.cjs 输出）
