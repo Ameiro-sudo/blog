@@ -4,6 +4,12 @@
 // fallback), captures screenshots for eyeballing, and reports the measured
 // width of each title so a font swap cannot silently truncate a heading.
 //
+// It doubles as a CI gate: exit 0 = all good, 1 = something is BAD, 2 = the tool
+// itself could not run (no browser). It was written long before it ran in CI and
+// had never been run against the current CSS — the first CI run flagged six
+// "OVERFLOW"s that were all the same element and all false positives, see
+// inspect() below.
+//
 // Usage:
 //   node scripts/serve-dist.cjs      # one terminal, serves .output/public on :4173
 //   node scripts/visual-check.cjs    # another terminal
@@ -129,6 +135,21 @@ async function inspect (page) {
     return [...document.querySelectorAll(sel)].map((el) => {
       const cs = getComputedStyle(el)
       const box = el.getBoundingClientRect()
+      // 用 Range 量文字真正占了多宽。scrollWidth 量的是内容盒 + 内边距，
+      // 它超了不等于文字被吃掉——实测 .site-name：文字宽 149.13 == 盒子宽
+      // 149.13、overflow-x 是 visible，scrollWidth 却报 159（多的 10px 是内边距）。
+      // 按 scrollWidth 判会对着一个根本没被裁的元素报 OVERFLOW，gate 天天红，
+      // 而红惯了的 gate 等于没有 gate。
+      const range = document.createRange()
+      range.selectNodeContents(el)
+      const textW = Math.round(range.getBoundingClientRect().width * 100) / 100
+      // 能不能裁剪：overflow-x 是 visible 且没有 text-overflow:ellipsis 时，
+      // 这个元素在物理上就不可能把标题切掉。
+      const canClip = cs.overflowX !== 'visible' || cs.textOverflow === 'ellipsis'
+      const style = getComputedStyle(el)
+      const padL = parseFloat(style.paddingLeft) || 0
+      const padR = parseFloat(style.paddingRight) || 0
+      const contentW = el.clientWidth - padL - padR
       return {
         cls: String(el.className || el.tagName.toLowerCase()),
         text: (el.textContent || '').trim().slice(0, 40),
@@ -136,7 +157,11 @@ async function inspect (page) {
         fontSize: cs.fontSize,
         w: Math.round(box.width),
         h: Math.round(box.height),
-        overflowX: el.scrollWidth > Math.ceil(box.width) + 1,
+        textW,
+        contentW,
+        canClip,
+        // 只有「能裁 + 文字确实比内容盒宽」才算被吃掉
+        overflowX: canClip && textW > contentW + 1
       }
     })
   }, TARGETS)
@@ -181,7 +206,8 @@ async function inspect (page) {
       if (!ok) bad++
       console.log('   ' + (ok ? 'OK  ' : 'BAD ') + r.cls.slice(0, 16).padEnd(17) +
         JSON.stringify(r.text).padEnd(30) + ' ' + r.family + ' ' + r.fontSize +
-        ' w=' + r.w + ' h=' + r.h + (r.overflowX ? '  OVERFLOW' : ''))
+        ' w=' + r.w + ' h=' + r.h + ' text=' + r.textW + '/' + r.contentW +
+        (r.overflowX ? '  TRUNCATED' : ''))
     }
   }
   console.log('')
