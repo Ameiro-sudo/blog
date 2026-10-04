@@ -16,12 +16,43 @@ const siteConfig = JSON.parse(readFileSync(join(ROOT, 'site.config.json'), 'utf-
 const SITE_URL = siteConfig.SITE_URL
 
 // ============================
-// PARSE POST (js-yaml)
+// FRONTMATTER（唯一实现）
 // ============================
-function parsePost(filepath) {
-  const text = readFileSync(filepath, 'utf-8')
+/** 取一段元数据行的 YAML 结果。解析失败只警告，不静默当成空——
+ *  「元数据整个丢了但构建照样成功」是最难查的一类问题。 */
+function loadYaml(metaLines, source) {
+  if (!metaLines.length || !metaLines.join('\n').trim()) return {}
+  try {
+    return yaml.load(metaLines.join('\n')) || {}
+  } catch (e) {
+    console.log(`  yaml parse warning (${source}): ${e.message}`)
+    return {}
+  }
+}
+
+/**
+ * 解析 content/ 下任意一个 .md，返回 `{ title, meta, body }`。
+ *
+ * 这里原来有**三个**解析器，而它们对同一种格式的理解并不一致：
+ *
+ *   parsePost()     认两种（`---` 围栏 / `# 标题` + 元数据行 + `---` 收尾），
+ *                   但收尾用「无条件扫到 `---` 为止」——`content/pages/about.md`
+ *                   （`# 关于` 后面直接就是正文，全文没有 `---`）会被整篇正文
+ *                   当成元数据去 YAML 解析，只是碰巧解析失败被 catch 掉、
+ *                   bodyStart 又恰好停在第 1 行，结果**碰巧**是对的。
+ *   parseMd()       只认 `---` 围栏，遇到旧格式的 meta 全丢。
+ *   extractBody()   认两种，但它判断「元数据结束」的依据是行形状
+ *                   （`/^[A-Za-z_-]+:\s/`），上面那种碰巧靠的正是它。
+ *
+ * 三份各自的「凑巧对」，改成一份把行为写死：
+ *   A  首行是 `---`            → 围栏式，找到收尾的 `---` 为止
+ *   B  首行是 `# 标题`          → 旧格式。元数据是「`key: value` 行」与空行，
+ *                               遇到**任何别的行**就认为正文开始了——
+ *                               不再往下扫到 `---`，因为正文里本来就可能有 `---`
+ *   C  都没有                   → 整篇都是正文
+ */
+function parseFrontmatter(text, source) {
   const lines = text.split('\n')
-  let meta = {}
   let title = ''
   let bodyStart = 0
 
@@ -31,39 +62,38 @@ function parsePost(filepath) {
   }
 
   if (lines[0]?.trim() === '---') {
-    bodyStart = 1
-  }
-
-  let i = bodyStart
-  let inMeta = bodyStart === 1
-  const metaLines = []
-
-  while (i < lines.length) {
-    const line = lines[i]
-    if (line.trim() === '---' && inMeta) {
-      bodyStart = i + 1
+    let i = 1
+    while (i < lines.length && lines[i].trim() !== '---') i++
+    if (i < lines.length) {
+      return { title, meta: loadYaml(lines.slice(1, i), source), body: lines.slice(i + 1).join('\n').trim() }
+    }
+    bodyStart = 0   // 只有开头的 --- 没有收尾：当作没有 frontmatter
+  } else if (bodyStart === 1) {
+    for (let i = 1; i < lines.length; i++) {
+      const t = lines[i].trim()
+      if (t === '---') {
+        return { title, meta: loadYaml(lines.slice(1, i), source), body: lines.slice(i + 1).join('\n').trim() }
+      }
+      if (t === '' || /^[A-Za-z_][A-Za-z0-9_-]*:/.test(lines[i])) continue
       break
     }
-    if (inMeta) metaLines.push(line)
-    i++
   }
 
-  if (metaLines.length) {
-    try {
-      meta = yaml.load(metaLines.join('\n')) || {}
-    } catch (e) {
-      console.log(`  yaml parse warning (${filepath}): ${e.message}`)
-    }
-  }
+  return { title, meta: {}, body: lines.slice(bodyStart).join('\n').trim() }
+}
+
+// ============================
+// PARSE POST
+// ============================
+function parsePost(filepath) {
+  const { title: parsedTitle, meta, body } = parseFrontmatter(readFileSync(filepath, 'utf-8'), filepath)
 
   const stem = basename(filepath).replace(/\.md$/, '')
-  if (!title) title = meta.title || stem
+  const title = parsedTitle || meta.title || stem
   const tags = (meta.tags || '').toString().split(',').map(t => t.trim()).filter(Boolean)
   const pinned = meta.pinned === true || meta.pinned === 'true'
 
-  const bodyLines = lines.slice(bodyStart)
-  const rawBody = bodyLines.join('\n').trim()
-  const cleanBody = rawBody
+  const cleanBody = body
     .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1 ')
     .replace(/[#*`\[\]()>_~]/g, '')
@@ -119,25 +149,6 @@ function buildPosts() {
 }
 
 // ============================
-// SHARED: FRONTMATTER PARSER
-// ============================
-function parseMd(text) {
-  let meta = {}
-  let body = text
-  const lines = text.split('\n')
-  if (lines[0] && lines[0].trim() === '---') {
-    const metaLines = []
-    let i = 1
-    while (i < lines.length && lines[i].trim() !== '---') { metaLines.push(lines[i]); i++ }
-    if (i < lines.length) {
-      try { meta = yaml.load(metaLines.join('\n')) || {} } catch (e) { /* 忽略解析警告 */ }
-      body = lines.slice(i + 1).join('\n')
-    }
-  }
-  return { meta, body: body.trim() }
-}
-
-// ============================
 // BUILD: MOMENTS INDEX
 // content/moments/*.md —— 每条 = 一条说说
 // frontmatter: time(必填) ; 正文 = 说说内容
@@ -152,7 +163,7 @@ function buildMoments() {
   if (!files.length) return // 无源文件时保留已提交的 index.json
 
   const moments = files.map(function (f) {
-    const { meta, body } = parseMd(readFileSync(join(dir, f), 'utf-8'))
+    const { meta, body } = parseFrontmatter(readFileSync(join(dir, f), 'utf-8'), join(dir, f))
     return { time: meta.time || '', text: body || meta.text || '' }
   }).filter(m => m.text && m.time)
 
@@ -180,7 +191,7 @@ function buildFriends() {
   if (!files.length) return
 
   const friends = files.map(function (f) {
-    const { meta } = parseMd(readFileSync(join(dir, f), 'utf-8'))
+    const { meta } = parseFrontmatter(readFileSync(join(dir, f), 'utf-8'), join(dir, f))
     return { name: meta.name || '', url: meta.url || '', desc: meta.desc || '' }
   }).filter(f => f.name && f.url)
 
@@ -393,28 +404,7 @@ function sanitizeArticleHtml (html) {
 }
 
 function extractBody(filepath) {
-  const text = readFileSync(filepath, 'utf-8')
-  const lines = text.split('\n')
-
-  // 标准围栏式 frontmatter：--- ... --- 在最前
-  if (lines[0]?.trim() === '---') {
-    let i = 1
-    while (i < lines.length && lines[i].trim() !== '---') i++
-    return lines.slice(i + 1).join('\n').trim()
-  }
-
-  // 本站旧格式：# 标题 + 元数据行，直到独立的一行 ---（post1~post8 均如此）
-  if (lines[0]?.startsWith('# ')) {
-    for (let j = 1; j < lines.length; j++) {
-      if (lines[j].trim() === '---') return lines.slice(j + 1).join('\n').trim()
-      // 空行后仍是元数据也继续扫；一旦出现普通正文段落则视为无 frontmatter
-      if (j > 1 && lines[j].trim() !== '' && !/^[A-Za-z_-]+:\s/.test(lines[j]) && !lines[j].startsWith('# ')) break
-    }
-    // 无 --- 收尾：仅剥掉标题行
-    return lines.slice(1).join('\n').trim()
-  }
-
-  return lines.join('\n').trim()
+  return parseFrontmatter(readFileSync(filepath, 'utf-8'), filepath).body
 }
 
 function buildArticlePayloads() {
