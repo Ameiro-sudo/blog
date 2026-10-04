@@ -37,6 +37,36 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0, viewport-fit=cover' },
+        // 内容安全策略。写在 nuxt.config 里而不是某个 .vue 的 <head>：
+        // SSG 的每一页 HTML 都是从这一份配置生成的，写在页面里只会覆盖到那一页。
+        //
+        // 两个 'unsafe-inline' 都是**已知且必要**的，写在这里是为了下一个人
+        // 知道它是买来的而不是漏掉的：
+        //   script-src —— Nuxt SSG 会把 hydration 数据以内联 <script> 注入每个页面，
+        //                另外 head.script 里那两段（防暗色闪烁、FA 样式表回填）
+        //                本来就刻意做成内联的。
+        //   style-src  —— Nuxt 默认把组件样式内联进 <style> 块。
+        // 真正白拿的是 base-uri / form-action / object-src：它们拦的是注入进来的
+        // 表单提交与 base 标签改写，跟内联脚本无关。frame-ancestors 只能走 HTTP
+        // 响应头，写在 <meta> 里会被浏览器忽略并每页刷一条警告，所以不写
+        // （A 站与 B 站的策略里也是同样的处理，注释写在那边）。
+        {
+          // 键名必须是 'http-equiv'。写成 `httpEquiv` 时 unhead 会原样输出成
+          // `httpequiv=` —— 浏览器不认这个属性，整条策略**静默失效**，而且
+          // 产物里看上去是有 meta 的。这属于「配了但等于没配」的一种。
+          'http-equiv': 'Content-Security-Policy',
+          content: [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline'",
+            "style-src 'self' 'unsafe-inline'",
+            "font-src 'self'",
+            "img-src 'self' data: blob:",
+            "connect-src 'self'",
+            "base-uri 'none'",
+            "form-action 'self'",
+            "object-src 'none'",
+          ].join('; '),
+        },
         { name: 'description', content: 'SnowBlock 博客 — 技术、游戏、日常与碎片思考' },
         { name: 'theme-color', media: '(prefers-color-scheme: light)', content: '#f2efe9' },
         { name: 'theme-color', media: '(prefers-color-scheme: dark)', content: '#0b2b3b' },
