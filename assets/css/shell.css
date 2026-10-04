@@ -364,7 +364,7 @@
 
 /* ===== 主题图标切换微动效（太阳/月亮旋转换位） ===== */
 .ti-enter-active {
-  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-normal) var(--ease-soft);
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-normal) var(--ease-out);
 }
 .ti-leave-active {
   transition: opacity var(--dur-fast) var(--ease-in), transform var(--dur-fast) var(--ease-in);
