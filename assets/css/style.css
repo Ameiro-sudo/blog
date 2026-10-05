@@ -1,0 +1,1317 @@
+/* ===== 全局：隐藏滚动条（保留滚动能力） ===== */
+html, body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  width: 0; height: 0; display: none;
+}
+*::-webkit-scrollbar {
+  width: 0; height: 0; display: none;
+}
+* { scrollbar-width: none; -ms-overflow-style: none; }
+
+/* ===== 容器与顶栏 ===== */
+.container { width: 100%; max-width: 1000px; margin: 0 auto; overflow-x: hidden; }
+
+.top-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: var(--glass-header-bg);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card), inset 0 1px 0 var(--glass-border);
+}
+.top-bar-inner {
+  max-width: 1000px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 0.75rem;
+  padding: 0.7rem 1.8rem;
+}
+.site-name {
+  position: relative;
+  font-size: 1.35rem; font-weight: 700; font-family: var(--font-title);
+  background: linear-gradient(135deg, var(--color-accent-warm), var(--color-accent));
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; text-decoration: none; letter-spacing: 1px;
+}
+/* 把点击热区外扩到 ≥24px（WCAG 2.5.8）。用伪元素而不是 padding，
+   避免 background-clip:text 的渐变随 padding 偏移。 */
+.site-name::after { content: ''; position: absolute; inset: -0.4rem -0.6rem; }
+.nav-links { display: flex; gap: 1rem; align-items: center; }
+.nav-links a {
+  position: relative; color: var(--text-secondary); text-decoration: none;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.7rem; border-radius: 0.6rem; cursor: pointer;
+  display: flex; align-items: center; gap: 0.4rem;
+  /* 简写 background 会把 background-image/position 一起挂上过渡，而它们多数
+     不可插值，整条声明会被忽略——hover 底色不渐变、直接跳。
+     悬停也从 250ms 收到 --dur-fast：鼠标在导航项上滑过时，底色该跟着走。 */
+  transition: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+.nav-links a > span {
+  font-family: var(--font-sans);
+  position: relative;
+  display: inline-flex;
+}
+.nav-links a i { font-size: 0.8rem; }
+.nav-links a > span::after {
+  content: ''; position: absolute; left: 50%; bottom: -5px;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--color-accent);
+  transform: translateX(-50%) scale(0);
+  transition: transform var(--dur-normal) var(--ease-out);
+}
+.nav-links a:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
+.nav-links a.active { color: var(--link-text); }
+.nav-links a.active > span::after { transform: translateX(-50%) scale(1); }
+
+.topbar-actions { display: flex; gap: 0.4rem; align-items: center; }
+.topbar-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 2.2rem; height: 2.2rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.6rem;
+  color: var(--text-secondary);
+  cursor: pointer; font-size: 0.85rem;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.topbar-btn:hover { background-color: var(--glass-hover-bg); color: var(--color-accent); transform: translateY(-1px); }
+.topbar-menu { display: none; }
+/* 展开时把三条杠转 90° 作为状态反馈（不引入新图标，
+   以免超出 FA 子集化后仅 12 个字形的覆盖范围） */
+.topbar-menu i { transition: transform var(--dur-normal) var(--ease-out); }
+.topbar-menu i.open { transform: rotate(90deg); }
+
+/* ===== 简介卡片 ===== */
+#profileCard { display: none; }
+.profile-wrap {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-item);
+  padding: 1.5rem 1.8rem 1.2rem;
+  text-align: center;
+  animation: var(--motion-enter-slow);
+}
+.profile-wrap::before {
+  content: ''; position: absolute; inset: -1px;
+  border-radius: var(--radius-card);
+  background: var(--body-overlay);
+  z-index: -1; pointer-events: none;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.profile-avatar-ring {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+  padding: 3px; margin: 0 auto 0.6rem;
+  display: block; box-shadow: var(--shadow-item);
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+.profile-avatar-ring:hover { transform: scale(1.06) rotate(4deg); }
+.profile-avatar {
+  width: 100%; height: 100%; border-radius: 50%;
+  object-fit: cover; display: block;
+}
+/* 首页此前一个 <h1> 都没有，标题层级直接从 h3 起步。简介卡的站名就是这个页面
+   的主标题，补成真正的 h1；外层 h1 抹掉浏览器默认样式，视觉零变化。 */
+.profile-heading { margin: 0; font-size: inherit; font-weight: inherit; }
+/* 原先这里有一份 .sr-only 工具类（给归档页的屏读专用 h1 用）。归档页的标题
+   已改成可见的 .module-header h1，全站再无使用者，连同注释一并移除。 */
+.profile-name {
+  font-size: 1.3rem; font-weight: 700; color: var(--text-primary);
+  font-family: var(--font-serif);
+  text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.3));
+  margin-bottom: 0.3rem;
+  text-decoration: none;
+  display: inline-block;
+  transition: color 0.25s;
+}
+.profile-name:hover { color: var(--color-accent); }
+.profile-divider {
+  width: 2rem; height: 3px;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-warm));
+  border-radius: 4px; margin: 0 auto 0.5rem;
+  opacity: 0.7;
+}
+.profile-bio {
+  font-size: 0.85rem; color: var(--text-secondary);
+  margin-bottom: 0.6rem; line-height: 1.4;
+  text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.2));
+}
+.profile-stats {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.2rem; margin: 0.5rem 0 0.9rem;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-size: 1.15rem; font-weight: 800; color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+.stat-label {
+  font-size: 0.62rem; color: var(--text-muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.stat-divider { width: 1px; height: 1.6rem; background: var(--glass-border); }
+.profile-links { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+.profile-icon { width: 0.9rem; height: 0.9rem; filter: brightness(0) invert(var(--icon-filter, 0.7)); }
+.profile-links a {
+  display: flex; align-items: center; justify-content: center;
+  width: 2.4rem; height: 2.4rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-radius: 0.75rem; border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-item);
+  color: var(--text-secondary); text-decoration: none;
+  font-size: 0.75rem;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-normal) var(--ease-out);
+}
+.profile-links a:hover { background-color: var(--glass-hover-bg); color: var(--color-accent); transform: translateY(-3px) scale(1.1); }
+
+/* ===== 页面头部 ===== */
+.page-header {
+  text-align: center; margin-bottom: 2rem;
+  background: linear-gradient(var(--body-overlay), var(--body-overlay)), var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-item);
+  padding: 1.5rem 1.8rem 1.2rem;
+  animation: var(--motion-enter);
+}
+.page-header h1 {
+  font-size: clamp(2rem, 7vw, 3rem); font-weight: 700; font-family: var(--font-title);
+  color: var(--heading-accent);
+  text-shadow: 0 2px 10px var(--shadow-card-color, rgba(0,0,0,0.2));
+}
+.page-header .sub { color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; }
+/* 与状态站 .page-header .sub a 保持一致：这里原先还是 --color-accent，
+   浅色下实测 2.78:1。 */
+.page-header .sub a { color: var(--heading-accent); text-decoration: none; }
+.search-bar { margin-top: 1.2rem; display: flex; justify-content: center; }
+.search-input {
+  width: 100%; max-width: 480px; padding: 0.7rem 1.2rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-item); color: var(--text-primary);
+  font-family: var(--font-sans); font-size: 0.9rem; outline: none;
+  transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+}
+.search-input::placeholder { color: var(--text-muted); }
+.search-input:focus { border-color: var(--color-accent); background-color: var(--glass-hover-bg); }
+.rss-link {
+  display: inline-flex; align-items: center;
+  margin-left: 8px; padding: 5px 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-item);
+  color: var(--text-muted);
+  font-family: var(--font-mono); font-size: 0.75rem;
+  text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+.rss-link:hover { background-color: var(--glass-hover-bg); color: var(--color-accent); }
+
+/* ===== 标签筛选 ===== */
+.tag-filters {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 0.4rem;
+  margin-top: 0.8rem; min-height: 0;
+}
+.tag-filter {
+  display: inline-block; padding: 2px 10px; border-radius: 40px;
+  font-size: 0.65rem; font-family: var(--font-mono); cursor: pointer;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  /* 原来是 transition: all 0.25s。all 要让浏览器盯着每一个可动画属性，
+   包括 width/height/top/left 这些会触发布局的：点一下标签，行高跟着量一次。
+   这里实际会变的就三样，按名字列出来。 */
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
+  user-select: none;
+  text-shadow: 0 1px 3px var(--shadow-item-color, rgba(0,0,0,0.2));
+}
+.tag-filter:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
+.tag-filter.active {
+  background: var(--color-accent-glow);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.tag-filter.size-1 { font-size: 0.6rem; }
+.tag-filter.size-2 { font-size: 0.7rem; }
+.tag-filter.size-3 { font-size: 0.8rem; font-weight: 700; }
+
+/* ===== 文章列表 ===== */
+.post-list { display: flex; flex-direction: column; gap: 1.3rem; }
+.post-card {
+  /* 这三行是它从 <div> 变成 <a> 之后必须补的：锚点默认 inline、有下划线、
+     且颜色取 UA 默认蓝。少了它们，卡片会整体塌成一行带蓝下划线的文字。
+     换标签换来的是 crawlLinks 爬得到第 2 页起的文章、浏览器原生的中键新开、
+     以及不必再自己挂 keydown —— 见 pages/posts/index.vue 的注释。 */
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  /* 渐变和底色拆成两个属性分开写：原来挤在一个 background 简写里，
+     hover 换底色时整条 background 过渡被忽略（两套绘制结构不同）。
+     拆开后两态结构一致，只换 background-color，就插得进去了。
+     渐变配方本身没动，--body-overlay 那层压暗的效果原样保留。 */
+  background-color: var(--glass-bg);
+  background-image: linear-gradient(var(--body-overlay), var(--body-overlay));
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-item);
+  animation: var(--motion-enter);
+  transition: background-color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+  cursor: pointer; outline: none;
+}
+.post-card:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; transform: scale(0.99); }
+.post-card:hover {
+  transform: translateX(4px) scale(1.01);
+  box-shadow: var(--shadow-card);
+  background-color: var(--glass-hover-bg);
+}
+.post-body { padding: 1.4rem 1.8rem; }
+.post-meta {
+  display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center;
+  margin-bottom: 0.6rem; font-size: 0.7rem; font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+.tag {
+  display: inline-block; padding: 2px 10px; border-radius: 40px;
+  font-size: 0.65rem; font-weight: 600; cursor: pointer;
+  /* 与 .post-card 同一处拆分：渐变留在 background-image 常驻，hover 只换底色，
+     两态结构一致才插得进去。不拆的话底色被上面这层渐变盖着，
+     background-color 过渡也看不出变化。 */
+  background-color: var(--glass-bg);
+  background-image: linear-gradient(var(--color-accent-glow), var(--color-accent-glow));
+    color: var(--link-text); letter-spacing: 0.3px;
+  transition: background-color var(--dur-fast) var(--ease-out); text-shadow: 0 1px 3px var(--shadow-item-color, rgba(0,0,0,0.3));
+}
+.tag:hover { background-color: var(--glass-hover-bg); }
+.tag.active-tag {
+  box-shadow: 0 0 0 1px var(--color-accent);
+  background: var(--color-accent-glow) !important;
+}
+.post-title {
+  font-size: clamp(1.15rem, 3vw, 1.5rem); font-weight: 600;
+  color: var(--text-primary); text-shadow: 0 1px 5px var(--shadow-card-color, rgba(0,0,0,0.25));
+  margin-bottom: 0.5rem; line-height: 1.35;
+}
+.post-excerpt { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+.post-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 1rem; padding-top: 0.7rem;
+  border-top: 1px solid var(--glass-border);
+}
+.post-date { color: var(--text-muted); font-size: 0.7rem; font-family: var(--font-mono); }
+
+/* ===== 分页 ===== */
+.pagination {
+  display: flex; justify-content: center; align-items: center;
+  gap: 0.6rem; margin-top: 1.5rem; flex-wrap: wrap;
+}
+.page-btn {
+  padding: 0.5rem 1rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-item);
+  color: var(--text-secondary);
+  font-family: var(--font-mono); font-size: 0.8rem;
+  cursor: pointer; transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); outline: none;
+}
+.page-btn:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
+.page-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+/* 当前页码：原先只有单层 --color-accent-glow(0.15) 当底，深蓝标题压上去
+   实测 3.01:1。补一层 --glass-bg，与状态站 .chart-btn 同一套配方。 */
+.page-btn.active {
+  background: linear-gradient(var(--color-accent-glow), var(--color-accent-glow)), var(--glass-bg);
+  color: var(--link-text);
+  border-color: var(--color-accent);
+}
+/* 深色下 --glass-hover-bg 是浅板岩 rgba(71,85,105,.75)，比 --glass-bg 亮，
+   浅蓝的 --link-text 压上去只有 3.47:1；换用更暗的 --color-bg-deep 打底。 */
+html.dark .page-btn.active {
+  background: linear-gradient(var(--color-accent-glow), var(--color-accent-glow)), var(--color-bg-deep);
+  color: var(--link-text);
+}
+.page-btn:disabled { opacity: 0.35; cursor: default; }
+.page-info { color: var(--text-muted); font-family: var(--font-mono); font-size: 0.75rem; padding: 0 0.3rem; }
+
+/* ===== 回到顶部 ===== */
+#backToTop {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+  width: 2.8rem; height: 2.8rem; border-radius: 50%;
+  background: var(--glass-bg); backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary); cursor: pointer; font-size: 1.2rem;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: translateY(20px);
+  /* 收起走 accelerate，展开走 decelerate；visibility 延迟一档才摘，
+     等淡出真的走完——不写的话它在还没淡完就已经从无障碍树里消失了。 */
+  transition: opacity var(--dur-fast) var(--ease-in),
+              transform var(--dur-fast) var(--ease-in),
+              background-color var(--dur-fast) var(--ease-in),
+              visibility 0s linear var(--dur-fast);
+  pointer-events: none;
+  visibility: hidden;
+}
+#backToTop.show {
+  opacity: 1; transform: translateY(0); pointer-events: auto; visibility: visible;
+  transition: opacity var(--dur-normal) var(--ease-out),
+              transform var(--dur-normal) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out),
+              visibility 0s;
+}
+#backToTop:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
+
+/* ===== 图片灯箱 ===== */
+#lightbox {
+  position: fixed; inset: 0; z-index: 10000;
+  background: var(--lightbox-overlay); backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--dur-normal) var(--ease-out);
+  cursor: zoom-out;
+}
+#lightbox.show { opacity: 1; pointer-events: auto; }
+#lightboxExif {
+  position: absolute; bottom: 1.5rem; left: 1.5rem;
+  color: var(--lightbox-exif);
+  font-size: 0.75rem; font-family: var(--font-mono);
+  line-height: 1.6; pointer-events: none;
+  text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.5));
+  display: none;
+}
+#lightbox img {
+  max-width: 90vw; max-height: 85vh;
+  border-radius: 0.8rem;   box-shadow: 0 20px 60px var(--shadow-card-color, rgba(0,0,0,0.5));
+  cursor: zoom-out; object-fit: contain;
+  transition: opacity var(--dur-normal) var(--ease-out), transform var(--dur-normal) var(--ease-out);
+  transform: scale(0.96);
+}
+#lightbox.show img { transform: scale(1); }
+#lightbox-close {
+  position: absolute; top: 1.5rem; right: 1.5rem; z-index: 10;
+  width: 2.5rem; height: 2.5rem; border-radius: 50%;
+  background: var(--lightbox-close-bg);
+  border: 1px solid var(--lightbox-close-border);
+  color: var(--lightbox-close-color); font-size: 1.1rem;
+  cursor: pointer; transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  display: flex; align-items: center; justify-content: center;
+}
+#lightbox-close:hover { background-color: var(--lightbox-close-hover-bg); color: var(--lightbox-close-hover-color); }
+
+/* ===== 文章目录 TOC ===== */
+#tocToggle {
+  position: fixed; bottom: 5.5rem; right: 2rem; z-index: 100;
+  width: 2.8rem; height: 2.8rem; border-radius: 50%;
+  background: var(--glass-bg); backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary); cursor: pointer; font-size: 1rem;
+  display: none; align-items: center; justify-content: center;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+#tocToggle:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
+#tocToggle.show { display: flex; }
+
+#tocPanel {
+  position: fixed; bottom: 8.6rem; right: 2rem; z-index: 99;
+  max-height: 60vh; overflow-y: auto;
+  background: linear-gradient(var(--body-overlay), var(--body-overlay)), var(--glass-bg);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2); backdrop-filter: blur(12px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-item);
+  box-shadow: var(--shadow-card);
+  padding: 0.8rem 0;
+  min-width: 180px; max-width: 260px;
+  opacity: 0; pointer-events: none;
+  transform: translateY(6px);
+  /* 展开走 decelerate，收起走 accelerate */
+  transition: opacity var(--dur-fast) var(--ease-in),
+              transform var(--dur-fast) var(--ease-in),
+              visibility 0s linear var(--dur-fast);
+  visibility: hidden;
+}
+#tocPanel.show {
+  opacity: 1; pointer-events: auto; transform: translateY(0); visibility: visible;
+  transition: opacity var(--dur-normal) var(--ease-out),
+              transform var(--dur-normal) var(--ease-out),
+              visibility 0s;
+}
+.toc-link {
+  display: block; padding: 0.4rem 1rem;
+  color: var(--text-secondary); text-decoration: none;
+  font-size: 0.78rem; font-family: var(--font-sans);
+  transition: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+  border-left: 2px solid transparent;
+}
+.toc-link.h2 { padding-left: 1rem; }
+.toc-link.h3 { padding-left: 1.8rem; font-size: 0.75rem; }
+.toc-link:hover { background-color: var(--glass-hover-bg); }
+.toc-link.active { color: var(--color-accent); border-left-color: var(--color-accent); }
+
+/* ===== 置顶标记 ===== */
+.pinned-badge {
+  display: inline-block; font-size: 0.6rem;
+  color: var(--link-text); margin-right: 0.4rem;
+}
+
+/* ===== 代码语言标签 ===== */
+.code-lang {
+  position: absolute; top: 0.3rem; right: 2.8rem;
+  font-size: 0.6rem; font-family: var(--font-mono);
+  /* 语言标签落在深色代码块上，用固定浅色而不是跟随主题的 --text-muted
+     （浅色主题下那是 #4d5b6b，压在 #0d1117 上只有 2.73:1） */
+  color: #8b949e; text-transform: uppercase;
+  letter-spacing: 0.05em; z-index: 2;
+}
+
+/* ===== 文章详情 ===== */
+.article-card {
+  background: linear-gradient(var(--body-overlay), var(--body-overlay)), var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(1.3);
+  -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
+  animation: var(--motion-enter);
+}
+.article-body { padding: 2rem 2.2rem; }
+.article-title {
+  font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 700; font-family: var(--font-title);
+  color: var(--text-primary); text-shadow: 0 2px 10px var(--shadow-card-color, rgba(0,0,0,0.3));
+  margin-bottom: 0.5rem;
+}
+.article-meta {
+  display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center;
+  margin-bottom: 1.8rem; font-size: 0.8rem; font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+.article-content { color: var(--text-secondary); font-size: 0.96rem; line-height: 1.75; }
+.article-content p { margin-bottom: 1rem; }
+.article-content h2 {
+  font-size: 1.4rem; font-weight: 600; color: var(--text-primary);
+  margin: 1.6rem 0 0.8rem; border-left: 3px solid var(--color-accent);
+  padding-left: 0.9rem;
+}
+.article-content h3 { font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin: 1.2rem 0 0.6rem; }
+.article-content code {
+  background: var(--glass-bg); padding: 0.2rem 0.4rem;
+  border-radius: 8px; font-family: var(--font-mono); font-size: 0.85em;
+}
+/* 行内 code 用深蓝保证浅底可读（--color-accent 在浅底上只有 2.99:1）。
+   这里按父元素逐个点名，刻意不写 .article-content code ——
+   那条规则会把 <pre> 里的 hljs token 颜色一起盖掉
+   （.article-content code 的特指度高于 .hljs-string）。 */
+.article-content p code,
+.article-content li code,
+.article-content td code,
+.article-content th code,
+.article-content h1 code,
+.article-content h2 code,
+.article-content h3 code,
+.article-content h4 code,
+.article-content blockquote code { color: var(--heading-accent); }
+.article-content pre {
+  margin: 1rem 0; background: var(--code-surface);
+  padding: 1rem 1.2rem; border-radius: 14px; overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: var(--font-mono); font-size: 0.85rem;
+}
+/* pre 内的 code 不再被 0.85em 二次缩水(否则 <12px 可读线) */
+.article-content pre code { font-size: 1em; padding: 0; background: none; }
+.code-block-wrapper { position: relative; margin: 1rem 0; }
+.copy-btn {
+  position: absolute; top: 0.5rem; right: 0.7rem;
+  /* 代码块现在恒为深色，复制按钮也改成深底浅字：原先跟着主题的浅色玻璃
+     压在深色块上只剩 3.88:1 */
+  background: rgba(255, 255, 255, 0.10); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.16); color: #c9d1d9;
+  font-family: var(--font-mono); font-size: 0.75rem;
+  padding: 0.2rem 0.7rem; border-radius: 28px;
+  cursor: pointer; z-index: 3;
+  /* 原来是 transition: all 0.25s：all 要盯着 width/height/padding 这类
+     会触发布局的属性，复制态只改底色也照样每次量一遍布局。 */
+  transition: background-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+/* hover 走深色块内的提亮，而不是主题强调色 —— 强调色那版是代码块改深底之前的残留，
+   同特指度写在后面会整条盖掉这一条（已删）。 */
+.copy-btn:hover { background: rgba(255, 255, 255, 0.22); color: #fff; border-color: rgba(255, 255, 255, 0.32); }
+/* copied 态原先是白字压 --color-success(#4caf50)，实测 2.78:1，而按钮字号只有
+   0.75rem（需 4.5:1）。改用为前景优化的绿色实心：浅色 8.0:1、深色 9.37:1。 */
+.copy-btn.copied { background: var(--status-success-text); color: #fff; border-color: var(--status-success-text); }
+html.dark .copy-btn.copied { color: var(--color-bg-deep); }
+.table-responsive { overflow-x: auto; margin: 1rem 0; border-radius: 12px; }
+.article-content table {
+  width: 100%; border-collapse: collapse;
+  background: var(--body-overlay); border-radius: 14px; overflow: hidden;
+}
+.article-content th, .article-content td { border: 1px solid var(--glass-border); padding: 8px 12px; text-align: left; }
+.article-content th { background: var(--color-accent-glow); color: var(--text-primary); }
+.article-content img { max-width: 100%; border-radius: 16px; margin: 1rem 0; box-shadow: 0 8px 20px var(--shadow-card-color, rgba(0,0,0,0.25)); height: auto; }
+.article-content a { color: var(--link-text); text-decoration: none; border-bottom: 1px dotted var(--link-text); }
+.article-content a:hover { color: var(--text-primary); border-bottom-color: var(--text-primary); }
+.back-link {
+  display: block; margin-top: 2rem; width: 100%;
+  padding: 0.7rem 1.2rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-item);
+  color: var(--text-secondary); font-family: var(--font-mono);
+  font-size: 0.85rem; text-decoration: none; text-align: center;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.back-link:hover { background-color: var(--glass-hover-bg); color: var(--color-accent); }
+.hljs { background: transparent; }
+/* atom-one-dark 自带的注释色 #5c6370 压在 #0d1117 上只有 3.13:1，
+   单独提亮到 6.17:1，其余 token 保持原样 */
+.article-content pre .hljs-comment { color: #8b949e; }
+pre code { background: none !important; padding: 0; border-radius: 0; }
+
+/* ===== 相关文章 ===== */
+#relatedPosts { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--glass-border); }
+#relatedPosts:empty { display: none; }
+.related-title { font-size: 1rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.8rem; font-family: var(--font-mono); }
+.related-grid { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+.related-card {
+  flex: 1; min-width: 180px;
+  background: var(--glass-bg);
+  border-radius: 1rem; border: 1px solid var(--glass-border);
+  padding: 0.8rem 1rem; cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.related-card:hover { background-color: var(--glass-hover-bg); transform: translateY(-2px); }
+.related-card-title { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem; text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.2)); }
+.related-card-date { font-size: 0.65rem; color: var(--text-muted); font-family: var(--font-mono); }
+
+/* ===== 归档时间轴 ===== */
+.archive-card {
+  background: linear-gradient(var(--body-overlay), var(--body-overlay)), var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(1.3);
+  -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
+  animation: var(--motion-enter);
+}
+.archive-body { padding: 2rem 2.2rem; }
+.archive-year { margin-bottom: 1.8rem; }
+.archive-year-header {
+  font-size: 1.5rem; font-weight: 700; font-family: var(--font-serif);
+  color: var(--text-primary); text-shadow: 0 2px 8px var(--shadow-card-color, rgba(0,0,0,0.2));
+  margin-bottom: 0.5rem; padding-left: 0.5rem;
+}
+.archive-month { margin-bottom: 1rem; }
+.archive-month-header {
+  font-size: 0.9rem; font-weight: 600; color: var(--heading-accent);
+  font-family: var(--font-mono); margin-bottom: 0.4rem; padding-left: 1rem;
+}
+.archive-list { list-style: none; padding-left: 2rem; border-left: 2px solid var(--color-accent-glow); }
+.archive-item {
+  display: flex; align-items: baseline; gap: 0.8rem;
+  padding: 0.35rem 0 0.35rem 1rem;
+  position: relative; cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out); border-radius: 0.5rem;
+  text-decoration: none;
+}
+.archive-item::before {
+  content: ''; position: absolute;
+  left: -0.6rem; top: 50%; transform: translateY(-50%);
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--color-accent); opacity: 0.4;
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.archive-item:hover::before { opacity: 1; transform: translateY(-50%) scale(1.3); }
+.archive-item:hover { background-color: var(--glass-bg); }
+.archive-item-date {
+  font-size: 0.7rem; color: var(--text-muted);
+  font-family: var(--font-mono); flex-shrink: 0; width: 3rem;
+}
+.archive-item-title { font-size: 0.9rem; color: var(--text-primary); text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.2)); }
+.archive-album .archive-item-date { color: var(--link-text); }
+.archive-album .archive-item-title { color: var(--heading-accent); }
+
+/* ===== 热力图 ===== */
+.heatmap-wrap {
+  margin-bottom: 2rem;
+  /* 背景照片恢复可见后，热力图的月份/星期标签只有 0.55~0.6rem，
+     压在透过卡片玻璃的照片上实测最低 1.27:1。给图表区一块自己的底，
+     让这排极小字有稳定可读的背景。 */
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 0.9rem;
+}
+/* 深色下热力图面板玻璃叠照片后采样仍有 rgb(140,140,139) 这类中灰，
+   白色轴标签（--text-primary）压上去只有 3.37:1。补一层不透明底把面板压暗。 */
+html.dark .heatmap-wrap {
+  background: linear-gradient(var(--body-overlay), var(--body-overlay)), var(--color-bg-deep);
+}
+.heatmap-header {
+  display: flex; gap: 0.4rem; justify-content: center;
+  margin-bottom: 0.6rem; flex-wrap: wrap;
+}
+.heatmap-year-btn {
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 0.75rem; font-family: var(--font-mono); cursor: pointer;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  transition: all 0.2s; outline: none;
+}
+.heatmap-year-btn:hover { background: var(--glass-hover-bg); color: var(--text-primary); }
+.heatmap-year-btn.active {
+  background: var(--color-accent-glow);
+  border-color: var(--color-accent);
+  color: var(--heading-accent);
+}
+.heatmap-body { display: flex; justify-content: center; overflow-x: auto; }
+.heatmap-body-inner { display: flex; gap: 4px; }
+.heatmap-labels {
+  display: flex; flex-direction: column; gap: 2px;
+  padding-top: 16px; flex-shrink: 0;
+}
+.heatmap-label {
+  height: 10px; font-size: 0.55rem;
+  /* 这两排是全站最小的字（0.55~0.6rem），而 .heatmap-wrap 的玻璃只有 0.65，底下
+     是照片：实测采样底色最差 rgb(170,134,143)（相对亮度 0.276），
+     --text-secondary 只有 2.74:1。改用最深的一支，两种主题都稳。 */
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  line-height: 10px;
+}
+.heatmap-grid { display: flex; flex-direction: column; }
+.heatmap-months { display: flex; gap: 2px; height: 16px; }
+.heatmap-month {
+  width: 10px; flex-shrink: 0;
+  font-size: 0.6rem;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  line-height: 16px;
+  text-align: center;
+  overflow: visible;
+  white-space: nowrap;
+}
+.heatmap-cells { display: flex; gap: 2px; flex-shrink: 0; }
+.hm-week { display: flex; flex-direction: column; gap: 2px; }
+.heatmap-cell {
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+.heatmap-cell:hover { transform: scale(1.4); }
+.heatmap-detail {
+  margin-top: 0.8rem; padding: 0.8rem 1.2rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-item);
+  width: 100%; max-width: 320px;
+}
+.heatmap-detail-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 0.5rem;
+}
+.heatmap-detail-date {
+  font-size: 0.8rem; font-family: var(--font-mono);
+  color: var(--color-accent);
+}
+.heatmap-detail-close {
+  cursor: pointer; font-size: 1rem;
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-out); padding: 0 4px;
+}
+.heatmap-detail-close:hover { color: var(--text-primary); }
+.heatmap-detail-list { display: flex; flex-direction: column; gap: 0.3rem; }
+.heatmap-detail-item {
+  padding: 0.3rem 0.5rem; border-radius: 6px;
+  font-size: 0.85rem; color: var(--text-primary); cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out);
+  text-decoration: none;
+}
+.heatmap-detail-item:hover { background-color: var(--glass-bg); }
+
+/* ===== 状态提示 ===== */
+.state-error { color: var(--text-primary); text-align: center; padding: 2rem; }
+.state-empty { color: var(--text-muted); text-align: center; padding: 2rem; }
+.state-fail { color: var(--text-primary); text-align: center; padding: 2rem; }
+
+/* ===== 搜索高亮 ===== */
+.search-highlight {
+  background: var(--color-highlight);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+/* ===== 画廊 ===== */
+#galleryView { margin-bottom: 2rem; width: 100%; }
+#albumGrid { width: 100%; }
+.gallery-wrap {
+  border-radius: var(--radius-card);
+  padding: 1.5rem 1.8rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+/* .gallery-wrap 自身没有背景（照片网格要透出背景照），所以这个标题是整页
+   唯一直接压在照片上的文字。实测照片亮处深蓝 #2f6a84 只有 2.22:1，连大字号
+   要求的 3:1 都不到，text-shadow 兜不住。补一条与 .archive-card / 状态站
+   .page-header 同款的磨砂底衬带，文字落在受控底色上。 */
+.gallery-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding: 1.3rem 1.5rem 1.1rem;
+  background: linear-gradient(var(--body-overlay), var(--body-overlay)), var(--glass-bg);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+.gallery-header h1 {
+  font-size: clamp(1.6rem,5vw,2.4rem); font-weight: 700; font-family: var(--font-title);
+  color: var(--heading-accent);
+}
+.album-grid {
+  columns: 280px;
+  column-gap: 1.5rem;
+}
+.album-card { cursor: pointer; display: flex; flex-direction: column; align-items: center; break-inside: avoid; margin-bottom: 1.5rem; position: relative; animation: var(--motion-photo); }
+@keyframes photoIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.album-card::after {
+  content: ''; position: absolute; top: -10px; left: 22px;
+  width: 3.2rem; height: 0.9rem;
+  background: rgba(253, 230, 138, 0.55);
+  -webkit-backdrop-filter: blur(1px); backdrop-filter: blur(1px);
+  transform: rotate(-8deg);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  pointer-events: none; z-index: 3;
+}
+.album-stack {
+  position: relative; width: 85%; margin-bottom: 1.5rem;
+}
+.album-layer {
+  border: 4px solid var(--glass-border);
+  border-radius: 3px; overflow: hidden;
+  transition: transform var(--dur-slow) var(--ease-out), opacity var(--dur-slow) var(--ease-out), filter var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow) var(--ease-out);
+  box-shadow: var(--shadow-item);
+}
+.album-layer img { width: 100%; height: auto; display: block; object-fit: cover; transition: transform 0.7s var(--ease-out); }
+.album-card:hover .album-layer-2 img { transform: scale(1.05); }
+.album-layer-0 {
+  position: relative;
+  transform: rotate(5deg) translate(8px, 4px);
+  opacity: 0.5; filter: grayscale(1) blur(1px);
+  z-index: 0;
+}
+.album-layer-1 {
+  position: absolute; inset: 0;
+  transform: rotate(-3deg) translate(-4px, -2px);
+  opacity: 0.7; filter: grayscale(0.5);
+  z-index: 1;
+}
+.album-layer-1 img, .album-layer-2 img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.album-layer-2 {
+  position: absolute; inset: 0;
+  z-index: 2;
+  box-shadow: 0 8px 24px var(--shadow-card-color, rgba(0,0,0,0.3));
+}
+/* 悬停扇形展开（参考 XinghuisamaBlogs 相册卡片） */
+.album-card:hover .album-layer-0 { transform: rotate(12deg) translate(26px, 8px); opacity: 0.55; }
+.album-card:hover .album-layer-1 { transform: rotate(-6deg) translate(-22px, -4px); opacity: 0.85; filter: grayscale(0.2); }
+.album-card:hover .album-layer-2 { transform: translateY(-10px) scale(1.05); box-shadow: 0 16px 40px var(--shadow-card-color, rgba(0,0,0,0.4)); }
+
+/* 封面浮层：底部渐变 + 计数/提示滑入 */
+.album-layer-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start;
+  padding: 1rem;
+  background: linear-gradient(to top, rgba(10, 30, 45, 0.78), rgba(10, 30, 45, 0.15) 48%, transparent);
+  opacity: 0; transition: opacity 0.5s ease;
+}
+.album-card:hover .album-layer-overlay { opacity: 1; }
+.album-layer-overlay span {
+  color: #fff; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  transform: translateY(10px); transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.album-card:hover .album-layer-overlay span { transform: translateY(0); }
+.album-layer-count { font-size: 0.95rem; font-weight: 700; }
+.album-layer-hint {
+  font-size: 0.66rem; font-family: var(--font-mono); color: var(--color-accent);
+  margin-top: 0.15rem; letter-spacing: 0.08em;
+  transition-delay: 0.06s !important;
+}
+
+.album-info { text-align: center; padding: 0 0.5rem; transition: color 0.35s; }
+.album-title { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem;   text-shadow: 0 1px 6px var(--shadow-item-color, rgba(0,0,0,0.4)); transition: color 0.35s; }
+.album-card:hover .album-title { color: var(--color-accent); }
+.album-date {
+  font-size: 0.65rem; color: var(--text-secondary); font-family: var(--font-mono);
+  /* 相册封面上的日期角标：原先底衬只有单层 --body-overlay(0.15)，
+     底下就是照片，--text-secondary 压上去实测 1.76:1。补一层 --glass-bg。 */
+  background: linear-gradient(var(--body-overlay), var(--body-overlay)), var(--glass-bg);
+  backdrop-filter: blur(6px) saturate(1.2);
+  -webkit-backdrop-filter: blur(6px) saturate(1.2);
+  display: inline-block;
+  padding: 1px 8px; border-radius: 4px; margin-bottom: 0.3rem;
+}
+.album-desc { font-size: 0.75rem; color: var(--text-secondary); text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.5)); }
+
+/* ===== 相册详情 ===== */
+.album-detail-wrap {
+  border-radius: var(--radius-card);
+  padding: 1.5rem 1.8rem;
+  width: 100%;
+  box-sizing: border-box;
+  animation: var(--motion-enter);
+}
+.album-detail-top {
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+}
+.album-back {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 2rem; padding: 0.4rem 1rem;
+  color: var(--text-secondary); cursor: pointer; font-family: var(--font-mono); font-size: 0.8rem;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+.album-back:hover { background-color: var(--glass-hover-bg); color: var(--text-primary); }
+/* 与 .gallery-wrap / .album-detail-wrap 同理，这两个容器都没有背景
+   （照片网格要透出背景照），于是标题是整页唯一直接压在照片上的文字块。
+   实测浅色下标题 2.43:1、副标题 1.94:1，连大字号要求的 3:1 都不到，
+   text-shadow 兜不住。补一条同款磨砂底衬带，文字落在受控底色上。 */
+.album-detail-header {
+  text-align: center;
+  margin: 1rem 0 1.5rem;
+  padding: 1.3rem 1.5rem 1.1rem;
+  background: linear-gradient(var(--body-overlay), var(--body-overlay)), var(--glass-bg);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+/* margin: 0 是必要的：这个元素刚从 <div> 提成 <h1>（本页此前整页零个标题元素，
+   读屏按标题导航时这里是空的）。UA 样式给 h1 的 margin 是 0.67em 上下，
+   不抹掉就会在照片墙标题上方凭空多出约 17px 空白。视觉保持零变化。 */
+.album-detail-title { font-size: 1.6rem; font-weight: 600; color: var(--text-primary); font-family: var(--font-serif); margin: 0 0 0.3rem; }
+.album-detail-meta { font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-mono); margin-bottom: 0.4rem; }
+.album-detail-desc { font-size: 0.9rem; color: var(--text-secondary); text-shadow: 0 1px 4px var(--shadow-item-color, rgba(0,0,0,0.5)); }
+.photo-grid {
+  columns: 260px;
+  column-gap: 0.8rem;
+}
+.photo-item {
+  break-inside: avoid; margin-bottom: 0.8rem;
+  border-radius: 0.8rem; overflow: hidden; cursor: zoom-in;
+  animation: var(--motion-photo-fast);
+  /* 这条以前是死代码：--motion-photo-fast 用的 fill 是 forwards，动画填充值在
+     层叠里压过普通声明，:hover 的 scale(1.02) 一直轮不到执行。令牌改成
+     backwards 之后才真的能缩放。 */
+  transition: transform var(--dur-normal) var(--ease-out), box-shadow var(--dur-normal) var(--ease-out);
+  position: relative;
+  box-shadow: var(--shadow-item);
+}
+.photo-item:hover { transform: scale(1.02); box-shadow: 0 8px 24px var(--shadow-card-color, rgba(0,0,0,0.3)); }
+.photo-item img { width: 100%; height: auto; display: block; transition: transform var(--dur-slow) var(--ease-out); }
+.photo-item:hover img { transform: scale(1.05); }
+
+@media (max-width: 600px) {
+  .album-grid { grid-template-columns: 1fr; gap: 2rem; }
+}
+
+/* 导航折叠：断点从 600px 提到 880px。原断点下 601~870px 会让 nav 换行，
+   顶栏高度从 59px 突增到 89~101px（820px 实测 101px）；880px 起实测稳定 59px。
+   折叠态需要 .topbar-menu 按钮来展开（app.vue #navToggle）。 */
+@media (max-width: 880px) {
+  .topbar-menu { display: flex; }
+  .top-bar-inner { flex-wrap: nowrap; }
+  .nav-links {
+    position: absolute; top: 100%; left: 0; right: 0;
+    display: flex;
+    flex-direction: column; align-items: stretch; gap: 0.2rem;
+    max-height: 0; overflow: hidden;
+    /* 抽屉是盖在内容上的浮层，单层玻璃（浅色下 0.65 不透明）会让下面的卡片透上来，
+       叠两层到 ~0.88 才够实 */
+    background: linear-gradient(var(--glass-bg), var(--glass-bg)), var(--glass-bg);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4); backdrop-filter: blur(12px) saturate(1.4);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 0 1rem;
+    opacity: 0;
+    /* 收起走 accelerate，展开走 decelerate——见下面 .nav-links.open 里覆盖的
+       进场那条。两个状态各自声明 transition，进场/退场才用得上不同曲线。 */
+    transition: max-height var(--dur-fast) var(--ease-in),
+                opacity var(--dur-fast) var(--ease-in),
+                padding var(--dur-fast) var(--ease-in);
+  }
+  .nav-links.open {
+    max-height: 60vh; opacity: 1;
+    padding: 0.5rem 1rem 0.8rem;
+    transition: max-height var(--dur-normal) var(--ease-out),
+                opacity var(--dur-normal) var(--ease-out),
+                padding var(--dur-normal) var(--ease-out);
+  }
+  .nav-links a { justify-content: center; padding: 0.55rem; }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 760px) {
+  :root { --body-pad: 1rem; --radius-card: 2.2rem; }
+  .top-bar-inner { padding: 0.6rem 1.2rem; }
+  .post-body { padding: 1rem 1.2rem; }
+  .article-body { padding: 1.4rem 1.2rem; }
+  .archive-body { padding: 1.4rem 1.2rem; }
+  .nav-links { gap: 1rem; }
+  .profile-wrap { padding: 1.2rem 1.2rem 1rem; }
+  .profile-avatar-ring { width: 64px; height: 64px; }
+}
+@media (max-width: 520px) {
+  .related-grid { flex-direction: column; }
+}
+
+@media (orientation: portrait) and (max-width: 900px) {
+  body { background-attachment: scroll; }
+  .post-card, .article-card, .archive-card, .page-header { border-radius: 2.2rem; }
+}
+
+@media (hover: hover) {
+  /* 这里原先是 background: var(--glass-hover-bg)，同特指度写在 .post-card:hover
+     之后，把上面那层 --body-overlay 渐变整个抹掉了——在有 hover 的设备上卡片
+     一悬停底色配方就变样。改成只换底色，渐变留住。 */
+  .post-card:hover { background-color: var(--glass-hover-bg); }
+  .tag-filter:hover { background-color: var(--glass-hover-bg); }
+  .profile-links a:hover { background-color: var(--glass-hover-bg); transform: translateY(-3px); }
+}
+
+/* ===== 打印 ===== */
+@media print {
+  body::before { display: none; }
+  body { background: var(--print-bg, #fff) !important; padding: 1rem; color: var(--print-text, #000); }
+  #loader, #snowCanvas, .search-bar, .tag-filters, .back-link, .copy-btn { display: none; }
+  .topbar-btn { display: none; }
+  .top-bar { position: static; background: var(--print-surface, #f5f5f5); backdrop-filter: none; border-color: var(--print-border, #ddd); }
+  .page-header { background: var(--print-surface, #f5f5f5) !important; backdrop-filter: none; border: 1px solid var(--print-border, #ddd); box-shadow: none; }
+  .profile-wrap { background: var(--print-surface2, #fafafa) !important; backdrop-filter: none; border: 1px solid var(--print-border, #ddd); }
+  .profile-wrap::before { display: none; }
+  .profile-divider { background: var(--print-muted, #aaa); }
+  .site-name { background: none; color: var(--print-accent, #0b2b3b); }
+  .nav-links a { color: var(--print-secondary, #555); }
+  .article-card, .post-card { background: var(--print-surface2, #fafafa); backdrop-filter: none; border: 1px solid var(--print-border, #ddd); box-shadow: none; }
+  .article-card:hover, .post-card:hover { transform: none; }
+  .article-title, .post-title { color: var(--print-accent, #0b2b3b); text-shadow: none; }
+  .article-content { color: var(--print-body, #333); }
+  .article-content code { background: var(--print-surface, #f0f0f0); color: var(--print-body, #333); }
+  .article-content a { color: var(--print-link, #1a73e8); }
+  .article-content pre { background: var(--print-surface, #f5f5f5); border-color: var(--print-border, #ddd); }
+  .post-title { color: var(--print-accent, #0b2b3b); text-shadow: none; }
+  .post-excerpt { color: var(--print-secondary, #555); }
+  .archive-card { background: var(--print-surface2, #fafafa) !important; border: 1px solid var(--print-border, #ddd); }
+  .archive-year-header { color: var(--print-accent, #0b2b3b); }
+  .archive-item-title { color: var(--print-body, #333); }
+}
+
+
+/* ===== 功能模块：说说 / 友链 / 留言 / 音乐 ===== */
+.module-wrap {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2); backdrop-filter: blur(12px) saturate(1.2);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-item);
+  padding: 1.5rem 1.8rem;
+  animation: var(--motion-enter);
+}
+.module-header { text-align: center; margin-bottom: 1.4rem; }
+.module-header h1 {
+  font-size: clamp(1.6rem, 5vw, 2.4rem); font-weight: 700; font-family: var(--font-title);
+  color: var(--heading-accent);
+}
+
+/* 说说时间线 */
+.moments-list { position: relative; padding-left: 1.4rem; }
+.moments-list::before {
+  content: ''; position: absolute; left: 4px; top: 6px; bottom: 6px;
+  width: 2px; background: var(--color-accent-glow);
+  border-radius: 2px;
+}
+.moment-item { position: relative; margin-bottom: 1.2rem; }
+.moment-dot {
+  position: absolute; left: -1.4rem; top: 6px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 8px var(--color-accent-glow);
+}
+.moment-content {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.9rem;
+  padding: 0.7rem 0.9rem;
+}
+.moment-text { font-size: 0.95rem; color: var(--text-primary); line-height: 1.5; }
+.moment-time { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.35rem; font-family: var(--font-mono); }
+
+/* 友链卡片 */
+.friends-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+.friend-card {
+  display: block; text-decoration: none;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 1rem;
+  padding: 1rem 1.1rem;
+  transition: background-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+.friend-card:hover { background-color: var(--glass-hover-bg); transform: translateY(-3px); box-shadow: var(--shadow-card); }
+.friend-name { font-size: 1.05rem; font-weight: 700; color: var(--heading-accent); font-family: var(--font-serif); margin-bottom: 0.3rem; }
+.friend-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4; }
+.friend-url { font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 0.4rem; word-break: break-all; }
+
+@media (max-width: 760px) {
+  .module-wrap { padding: 1rem 1.1rem; }
+  .friends-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== 首页仪表盘（Kirameku 风） ===== */
+#homeDashboard { display: flex; flex-direction: column; gap: 2rem; margin-bottom: 1rem; }
+.home-row { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; align-items: start; }
+.home-col-main, .home-col-side { display: flex; flex-direction: column; }
+.home-col-main { gap: 3rem; }
+.home-col-side { gap: 2rem; }
+.home-panel {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2); backdrop-filter: blur(12px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-item);
+  box-shadow: var(--shadow-item);
+  padding: 1.2rem 1.4rem;
+  display: flex; flex-direction: column;
+  animation: var(--motion-enter);
+}
+.home-panel-title {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.95rem; font-weight: 700; font-family: var(--font-serif);
+  color: var(--text-primary);
+  margin-bottom: 0.9rem;
+}
+.home-panel-title i { color: var(--color-accent); }
+.home-empty { color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0; text-align: center; }
+.home-more {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.78rem; color: var(--link-text); text-decoration: none;
+  margin-top: 0.7rem;
+  /* 触控目标 >=44px 高(视觉字号不变,用负 margin 抵消额外内边距) */
+  padding: 0.65rem 0.75rem;
+  margin: 0.25rem -0.75rem 0;
+}
+.home-more:hover { text-decoration: underline; }
+/* 这里原来还有一条 @media (prefers-color-scheme: dark) 把 .home-more 改回
+   --color-accent。它是全站唯一一处用媒体查询（而不是 html.dark）做样式决策的
+   地方，于是全站的暗色体系在这里分叉成了两套并行策略。
+
+   代价比看起来大：系统偏好暗色、而用户在本站手动点过「浅色主题」并写进
+   localStorage 时，--color-accent 仍是浅色值 #5b9bb5，落到 #f2efe9 底上实测
+   2.69:1；.home-more 是 0.78rem 的正文，AA 要 4.5:1。这条媒体查询把上面刚用
+   --link-text 压到 6.97:1 的成果又顶了回去。
+
+   暗色下的亮色链接由 tokens.css:231 的 `html.dark { --link-text: #9fe0f5 }`
+   负责，不需要在这里另开一套。要加暗色适配，改 tokens.css，别在这里加媒体查询。 */
+
+/* 最新说说 */
+.home-moments { display: flex; flex-direction: column; }
+.home-moment { position: relative; padding: 0 0 0.8rem 1.1rem; }
+.home-moment::before {
+  content: ''; position: absolute; left: 3px; top: 6px; bottom: 0;
+  width: 1px; background: var(--color-accent-glow);
+}
+.home-moment-dot {
+  position: absolute; left: 0; top: 6px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--color-accent);
+}
+.home-moment-text { font-size: 0.85rem; color: var(--text-primary); line-height: 1.4; }
+.home-moment-time { font-size: 0.68rem; color: var(--text-secondary); margin-top: 0.2rem; font-family: var(--font-mono); }
+  /* 原为 --text-muted，压在照片上只有 3.88~4.39:1 */
+
+/* 最新文章 */
+.home-hero {
+  position: relative; display: block; overflow: hidden;
+  border-radius: 1rem; min-height: 150px;
+  text-decoration: none;
+  transition: transform var(--dur-normal) var(--ease-out);
+}
+.home-hero:hover { transform: translateY(-2px); }
+.home-hero-mask {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.65), rgba(0,0,0,0.15) 60%, transparent);
+}
+.home-hero-info { position: relative; padding: 1.1rem 1.2rem; display: flex; flex-direction: column; justify-content: flex-end; min-height: 150px; }
+.home-hero-title { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+.home-hero-meta { font-size: 0.72rem; color: rgba(255,255,255,0.7); font-family: var(--font-mono); }
+.home-post-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; margin-top: 0.7rem; }
+.home-post-card {
+  position: relative; display: block; overflow: hidden;
+  border-radius: 0.8rem; min-height: 76px; text-decoration: none;
+  transition: transform var(--dur-normal) var(--ease-out);
+}
+.home-post-card:hover { transform: translateY(-2px); }
+.home-post-card-mask {
+  position: absolute; inset: 0;
+  /* 原蒙版底部只到 0.5，标题所在的下半段实际只有 ~0.3，白字压在亮封面图上
+     实测 1.67:1、日期 1.97:1。加深到 0.78 并抬高中段，让文字落在受控底色上。 */
+  background: linear-gradient(to top, rgba(0,0,0,0.88), rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.20));
+  opacity: 0.9;
+}
+.home-post-card-info { position: relative; padding: 0.7rem; display: flex; flex-direction: column; justify-content: flex-end; min-height: 76px; }
+.home-post-card-title { font-size: 0.78rem; font-weight: 700; color: #fff; }
+.home-post-card-date { font-size: 0.64rem; color: rgba(255,255,255,0.82); margin-top: 0.15rem; font-family: var(--font-mono); }
+
+/* 照片墙单图轮播 */
+.home-photo-panel { padding: 1.2rem 1.4rem; }
+.home-photo {
+  position: relative; overflow: hidden; border-radius: 0.9rem;
+  width: 100%; height: 300px; cursor: pointer;
+  background: var(--glass-bg);
+}
+.home-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: opacity var(--dur-normal) var(--ease-out);
+}
+
+@media (max-width: 760px) {
+  .home-row { grid-template-columns: 1fr; }
+  .home-panel { padding: 1rem 1.1rem; }
+}
+
+/* ===== 主题切换平滑过渡 =====
+   原来这条是无条件生效的：45 个选择器 + transition-duration/timing-function
+   带 !important，把它们各自的 transition 永久盖成 0.35s ease。后果是
+   .tag-filter 里写的 0.15s、.post-card 里写的 0.25s、.toc-link 里写的
+   0.15s 从来没生效过——鼠标划过卡片、标签、导航项全是同一个 350ms 慢动作，
+   「点了没反应」大半来自这里。
+
+   现在只在切换那一刻由 <html>.theme-shift 打开（见 app.vue toggleTheme），
+   扫完 350ms 就撤掉，各组件自己的节奏随即恢复。!important 保留：扫主题时要的是
+   全体统一，压过组件规则正是它的用途，作用域收窄之后就不会误伤了。 */
+.theme-shift body,
+.theme-shift body::before,
+.theme-shift body::after,
+.theme-shift .top-bar,
+.theme-shift .top-bar-inner,
+.theme-shift .site-name,
+.theme-shift .nav-links a,
+.theme-shift .nav-links a > span::after,
+.theme-shift .topbar-btn,
+.theme-shift .profile-wrap,
+.theme-shift .profile-name,
+.theme-shift .profile-bio,
+.theme-shift .profile-links a,
+.theme-shift .home-panel,
+.theme-shift .home-panel-title,
+.theme-shift .page-header,
+.theme-shift .search-input,
+.theme-shift .tag-filter,
+.theme-shift .tag,
+.theme-shift .post-card,
+.theme-shift .post-title,
+.theme-shift .post-excerpt,
+.theme-shift .post-meta,
+.theme-shift .article-card,
+.theme-shift .article-title,
+.theme-shift .article-meta,
+.theme-shift .article-content,
+.theme-shift .archive-card,
+.theme-shift .archive-year-header,
+.theme-shift .archive-item-title,
+.theme-shift .module-wrap,
+.theme-shift .friend-card,
+.theme-shift .friend-name,
+.theme-shift .friend-desc,
+.theme-shift .moment-content,
+.theme-shift .moment-text,
+.theme-shift .album-card,
+.theme-shift .album-title,
+.theme-shift .album-date,
+.theme-shift .album-detail-wrap,
+.theme-shift .photo-item,
+.theme-shift #backToTop,
+.theme-shift #tocToggle,
+.theme-shift #tocPanel,
+.theme-shift .toc-link,
+.theme-shift .back-link,
+.theme-shift .related-card {
+  transition-property: background-color, color, border-color, box-shadow, opacity, transform;
+  transition-duration: 0.35s !important;
+  transition-timing-function: var(--ease-out) !important;
+  transition-delay: 0s !important;
+}
+
+/* ===== 键盘焦点可见性 =====
+   搜索框、归档年份按钮、回到顶部这几处原本只改边框色或直接 outline:none，
+   键盘用户看不出焦点落在哪。放在文件末尾：:focus-visible 的特指度
+   (0,1,1) 高于这些规则的 (0,1,0)，不需要逐处改原有声明。 */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* 回到顶部未显示时是 opacity:0，但仍留在 Tab 序列里 —— 用 visibility 移出焦点序列。
+   过渡在这里重声明一次：它带 id 选择器且写在文件末尾，会盖掉前面 #backToTop 上
+   那条进场/退场分开的写法，不重写就退回 --dur-fast ease 的旧节奏。 */
+#backToTop {
+  visibility: hidden;
+  transition: opacity var(--dur-fast) var(--ease-in),
+              transform var(--dur-fast) var(--ease-in),
+              background-color var(--dur-fast) var(--ease-in),
+              visibility 0s linear var(--dur-fast);
+}
+#backToTop.show {
+  visibility: visible;
+  transition: opacity var(--dur-normal) var(--ease-out),
+              transform var(--dur-normal) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out),
+              visibility 0s;
+}
